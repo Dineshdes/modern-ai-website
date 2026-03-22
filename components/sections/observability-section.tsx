@@ -1,135 +1,132 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { FileText, BarChart2, TrendingUp } from "lucide-react";
 
-function DotPattern({ className = "" }: { className?: string }) {
+function DotIcon() {
   return (
-    <svg
-      className={`absolute pointer-events-none opacity-40 ${className}`}
-      width="120"
-      height="120"
-      viewBox="0 0 120 120"
-    >
-      {Array.from({ length: 8 }, (_, row) =>
-        Array.from({ length: 8 }, (_, col) => (
-          <circle
-            key={`${row}-${col}`}
-            cx={col * 16 + 8}
-            cy={row * 16 + 8}
-            r={1.5}
-            fill="white"
-            opacity={0.3}
-          />
-        ))
+    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" className="mb-8 opacity-60">
+      {[0,1,2,3,4].map((row) =>
+        [0,1,2,3,4].map((col) => {
+          if (col > row) return null;
+          const opacity = 0.15 + ((row + col) / 8) * 0.85;
+          return (
+            <circle key={`${row}-${col}`} cx={col*6+3} cy={row*6+3} r={1.5} fill="white" fillOpacity={opacity} />
+          );
+        })
       )}
     </svg>
   );
 }
 
-const cards = [
+const FEATURES = [
   {
-    icon: <FileText size={20} className="text-[#00E599] mb-4" />,
-    title: "Request logs",
-    desc: "Every inference logged with model, tokens, latency, cost, and user ID.",
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <path d="M9 2H4a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2v-5" stroke="#00E599" strokeWidth={1.5} strokeLinecap="round"/>
+        <path d="M10 10l8-8M14 2h4v4" stroke="#00E599" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
+    ),
+    title: "HIPAA and SOC2.",
+    desc: "Meet your compliance requirements without high spend commitments.",
   },
   {
-    icon: <BarChart2 size={20} className="text-[#00E599] mb-4" />,
-    title: "Latency histograms",
-    desc: "P50, P95, P99 latency distributions updated in real time.",
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <circle cx="10" cy="10" r="8" stroke="#00E599" strokeWidth={1.5}/>
+        <path d="M2 10h16M10 2c-2.5 3-4 5-4 8s1.5 5 4 8M10 2c2.5 3 4 5 4 8s-1.5 5-4 8" stroke="#00E599" strokeWidth={1.5}/>
+      </svg>
+    ),
+    title: "Private networking.",
+    desc: "Keep traffic off the public internet via PrivateLink, no additional costs.",
   },
   {
-    icon: <TrendingUp size={20} className="text-[#00E599] mb-4" />,
-    title: "Cost analytics",
-    desc: "Per-model, per-user cost breakdowns. Set spend alerts and budgets.",
-  },
-];
-
-const metrics = [
-  {
-    value: "12,847 req/min",
-    badge: "↑8%",
-    badgeColor: "text-[#00E599]",
-    label: "Request rate",
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <rect x="2" y="6" width="16" height="11" rx="2" stroke="#00E599" strokeWidth={1.5}/>
+        <path d="M6 6V4a4 4 0 018 0v2" stroke="#00E599" strokeWidth={1.5} strokeLinecap="round"/>
+      </svg>
+    ),
+    title: "Logs & metrics export.",
+    desc: "Forward them directly to Datadog or any OTel-compatible service — no extra fees.",
   },
   {
-    value: "48ms",
-    badge: "✓ Within SLA",
-    badgeColor: "text-[#00E599]",
-    label: "P99 latency",
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <circle cx="10" cy="10" r="8" stroke="#00E599" strokeWidth={1.5}/>
+        <path d="M10 6v4l3 3" stroke="#00E599" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
+    ),
+    title: "Uptime SLAs.",
+    desc: "99.95% uptime guaranteed by SLA for all workloads in Scale.",
   },
   {
-    value: "0.02%",
-    badge: "✓ Normal",
-    badgeColor: "text-[#00E599]",
-    label: "Error rate",
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <path d="M2 10l4 4 4-4 4 4 4-4" stroke="#00E599" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
+    ),
+    title: "Point-in-time recovery.",
+    desc: "Restore your instance instantly to any moment in time without flat monthly fees.",
   },
   {
-    value: "$0.0012",
-    badge: "per 1k tokens",
-    badgeColor: "text-[#797D86]",
-    label: "Avg cost",
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <circle cx="10" cy="7" r="4" stroke="#00E599" strokeWidth={1.5}/>
+        <path d="M3 18c0-3.9 3.1-7 7-7s7 3.1 7 7" stroke="#00E599" strokeWidth={1.5} strokeLinecap="round"/>
+      </svg>
+    ),
+    title: "Single sign-on.",
+    desc: "Centralize your team access with SSO to manage logins securely.",
   },
 ];
 
 export default function ObservabilitySection() {
   return (
     <section
-      id="observability"
-      className="relative py-24 border-b border-white/[0.06]"
+      id="production"
+      className="relative py-32 border-b border-white/[0.06] overflow-hidden bg-black"
     >
-      <DotPattern className="top-0 right-0" />
-
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5 }}
-      >
-        <h2 className="text-[48px] leading-[54px] font-normal tracking-[-0.04em] text-center text-[#797D86] max-w-4xl mx-auto">
-          <span className="text-white">Full visibility.</span> Every inference
-          request logged and measured in real time.
-        </h2>
-      </motion.div>
-
-      {/* 3-col cards */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5, delay: 0.1 }}
-        className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6"
-      >
-        {cards.map((card) => (
-          <div key={card.title}>
-            {card.icon}
-            <h3 className="text-base font-medium text-white">{card.title}</h3>
-            <p className="text-sm text-[#797D86] mt-2">{card.desc}</p>
-          </div>
-        ))}
-      </motion.div>
-
-      {/* 2x2 metrics grid */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5, delay: 0.2 }}
-        className="grid grid-cols-2 gap-4 mt-10"
-      >
-        {metrics.map((m) => (
-          <div
-            key={m.label}
-            className="bg-[#111215] border border-white/[0.06] rounded-xl p-5"
+      <div className="max-w-[1400px] mx-auto px-8 lg:pl-[260px]">
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.55 }}
+        >
+          <DotIcon />
+          <h2
+            className="font-normal text-[#797D86] max-w-4xl"
+            style={{ fontSize: "clamp(32px,3.5vw,48px)", lineHeight: 1.17, letterSpacing: "-1.92px" }}
           >
-            <p className="text-xs text-[#797D86] mb-2">{m.label}</p>
-            <p className="text-2xl font-normal text-white tracking-tight">
-              {m.value}
-            </p>
-            <p className={`text-xs mt-1 ${m.badgeColor}`}>{m.badge}</p>
-          </div>
-        ))}
-      </motion.div>
+            <span className="text-white">No platform fees.</span>{" "}
+            Enterprise-grade features available to everyone, without fixed fees or monthly minimums.
+          </h2>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.55, delay: 0.1 }}
+          className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-px border border-white/[0.06] rounded-2xl overflow-hidden"
+          style={{ background: "#111215" }}
+        >
+          {FEATURES.map((f, i) => (
+            <div
+              key={f.title}
+              className="p-7 border-r border-b border-white/[0.06]"
+              style={{
+                borderRight: (i + 1) % 3 === 0 ? "none" : undefined,
+                borderBottom: i >= 3 ? "none" : undefined,
+              }}
+            >
+              <div className="mb-4">{f.icon}</div>
+              <h3 className="text-[15px] font-medium text-white mb-2">{f.title}</h3>
+              <p className="text-sm text-[#797D86] leading-relaxed">{f.desc}</p>
+            </div>
+          ))}
+        </motion.div>
+      </div>
     </section>
   );
 }

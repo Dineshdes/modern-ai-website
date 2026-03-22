@@ -2,170 +2,205 @@
 
 import { motion } from "framer-motion";
 
-const cards = [
-  {
-    step: "01",
-    title: "Idle-aware fleet",
-    body: "Deploy thousands of models that turn off when idle. Inactive endpoints pause automatically, keeping your fleet efficient.",
-  },
-  {
-    step: "02",
-    title: "API-first management",
-    body: "Manage your fleet via API. Spin up endpoints in milliseconds with full quota controls and monitoring.",
-  },
-  {
-    step: "03",
-    title: "Database checkpoints",
-    body: "Copy-on-write storage makes it cheap to save point-in-time snapshots.",
-  },
-  {
-    step: "04",
-    title: "Built-in security",
-    body: "Built-in rate limiting, authentication, and audit logs for every inference request.",
-  },
-];
+function FleetHeatmap({ day, active, idle }: { day: string; active: number; idle: number }) {
+  const hours = Array.from({ length: 16 }, (_, i) => i + 8); // 8:00 to 23:00
+  const totalCells = 16 * 4;
+  const activeCells = Math.floor((active / (active + idle)) * totalCells);
+
+  return (
+    <div className="mb-6">
+      <div className="flex items-center justify-between mb-2">
+        <span className="text-xs font-mono text-[#797D86]">{day}</span>
+        <div className="flex items-center gap-4 text-xs font-mono">
+          <span className="text-[#00E599]">Active: {active.toLocaleString()}</span>
+          <span className="text-[#797D86]">Idle: {idle.toLocaleString()}</span>
+        </div>
+      </div>
+      {/* Heatmap grid */}
+      <div className="grid gap-[2px]" style={{ gridTemplateColumns: `repeat(${hours.length * 4}, 1fr)` }}>
+        {Array.from({ length: totalCells }, (_, i) => (
+          <div
+            key={i}
+            className="rounded-[1px]"
+            style={{
+              height: 8,
+              background: i < activeCells
+                ? `rgba(0, 229, 153, ${0.3 + (i / activeCells) * 0.7})`
+                : "rgba(255,255,255,0.04)",
+            }}
+          />
+        ))}
+      </div>
+      <div className="flex justify-between mt-1">
+        {[8, 12, 16, 20, 23].map((h) => (
+          <span key={h} className="text-[9px] font-mono text-[#797D86]">{h}:00</span>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 export default function AgentPlatform() {
   return (
-    <section className="bg-black border-y border-white/[0.06] py-32 overflow-hidden">
-      <div className="max-w-7xl mx-auto px-6">
-        {/* Terminal label bar */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="flex justify-center mb-12"
-        >
-          <div className="bg-[#18191B] border border-white/[0.08] rounded-lg px-4 py-2 inline-flex items-center gap-6 text-xs font-mono text-[#797D86]">
-            <span className="flex items-center gap-2">
-              <span className="size-1.5 rounded-full bg-[#00E599] animate-pulse" />
-              SYSTEM: SYNAPSE AI PLATFORM
+    <section className="bg-black overflow-hidden">
+      {/* Terminal status bar */}
+      <div className="border-y border-white/[0.06] px-6 py-2.5 flex items-center gap-8 text-[10px] font-mono text-[#797D86]">
+        <div className="flex items-center gap-2 max-w-[1400px] mx-auto w-full">
+          <span className="size-2 rounded-sm bg-[#797D86]" />
+          <span>SYSTEM: SYNAPSE AI PLATFORM</span>
+          <span className="ml-6 flex gap-1">
+            {Array.from({ length: 20 }, (_, i) => (
+              <span key={i} className="opacity-40">|</span>
+            ))}
+          </span>
+          <span className="ml-4">[ STATUS: ONLINE ]</span>
+          <span className="flex gap-1 ml-2">
+            {Array.from({ length: 6 }, (_, i) => (
+              <span key={i} className="opacity-30">|</span>
+            ))}
+          </span>
+          <span className="ml-4">[ CONNECTION: STABLE ]</span>
+        </div>
+      </div>
+
+      <div className="max-w-[1400px] mx-auto px-8 py-24">
+        {/* Top section: label + H2 + CTA */}
+        <div className="max-w-3xl">
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.55 }}
+            className="flex items-center gap-2 mb-6"
+          >
+            <span style={{ color: "#ef4444", fontSize: 9 }}>▶</span>
+            <span className="text-[11px] font-mono uppercase tracking-[0.16em] text-[#797D86]">
+              AGENT PLATFORM
             </span>
-            <span>[ STATUS: ONLINE ]</span>
-            <span>[ CONNECTION: STABLE ]</span>
-          </div>
-        </motion.div>
+          </motion.div>
 
-        {/* Section label */}
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.05 }}
-          className="text-sm font-medium text-[#00E599] uppercase tracking-widest mb-4"
-        >
-          Agent platform
-        </motion.p>
+          <motion.h2
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.55, delay: 0.06 }}
+            className="font-normal text-white"
+            style={{ fontSize: "clamp(48px,6vw,80px)", lineHeight: 1.05, letterSpacing: "-3.2px" }}
+          >
+            Speed and scale for agents. And devs.
+          </motion.h2>
 
-        {/* H2 */}
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className="text-[80px] leading-[1] font-normal tracking-[-0.04em] text-white"
-        >
-          Speed and scale for agents. And teams.
-        </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.55, delay: 0.12 }}
+            className="text-[#797D86] text-lg mt-6 leading-relaxed"
+          >
+            Codegen and agent platforms rely on Synapse to run the backend for user-generated AI apps.
+          </motion.p>
 
-        {/* Sub */}
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.15 }}
-          className="text-[#797D86] text-xl mt-6 max-w-2xl"
-        >
-          Agent platforms and codegen tools rely on Synapse to run AI inference
-          at scale for their users.
-        </motion.p>
+          <motion.a
+            initial={{ opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.55, delay: 0.18 }}
+            href="#"
+            className="mt-8 inline-flex items-center bg-white text-black font-medium px-6 h-11 rounded-full text-[15px] hover:bg-white/90 transition-colors"
+          >
+            I&apos;m building an agent
+          </motion.a>
+        </div>
 
-        {/* CTA */}
-        <motion.a
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          href="#"
-          className="text-white text-base hover:text-[#00E599] transition-colors inline-flex items-center gap-2 mt-8"
-        >
-          I&apos;m building an agent →
-        </motion.a>
-
-        {/* Fleet visualization */}
+        {/* Two-col layout: left steps + right fleet */}
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
+          initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.25 }}
-          className="bg-[#111215] rounded-2xl p-6 border border-white/[0.06] mt-12"
+          transition={{ duration: 0.55, delay: 0.24 }}
+          className="mt-20 grid grid-cols-1 lg:grid-cols-2 gap-16 items-start"
         >
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-3">
-              <span className="size-2 rounded-full bg-[#00E599] animate-pulse" />
-              <span className="text-sm text-white font-medium">
-                Endpoints deployed: 41,092
-              </span>
-            </div>
-            <span className="text-xs text-[#797D86]">Last 7 days</span>
-          </div>
-
-          <div className="space-y-4">
-            {[
-              { day: "Friday", active: 28400, idle: 12692 },
-              { day: "Saturday", active: 19200, idle: 21892 },
-            ].map(({ day, active, idle }) => {
-              const total = active + idle;
-              const activePct = (active / total) * 100;
-              return (
-                <div key={day}>
-                  <div className="flex items-center justify-between mb-2">
-                    <span className="text-xs text-[#797D86]">{day}</span>
-                    <div className="flex gap-4 text-xs">
-                      <span className="text-[#00E599]">
-                        Active: {active.toLocaleString()}
-                      </span>
-                      <span className="text-[#797D86]">
-                        Idle: {idle.toLocaleString()}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="h-2 bg-[#18191B] rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-[#00E599] rounded-full"
-                      style={{ width: `${activePct}%` }}
-                    />
+          {/* Left: numbered steps */}
+          <div className="space-y-6">
+            {/* Step 01 */}
+            <div className="flex items-start gap-5">
+              <div className="shrink-0">
+                <span className="text-[13px] font-mono text-[#797D86]">01</span>
+                <div className="w-px h-full bg-white/[0.06] ml-2 mt-2" style={{ minHeight: 40 }} />
+              </div>
+              <div className="flex-1">
+                <p className="text-[15px] text-white/70 mb-3">
+                  Send API call and receive connection string in{" "}
+                  <span className="text-[#00E599]">120ms</span>
+                </p>
+                <div
+                  className="rounded-xl border border-white/[0.07] p-4 font-mono text-sm"
+                  style={{ background: "#0d1117" }}
+                >
+                  <div
+                    className="rounded-md px-3 py-2 text-[12px] flex items-center gap-2"
+                    style={{ background: "#161b22" }}
+                  >
+                    <span className="size-2 rounded-full bg-[#00E599]" />
+                    <span className="text-white/50">curl -X POST</span>
+                    <span className="text-[#00E599]">https://api.synapse.tech/v2/projects/:id/endpoint</span>
                   </div>
                 </div>
-              );
-            })}
+              </div>
+            </div>
+
+            {/* Step 02 */}
+            <div className="flex items-start gap-5">
+              <span className="text-[13px] font-mono text-[#797D86] shrink-0">02</span>
+              <div className="flex-1">
+                <p className="text-[15px] text-white/70 mb-3">
+                  Test and deploy <span className="text-[#797D86]">{">>"}</span>
+                </p>
+                <div
+                  className="rounded-xl border border-white/[0.07] p-4 font-mono text-[11px] text-[#797D86]"
+                  style={{ background: "#0d1117", minHeight: 80 }}
+                >
+                  <div className="text-white/40">$ curl -X POST .../completions \</div>
+                  <div className="text-white/30 pl-4">-H "Authorization: Bearer $API_KEY" \</div>
+                  <div className="text-white/30 pl-4">{'-d \'{"model":"llama-3.1-70b","messages":[...]}\''}</div>
+                  <div className="text-[#00E599] mt-2">▪ Run Query</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right description */}
+            <div className="mt-8 pt-8 border-t border-white/[0.06]">
+              <p className="text-lg text-white/80 leading-snug">
+                Manage your fleet via API.{" "}
+                <span className="text-[#797D86]">
+                  Synapse endpoints spin up in milliseconds, with APIs for quota controls and fleet scaling.
+                </span>
+              </p>
+              <a href="#" className="mt-4 inline-flex items-center gap-1 text-sm text-white/60 hover:text-white transition-colors">
+                Learn more <span>→</span>
+              </a>
+            </div>
+          </div>
+
+          {/* Right: Fleet dashboard */}
+          <div
+            className="rounded-2xl border border-white/[0.07] overflow-hidden"
+            style={{ background: "#0a0a0a" }}
+          >
+            {/* Header */}
+            <div className="border-b border-white/[0.06] px-5 py-4">
+              <div className="font-mono text-sm text-white/70">
+                Endpoints deployed:{" "}
+                <span className="text-[#797D86]">0</span>
+              </div>
+            </div>
+
+            <div className="p-5">
+              <FleetHeatmap day="Friday" active={0} idle={0} />
+              <FleetHeatmap day="Saturday" active={7589} idle={12957} />
+            </div>
           </div>
         </motion.div>
-
-        {/* Feature cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-16">
-          {cards.map((card, i) => (
-            <motion.div
-              key={card.step}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.07 }}
-              className="bg-[#18191B] border border-white/[0.06] rounded-2xl p-7"
-            >
-              <p className="text-xs font-mono text-[#797D86] mb-4">
-                {card.step}
-              </p>
-              <h3 className="text-[28px] font-normal tracking-tight text-[#797D86] mb-3">
-                {card.title}
-              </h3>
-              <p className="text-[15px] text-[#797D86] leading-relaxed">
-                {card.body}
-              </p>
-            </motion.div>
-          ))}
-        </div>
       </div>
     </section>
   );
