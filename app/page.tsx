@@ -20,9 +20,9 @@ export default function Home() {
       <Hero />
       <FeatureSectionWrapper>
         <InferenceSection />
+        <AutoscalingSection />
         <FineTuningSection />
         <VectorDBSection />
-        <AutoscalingSection />
         <ObservabilitySection />
       </FeatureSectionWrapper>
       <AgentPlatform />

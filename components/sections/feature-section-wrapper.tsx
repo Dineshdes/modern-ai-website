@@ -60,7 +60,7 @@ export default function FeatureSectionWrapper({
               <span
                 className={`shrink-0 rounded-full transition-colors ${
                   active === id
-                    ? "bg-[#00E599]"
+                    ? "bg-[#34D59A]"
                     : "bg-transparent border border-white/20"
                 }`}
                 style={{ width: 6, height: 6 }}

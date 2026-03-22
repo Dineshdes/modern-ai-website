@@ -3,17 +3,79 @@
 import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 
-/* ─── Exact company logos as neon uses (inline SVG style) ─── */
-const COMPANIES = [
-  { name: "Replit", w: 56 },
-  { name: "DoorDash", w: 80 },
-  { name: "Framer", w: 60 },
-  { name: "Retool", w: 56 },
-  { name: "Outfront", w: 72 },
-  { name: "Vercel", w: 56 },
-  { name: "Linear", w: 52 },
-  { name: "Notion", w: 56 },
-];
+/* ─── Company logo marks (inline SVG) matching neon's style ─── */
+function LogoReplit() {
+  return (
+    <svg height="18" viewBox="0 0 24 28" fill="none" style={{ color: "#94979E" }}>
+      <path d="M0 0h8a8 8 0 0 1 0 16H0V0Z" fill="currentColor" fillOpacity={0.7}/>
+      <path d="M0 16h8a8 8 0 0 1 0 16H0V16Z" fill="currentColor" fillOpacity={0.5}/>
+      <path d="M8 8h8a8 8 0 0 1 0 16H8V8Z" fill="currentColor" fillOpacity={0.6}/>
+      <text x="26" y="20" fontSize="13" fontFamily="inherit" fontWeight="500" fill="currentColor" fillOpacity={0.7}>replit</text>
+    </svg>
+  );
+}
+function LogoDoorDash() {
+  return (
+    <svg height="16" viewBox="0 0 110 20" fill="none" style={{ color: "#94979E" }}>
+      <rect x="0" y="2" width="16" height="16" rx="4" fill="currentColor" fillOpacity={0.6}/>
+      <path d="M5 6h6a4 4 0 0 1 0 8H5V6Z" fill="#0C0D0D"/>
+      <text x="22" y="15" fontSize="13" fontFamily="inherit" fontWeight="600" fill="currentColor" fillOpacity={0.7} letterSpacing="0.5">DOORDASH</text>
+    </svg>
+  );
+}
+function LogoFramer() {
+  return (
+    <svg height="16" viewBox="0 0 80 20" fill="none" style={{ color: "#94979E" }}>
+      <path d="M0 0h14v7H7L0 0Z" fill="currentColor" fillOpacity={0.7}/>
+      <path d="M0 7h7l7 7H0V7Z" fill="currentColor" fillOpacity={0.5}/>
+      <path d="M7 14l7 7V14H7Z" fill="currentColor" fillOpacity={0.6}/>
+      <text x="20" y="15" fontSize="13" fontFamily="inherit" fontWeight="500" fill="currentColor" fillOpacity={0.7}>Framer</text>
+    </svg>
+  );
+}
+function LogoRetool() {
+  return (
+    <svg height="16" viewBox="0 0 78 20" fill="none" style={{ color: "#94979E" }}>
+      <rect x="0" y="1" width="16" height="16" rx="3" fill="currentColor" fillOpacity={0.15}/>
+      <path d="M4 5h5a3 3 0 0 1 0 6H4V5ZM4 11l4 5" stroke="currentColor" strokeWidth="1.8" strokeOpacity={0.7} strokeLinecap="round"/>
+      <text x="21" y="15" fontSize="13" fontFamily="inherit" fontWeight="500" fill="currentColor" fillOpacity={0.7}>Retool</text>
+    </svg>
+  );
+}
+function LogoOutfront() {
+  return (
+    <svg height="14" viewBox="0 0 102 18" fill="none" style={{ color: "#94979E" }}>
+      <text x="0" y="14" fontSize="13" fontFamily="inherit" fontWeight="700" fill="currentColor" fillOpacity={0.7} letterSpacing="0.3">OUTFRONT/</text>
+    </svg>
+  );
+}
+function LogoVercel() {
+  return (
+    <svg height="16" viewBox="0 0 72 20" fill="none" style={{ color: "#94979E" }}>
+      <path d="M8 2L16 18H0L8 2Z" fill="currentColor" fillOpacity={0.7}/>
+      <text x="22" y="15" fontSize="13" fontFamily="inherit" fontWeight="500" fill="currentColor" fillOpacity={0.7}>Vercel</text>
+    </svg>
+  );
+}
+function LogoLinear() {
+  return (
+    <svg height="16" viewBox="0 0 70 20" fill="none" style={{ color: "#94979E" }}>
+      <circle cx="8" cy="10" r="7" stroke="currentColor" strokeWidth="1.5" strokeOpacity={0.6}/>
+      <path d="M3 15L13 5" stroke="currentColor" strokeWidth="1.5" strokeOpacity={0.6} strokeLinecap="round"/>
+      <text x="21" y="15" fontSize="13" fontFamily="inherit" fontWeight="500" fill="currentColor" fillOpacity={0.7}>Linear</text>
+    </svg>
+  );
+}
+function LogoMeta() {
+  return (
+    <svg height="16" viewBox="0 0 68 20" fill="none" style={{ color: "#94979E" }}>
+      <path d="M2 12c0-3 1.5-5.5 3-5.5 1 0 2 1.5 3 3.5 1-2 2-3.5 3-3.5 1.5 0 3 2.5 3 5.5a2.5 2.5 0 0 1-5 0c0 1.5-.5 2.5-1 2.5s-1-1-1-2.5a2.5 2.5 0 0 1-5 0Z" stroke="currentColor" strokeWidth="1.4" strokeOpacity={0.7} fill="none"/>
+      <text x="18" y="15" fontSize="13" fontFamily="inherit" fontWeight="500" fill="currentColor" fillOpacity={0.7}>Meta</text>
+    </svg>
+  );
+}
+
+const LOGO_COMPONENTS = [LogoReplit, LogoDoorDash, LogoFramer, LogoRetool, LogoOutfront, LogoVercel, LogoLinear, LogoMeta];
 
 /* ─── Animated bars canvas ─── */
 function HeroBars() {
@@ -221,15 +283,11 @@ export default function Hero() {
             className="mt-14"
             style={{ borderTop: "1px solid rgba(255,255,255,0.07)", paddingTop: 28 }}
           >
-            <div className="flex items-center gap-12 overflow-hidden flex-wrap">
-              {COMPANIES.map(({ name }) => (
-                <span
-                  key={name}
-                  className="text-[15px] font-medium tracking-tight whitespace-nowrap shrink-0"
-                  style={{ color: "#94979E" }}
-                >
-                  {name}
-                </span>
+            <div className="flex items-center gap-10 overflow-hidden flex-wrap">
+              {LOGO_COMPONENTS.map((Logo, i) => (
+                <div key={i} className="shrink-0 flex items-center opacity-60 hover:opacity-90 transition-opacity">
+                  <Logo />
+                </div>
               ))}
             </div>
           </motion.div>

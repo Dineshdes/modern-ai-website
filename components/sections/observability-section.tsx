@@ -88,41 +88,23 @@ export default function ObservabilitySection() {
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.1 }}
-          className="mt-16 rounded-2xl overflow-hidden"
+          className="mt-16 rounded-2xl overflow-hidden grid grid-cols-1 md:grid-cols-3"
           style={{ border: "1px solid rgba(255,255,255,0.07)" }}
         >
-          {FEATURES.map((f, i) => {
-            const isTopRow = i < 3;
-            const isLastInRow = (i + 1) % 3 === 0;
-            return (
-              <div
-                key={f.title}
-                className={`p-7 ${isTopRow ? "border-b" : ""} ${!isLastInRow ? "border-r" : ""}`}
-                style={{
-                  display: "grid",
-                  gridColumn: "span 1",
-                  borderColor: "rgba(255,255,255,0.06)",
-                  background: "transparent",
-                }}
-              />
-            );
-          })}
-          <div className="grid grid-cols-3">
-            {FEATURES.map((f, i) => (
-              <div
-                key={f.title}
-                className="p-7"
-                style={{
-                  borderRight: (i + 1) % 3 !== 0 ? "1px solid rgba(255,255,255,0.06)" : "none",
-                  borderBottom: i < 3 ? "1px solid rgba(255,255,255,0.06)" : "none",
-                }}
-              >
-                <GreenIcon>{f.icon}</GreenIcon>
-                <h3 className="text-[15px] font-medium mb-2" style={{ color: "#F9FAFA" }}>{f.title}</h3>
-                <p className="text-sm leading-relaxed" style={{ color: "#94979E" }}>{f.desc}</p>
-              </div>
-            ))}
-          </div>
+          {FEATURES.map((f, i) => (
+            <div
+              key={f.title}
+              className="p-7"
+              style={{
+                borderRight: (i + 1) % 3 !== 0 ? "1px solid rgba(255,255,255,0.06)" : "none",
+                borderBottom: i < 3 ? "1px solid rgba(255,255,255,0.06)" : "none",
+              }}
+            >
+              <GreenIcon>{f.icon}</GreenIcon>
+              <h3 className="text-[15px] font-medium mb-2" style={{ color: "#F9FAFA" }}>{f.title}</h3>
+              <p className="text-sm leading-relaxed" style={{ color: "#94979E" }}>{f.desc}</p>
+            </div>
+          ))}
         </motion.div>
       </div>
     </section>
