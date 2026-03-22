@@ -79,7 +79,7 @@ const COLS = [
 
 export default function Footer() {
   return (
-    <footer style={{ background: "#0C0D0D", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+    <footer className="relative" style={{ background: "#0C0D0D", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
       {/* Subtle noise texture overlay */}
       <div
         className="absolute inset-0 pointer-events-none opacity-[0.03]"

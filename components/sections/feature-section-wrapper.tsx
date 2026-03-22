@@ -64,7 +64,20 @@ export default function FeatureSectionWrapper({
       >
         <nav
           className="absolute"
-          style={{ left: "max(24px, calc(50vw - 740px))", top: 0, paddingTop: 40 }}
+          style={{
+            left: "max(24px, calc(50vw - 740px))",
+            top: 0,
+            paddingTop: 40,
+            // Add subtle backdrop for readability on light sections
+            ...(active === "autoscaling" ? {
+              background: "rgba(255,255,255,0.6)",
+              backdropFilter: "blur(12px)",
+              WebkitBackdropFilter: "blur(12px)",
+              borderRadius: 12,
+              padding: "12px 16px",
+              paddingTop: 40,
+            } : {}),
+          }}
         >
           {SECTIONS.map(({ id, label }) => (
             <a
@@ -73,19 +86,25 @@ export default function FeatureSectionWrapper({
               className="flex items-center gap-3 py-[7px] group"
             >
               <span
-                className={`shrink-0 rounded-full transition-colors ${
-                  active === id
-                    ? "bg-[#34D59A]"
-                    : "bg-transparent border border-white/20"
-                }`}
-                style={{ width: 6, height: 6 }}
+                className="shrink-0 rounded-full transition-colors"
+                style={{
+                  width: 6,
+                  height: 6,
+                  background: active === id
+                    ? (active === "autoscaling" ? "#2C4A3E" : "#34D59A")
+                    : "transparent",
+                  border: active === id
+                    ? "none"
+                    : `1px solid ${active === "autoscaling" ? "rgba(0,0,0,0.25)" : "rgba(255,255,255,0.2)"}`,
+                }}
               />
               <span
-                className={`text-[14px] leading-tight transition-colors ${
-                  active === id
-                    ? "text-white"
-                    : "text-[#797D86] group-hover:text-white/60"
-                }`}
+                className="text-[14px] leading-tight transition-colors"
+                style={{
+                  color: active === id
+                    ? (active === "autoscaling" ? "#111215" : "white")
+                    : (active === "autoscaling" ? "rgba(0,0,0,0.45)" : "#797D86"),
+                }}
               >
                 {label}
               </span>

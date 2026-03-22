@@ -32,7 +32,7 @@ export default function Navbar() {
     >
       <div
         className="h-full flex items-center justify-between px-8"
-        style={{ maxWidth: 1600, margin: "0 auto" }}
+        style={{ maxWidth: 1400, margin: "0 auto" }}
       >
         {/* Logo + company */}
         <a href="/" className="flex items-center gap-3 shrink-0">
@@ -48,13 +48,6 @@ export default function Navbar() {
           <span className="font-semibold text-[17px]" style={{ color: "#F9FAFA", letterSpacing: "-0.3px" }}>
             Synapse
           </span>
-          {/* Company badge */}
-          <div
-            className="hidden md:flex items-center gap-1.5 ml-1 px-2 py-0.5 rounded text-[10px] uppercase tracking-widest"
-            style={{ color: "#94979E", border: "1px solid rgba(255,255,255,0.08)" }}
-          >
-            <span>A Y COMBINATOR COMPANY</span>
-          </div>
         </a>
 
         {/* Center nav */}

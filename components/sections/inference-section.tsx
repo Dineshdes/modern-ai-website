@@ -214,30 +214,6 @@ export default function InferenceSection() {
           </h2>
         </motion.div>
 
-        {/* Tab headers */}
-        <motion.div
-          initial={{ opacity: 0, y: 28 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.08 }}
-          className="mt-12 flex border-t border-b"
-          style={{ borderColor: "rgba(255,255,255,0.06)" }}
-        >
-          {["Adds Synapse Rules for correct code", "Adds MCP for safe access to Synapse"].map((tab, i) => (
-            <div
-              key={tab}
-              className="px-6 py-3 text-sm border-r"
-              style={{
-                borderColor: "rgba(255,255,255,0.06)",
-                color: i === 0 ? "rgba(249,250,250,0.7)" : "#94979E",
-                borderLeft: i === 0 ? "1px solid rgba(255,255,255,0.06)" : undefined,
-              }}
-            >
-              {tab}
-            </div>
-          ))}
-        </motion.div>
-
         <motion.div initial={{ opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.14 }}>
           <IDEMockup />
         </motion.div>
