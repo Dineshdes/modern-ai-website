@@ -1,3 +1,5 @@
+"use client";
+
 export default function AnnouncementBar() {
   return (
     <div className="relative overflow-hidden" style={{ backgroundColor: "#0C0D0D" }}>
