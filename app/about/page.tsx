@@ -1270,29 +1270,63 @@ function BottomCTA() {
   const cta = "Help us build the inference standard.";
   return (
     <section ref={sec} className="relative overflow-hidden" style={{ background: "#0C0D0D" }}>
-      <SectionGlow variant="center" />
-      <WarpBackground
-        className="border-0 rounded-none p-0 w-full"
-        gridColor="rgba(52,213,154,0.06)"
-        beamsPerSide={2}
-        beamDuration={7}
-        beamSize={10}
-        perspective={120}
-      >
-        <div className="relative z-10 max-w-[620px] mx-auto px-8 text-center py-32">
-          <div className="flex items-center justify-center gap-2 mb-8"><Diamond /><span className="text-[11px] uppercase tracking-widest" style={{ color: "#94979E", fontFamily: "var(--font-mono),monospace" }}>Join the team</span></div>
-          <h2 ref={headRef} style={{ fontSize: "clamp(26px, 4vw, 50px)", fontWeight: 400, letterSpacing: "-0.04em", color: "#F9FAFA", lineHeight: 1.12, marginBottom: 20 }}>
-            {cta.split(" ").map((word, i) => <span key={i} className="w inline-block" style={{ marginRight: "0.26em", opacity: 0 }}>{word}</span>)}
-          </h2>
-          <p style={{ fontSize: 16, color: "#94979E", lineHeight: 1.7, marginBottom: 44 }}>
-            Small team, clear mission. If you care about performance, developer experience, and making powerful AI accessible — we should talk.
-          </p>
-          <div className="flex items-center justify-center gap-3">
-            <MagBtn primary>View open roles</MagBtn>
-            <MagBtn>Get started free</MagBtn>
-          </div>
+
+      {/* ── Halftone dot texture background ── */}
+      <svg aria-hidden className="absolute inset-0 w-full h-full pointer-events-none"
+        preserveAspectRatio="xMidYMid slice" viewBox="0 0 1440 520" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          {/* Teal dot grid */}
+          <pattern id="cta-dots" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
+            <circle cx="5" cy="5" r="1.2" fill="#34D59A" />
+          </pattern>
+          {/* Radial fade mask — opaque edges, transparent centre */}
+          <radialGradient id="cta-rmask" cx="50%" cy="50%" r="55%">
+            <stop offset="0%"   stopColor="black" stopOpacity="1" />
+            <stop offset="55%"  stopColor="black" stopOpacity="0.2" />
+            <stop offset="100%" stopColor="white" stopOpacity="1" />
+          </radialGradient>
+          <mask id="cta-dotsm">
+            <rect width="1440" height="520" fill="url(#cta-rmask)" />
+          </mask>
+          {/* Left-edge teal glow */}
+          <radialGradient id="cta-gl" cx="0%" cy="100%" r="60%">
+            <stop offset="0%"  stopColor="#34D59A" stopOpacity="0.18" />
+            <stop offset="100%" stopColor="#34D59A" stopOpacity="0" />
+          </radialGradient>
+          {/* Right-edge subtle warm glow */}
+          <radialGradient id="cta-gr" cx="100%" cy="0%" r="50%">
+            <stop offset="0%"  stopColor="#F59D4A" stopOpacity="0.09" />
+            <stop offset="100%" stopColor="#F59D4A" stopOpacity="0" />
+          </radialGradient>
+        </defs>
+
+        {/* Dot field with radial mask — dense at edges, fades to nothing at centre */}
+        <rect width="1440" height="520" fill="url(#cta-dots)" mask="url(#cta-dotsm)" opacity="0.45" />
+        {/* Colour glows */}
+        <rect width="1440" height="520" fill="url(#cta-gl)" />
+        <rect width="1440" height="520" fill="url(#cta-gr)" />
+      </svg>
+
+      {/* Centre ambient */}
+      <div className="absolute inset-0 pointer-events-none"
+        style={{ background: "radial-gradient(ellipse 55% 65% at 50% 50%, rgba(52,213,154,0.055) 0%, transparent 70%)" }} />
+
+      <div className="relative z-10 max-w-[620px] mx-auto px-8 text-center py-36">
+        <div className="flex items-center justify-center gap-2 mb-8">
+          <Diamond />
+          <span className="text-[11px] uppercase tracking-widest" style={{ color: "#94979E", fontFamily: "var(--font-mono),monospace" }}>Join the team</span>
         </div>
-      </WarpBackground>
+        <h2 ref={headRef} style={{ fontSize: "clamp(26px, 4vw, 50px)", fontWeight: 400, letterSpacing: "-0.04em", color: "#F9FAFA", lineHeight: 1.12, marginBottom: 20 }}>
+          {cta.split(" ").map((word, i) => <span key={i} className="w inline-block" style={{ marginRight: "0.26em", opacity: 0 }}>{word}</span>)}
+        </h2>
+        <p style={{ fontSize: 16, color: "#94979E", lineHeight: 1.7, marginBottom: 44 }}>
+          Small team, clear mission. If you care about performance, developer experience, and making powerful AI accessible — we should talk.
+        </p>
+        <div className="flex items-center justify-center gap-3">
+          <MagBtn primary>View open roles</MagBtn>
+          <MagBtn>Get started free</MagBtn>
+        </div>
+      </div>
     </section>
   );
 }
