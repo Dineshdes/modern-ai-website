@@ -197,6 +197,24 @@ export default function InferenceSection() {
       style={{ background: "#0C0D0D", borderColor: "rgba(255,255,255,0.06)" }}
     >
       <SectionGlow variant="default" />
+
+      {/* Subtle teal glow — bottom center */}
+      <div
+        className="absolute bottom-0 left-0 right-0 pointer-events-none"
+        style={{
+          height: 320,
+          background: "radial-gradient(ellipse 70% 100% at 50% 100%, rgba(52,213,154,0.08) 0%, rgba(52,213,154,0.03) 50%, transparent 100%)",
+        }}
+      />
+      {/* Bottom fade to next section */}
+      <div
+        className="absolute bottom-0 left-0 right-0 pointer-events-none"
+        style={{
+          height: 120,
+          background: "linear-gradient(to top, rgba(12,13,13,0.6) 0%, transparent 100%)",
+        }}
+      />
+
       <div className="relative max-w-[1400px] mx-auto px-8 lg:pl-[260px]">
 
         {/* Heading */}
