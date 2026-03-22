@@ -76,7 +76,7 @@ export default function AgentPlatform() {
         </div>
       </div>
 
-      <div className="max-w-[1400px] mx-auto px-8 py-32">
+      <div className="max-w-[1400px] mx-auto px-8 py-44">
         {/* Top label + H2 */}
         <div className="max-w-3xl">
           <motion.div initial={{ opacity: 0, y: 24 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }} className="flex items-center gap-2 mb-6">

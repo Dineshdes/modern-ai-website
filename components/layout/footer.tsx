@@ -1,5 +1,7 @@
 "use client";
 
+import HalftoneEdges from "@/components/ui/halftone-edges";
+
 /* ─── Social icons ─── */
 const DiscordIcon = () => (
   <svg width="18" height="14" viewBox="0 0 16 12" fill="currentColor">
@@ -275,6 +277,13 @@ export default function Footer() {
         }}
       />
 
+      {/* Halftone dot edges */}
+      <HalftoneEdges
+        leftColor="rgba(52, 213, 154, 0.45)"
+        rightColor="rgba(220, 110, 50, 0.38)"
+        edgeWidth={300}
+        fadeStop={90}
+      />
       {/* Ghosted chat window — right side */}
       <ChatWindowBg />
 

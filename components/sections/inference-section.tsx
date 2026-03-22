@@ -2,6 +2,7 @@
 
 import { motion } from "framer-motion";
 import SectionGlow from "@/components/ui/section-glow";
+import HalftoneEdges from "@/components/ui/halftone-edges";
 
 /* Neon-exact dot pattern icon */
 function DotIcon({ dark = false }: { dark?: boolean }) {
@@ -192,10 +193,11 @@ export default function InferenceSection() {
   return (
     <section
       id="ai"
-      className="relative py-36 overflow-hidden border-b"
+      className="relative py-48 overflow-hidden border-b"
       style={{ background: "#0C0D0D", borderColor: "rgba(255,255,255,0.06)" }}
     >
       <SectionGlow variant="default" />
+      <HalftoneEdges />
       <div className="relative max-w-[1400px] mx-auto px-8 lg:pl-[260px]">
         <motion.div initial={{ opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
           <DotIcon />

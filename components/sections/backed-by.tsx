@@ -14,7 +14,7 @@ export default function BackedBy() {
         }}
       />
 
-      <div className="relative max-w-[1400px] mx-auto px-8 py-36">
+      <div className="relative max-w-[1400px] mx-auto px-8 py-48">
         <div className="grid grid-cols-1 lg:grid-cols-2" style={{ gap: 0 }}>
           {/* LEFT */}
           <motion.div

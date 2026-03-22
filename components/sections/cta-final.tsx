@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import HalftoneEdges from "@/components/ui/halftone-edges";
 
 /* ─── Node definitions for the SVG network ─── */
 const NODES = [
@@ -250,7 +251,13 @@ function NetworkSVG() {
 
 export default function CTAFinal() {
   return (
-    <section style={{ background: "#0C0D0D" }}>
+    <section className="relative overflow-hidden" style={{ background: "#0C0D0D" }}>
+      <HalftoneEdges
+        leftColor="rgba(52, 213, 154, 0.45)"
+        rightColor="rgba(220, 110, 50, 0.40)"
+        edgeWidth={380}
+        fadeStop={90}
+      />
       {/* SVG network visualization section */}
       <div className="relative" style={{ minHeight: "clamp(520px, 65vh, 780px)" }}>
         <NetworkSVG />

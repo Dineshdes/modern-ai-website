@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
+import HalftoneEdges from "@/components/ui/halftone-edges";
 
 /* ─── Company logo marks matching neon's style: icon mark + wordmark ─── */
 const LOGOS: { icon: React.ReactNode; label: string }[] = [
@@ -205,6 +206,12 @@ export default function Hero() {
     >
       {/* Canvas bars */}
       <HeroBars />
+      <HalftoneEdges
+        leftColor="rgba(52, 213, 154, 0.40)"
+        rightColor="rgba(220, 110, 50, 0.35)"
+        edgeWidth={320}
+        fadeStop={85}
+      />
 
       {/* Content — positioned to match neon's above-fold layout */}
       <div
