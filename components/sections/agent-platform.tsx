@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import SectionGlow from "@/components/ui/section-glow";
 
 function Heatmap({ day, active, idle }: { day: string; active: number; idle: number }) {
   const total = active + idle;
@@ -50,6 +51,7 @@ function Heatmap({ day, active, idle }: { day: string; active: number; idle: num
 export default function AgentPlatform() {
   return (
     <section className="relative overflow-hidden" style={{ background: "#0C0D0D" }}>
+      <SectionGlow variant="dual" opacity={0.05} />
       {/* Terminal status bar */}
       <div
         className="border-y px-8 py-2.5"

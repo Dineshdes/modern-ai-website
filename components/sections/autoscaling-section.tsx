@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
+import SectionGlow from "@/components/ui/section-glow";
 
 function DotIcon({ dark = true }: { dark?: boolean }) {
   const fill = dark ? "#2C4A3E" : "#94979E";
@@ -99,7 +100,8 @@ export default function AutoscalingSection() {
       className="relative py-28 overflow-hidden border-b"
       style={{ background: "#E4F1EB", borderColor: "rgba(0,0,0,0.06)" }}
     >
-      <div className="max-w-[1400px] mx-auto px-8 lg:pl-[260px]">
+      <SectionGlow variant="corner" color="#2C6D4C" opacity={0.03} />
+      <div className="relative max-w-[1400px] mx-auto px-8 lg:pl-[260px]">
         <motion.div initial={{ opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
           <DotIcon dark />
           <h2

@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import SectionGlow from "@/components/ui/section-glow";
 
 function DotIcon() {
   return (
@@ -92,7 +93,8 @@ export default function FineTuningSection() {
       className="relative py-28 overflow-hidden border-b"
       style={{ background: "#0C0D0D", borderColor: "rgba(255,255,255,0.06)" }}
     >
-      <div className="max-w-[1400px] mx-auto px-8 lg:pl-[260px]">
+      <SectionGlow variant="corner" />
+      <div className="relative max-w-[1400px] mx-auto px-8 lg:pl-[260px]">
         <motion.div initial={{ opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
           <DotIcon />
           <h2
