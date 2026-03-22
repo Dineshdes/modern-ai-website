@@ -887,7 +887,7 @@ function Values() {
 ════════════════════════════════════════════════════════ */
 
 /* Corner bracket decoration */
-function Brackets({ color = "rgba(255,255,255,0.18)" }: { color?: string }) {
+function Brackets({ color = "rgba(0,0,0,0.18)" }: { color?: string }) {
   const s: React.CSSProperties = { position: "absolute", width: 14, height: 14, pointerEvents: "none" };
   const b = `1.5px solid ${color}`;
   return (
@@ -900,23 +900,64 @@ function Brackets({ color = "rgba(255,255,255,0.18)" }: { color?: string }) {
   );
 }
 
+/* Investor logo marks */
+function InvLogo({ id }: { id: string }) {
+  if (id === "yc") return (
+    <svg width="72" height="72" viewBox="0 0 72 72" fill="none">
+      <rect width="72" height="72" rx="14" fill="#FF6600"/>
+      <text x="36" y="50" textAnchor="middle" fill="white" fontSize="30" fontWeight="700" fontFamily="sans-serif">YC</text>
+    </svg>
+  );
+  if (id === "a16z") return (
+    <svg width="160" height="48" viewBox="0 0 160 48" fill="none">
+      <rect width="160" height="48" rx="10" fill="#0A0A0A"/>
+      <text x="80" y="33" textAnchor="middle" fill="white" fontSize="22" fontWeight="800" fontFamily="monospace" letterSpacing="-1">a16z</text>
+    </svg>
+  );
+  if (id === "index") return (
+    <svg width="120" height="48" viewBox="0 0 120 48" fill="none">
+      <rect width="120" height="48" rx="10" fill="#1A1A2E"/>
+      <text x="60" y="33" textAnchor="middle" fill="#4A9EFF" fontSize="18" fontWeight="700" fontFamily="sans-serif" letterSpacing="2">INDEX</text>
+    </svg>
+  );
+  if (id === "elad") return (
+    <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+      <circle cx="40" cy="40" r="38" stroke="#34D59A" strokeWidth="1.5" fill="none"/>
+      <text x="40" y="53" textAnchor="middle" fill="#111" fontSize="28" fontWeight="700" fontFamily="sans-serif">EG</text>
+    </svg>
+  );
+  if (id === "nat") return (
+    <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+      <circle cx="40" cy="40" r="38" stroke="#555" strokeWidth="1.5" fill="none"/>
+      <text x="40" y="53" textAnchor="middle" fill="#111" fontSize="28" fontWeight="700" fontFamily="sans-serif">NF</text>
+    </svg>
+  );
+  if (id === "ak") return (
+    <svg width="80" height="80" viewBox="0 0 80 80" fill="none">
+      <circle cx="40" cy="40" r="38" stroke="#c084fc" strokeWidth="1.5" fill="none"/>
+      <text x="40" y="53" textAnchor="middle" fill="#111" fontSize="28" fontWeight="700" fontFamily="sans-serif">AK</text>
+    </svg>
+  );
+  return null;
+}
+
 const INV_DATA = [
-  { name: "Y Combinator",        mono: "YC",   role: "Lead Investor",   accent: "#F59D4A",
-    desc: "The world's most powerful startup accelerator backing Synapse's vision for the AI inference era.",
+  { id: "yc",    name: "Y Combinator",        mono: "YC",   role: "Lead Investor",   accent: "#FF6600",
+    desc: "The world's most powerful startup accelerator. Backing Synapse's vision for the AI inference era.",
     website: "ycombinator.com" },
-  { name: "Andreessen Horowitz", mono: "a16z", role: "Series A Lead",   accent: "#7C6FFF",
+  { id: "a16z",  name: "Andreessen Horowitz",  mono: "a16z", role: "Series A Lead",   accent: "#6366F1",
     desc: "Pioneering venture firm backing transformational technology companies from seed to public markets.",
     website: "a16z.com" },
-  { name: "Index Ventures",      mono: "IX",   role: "Series A",        accent: "#3482D5",
+  { id: "index", name: "Index Ventures",       mono: "INDEX",role: "Series A",        accent: "#4A9EFF",
     desc: "Global venture capital firm backing bold founders building category-defining companies worldwide.",
     website: "indexventures.com" },
-  { name: "Elad Gil",            mono: "EG",   role: "Angel Investor",  accent: "#34D59A",
+  { id: "elad",  name: "Elad Gil",             mono: "EG",   role: "Angel Investor",  accent: "#34D59A",
     desc: "Prolific investor and operator. Backed Stripe, Airbnb, and dozens of generational companies.",
     website: "eladgil.com" },
-  { name: "Nat Friedman",        mono: "NF",   role: "Angel Investor",  accent: "#94979E",
+  { id: "nat",   name: "Nat Friedman",         mono: "NF",   role: "Angel Investor",  accent: "#64748B",
     desc: "Former CEO of GitHub. Deep believer in open-source, developer tools, and AI infrastructure.",
     website: "nat.org" },
-  { name: "Andrej Karpathy",     mono: "AK",   role: "Advisor",         accent: "#c084fc",
+  { id: "ak",    name: "Andrej Karpathy",      mono: "AK",   role: "Advisor",         accent: "#c084fc",
     desc: "Founding scientist at Tesla AI and OpenAI. One of the world's foremost AI researchers.",
     website: "karpathy.ai" },
 ];
@@ -1022,49 +1063,48 @@ function Investors() {
               }}
             >
               {isC ? (
-                /* ── Active centre card ── */
+                /* ── Active centre card — white ── */
                 <div style={{
                   width: CW, height: CH, borderRadius: 22,
-                  background: "#111215",
-                  border: "1px solid rgba(255,255,255,0.1)",
-                  boxShadow: `0 40px 80px rgba(0,0,0,0.65), 0 0 0 1px rgba(255,255,255,0.04) inset, 0 0 80px ${inv.accent}14`,
+                  background: "#FFFFFF",
+                  border: "1px solid rgba(0,0,0,0.08)",
+                  boxShadow: "0 32px 80px rgba(0,0,0,0.55), 0 8px 24px rgba(0,0,0,0.25)",
                   position: "relative", overflow: "hidden",
                   display: "flex", flexDirection: "column", alignItems: "center",
-                  padding: "32px 26px 24px",
+                  padding: "30px 26px 22px",
                 }}>
-                  {/* Ambient glow */}
-                  <div style={{ position: "absolute", top: -80, left: "50%", transform: "translateX(-50%)", width: 260, height: 260, borderRadius: "50%", background: `${inv.accent}14`, filter: "blur(60px)", pointerEvents: "none" }} />
-                  {/* Dot texture */}
-                  <div style={{ position: "absolute", inset: 0, backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.028) 1px, transparent 1px)", backgroundSize: "18px 18px", pointerEvents: "none" }} />
+                  {/* Subtle top colour wash */}
+                  <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 90, background: `linear-gradient(180deg, ${inv.accent}12 0%, transparent 100%)`, pointerEvents: "none" }} />
                   {/* Corner brackets */}
-                  <Brackets color={`${inv.accent}55`} />
+                  <Brackets color="rgba(0,0,0,0.15)" />
 
-                  {/* Role pill */}
-                  <div style={{ position: "relative", display: "flex", alignItems: "center", gap: 6, marginBottom: 14 }}>
-                    <span style={{ width: 5, height: 5, borderRadius: "50%", background: inv.accent, display: "inline-block", boxShadow: `0 0 7px ${inv.accent}` }} />
-                    <span style={{ fontSize: 9, color: inv.accent, fontFamily: "var(--font-mono),monospace", letterSpacing: "0.14em", textTransform: "uppercase" }}>{inv.role}</span>
+                  {/* Name at top — large, readable */}
+                  <div style={{ position: "relative", width: "100%", textAlign: "center", marginBottom: 4 }}>
+                    <div style={{ fontSize: 11, fontWeight: 600, color: inv.accent, fontFamily: "var(--font-mono),monospace", letterSpacing: "0.14em", textTransform: "uppercase", marginBottom: 8 }}>{inv.role}</div>
+                    <div style={{ fontSize: 17, fontWeight: 700, color: "#0C0D0D", letterSpacing: "-0.03em", lineHeight: 1.2 }}>{inv.name}</div>
                   </div>
 
-                  {/* Name */}
-                  <div style={{ position: "relative", fontSize: 15, fontWeight: 600, color: "#F9FAFA", letterSpacing: "-0.015em", textAlign: "center", lineHeight: 1.3 }}>{inv.name}</div>
-
-                  {/* Monogram — large, centered */}
+                  {/* Logo mark — centred */}
                   <div style={{ position: "relative", flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    <span style={{ fontSize: 90, fontWeight: 800, letterSpacing: "-0.06em", color: inv.accent, opacity: 0.16, lineHeight: 1, userSelect: "none" }}>{inv.mono}</span>
+                    <InvLogo id={inv.id} />
                   </div>
 
-                  {/* Description */}
-                  <div style={{ position: "relative", textAlign: "center", marginBottom: 22 }}>
-                    <p style={{ fontSize: 9.5, color: "#6B7280", lineHeight: 1.85, letterSpacing: "0.07em", textTransform: "uppercase", fontFamily: "var(--font-mono),monospace", maxWidth: 210 }}>
+                  {/* Description — dark, readable */}
+                  <div style={{ position: "relative", textAlign: "center", marginBottom: 20 }}>
+                    <p style={{ fontSize: 10.5, color: "#4B5563", lineHeight: 1.85, letterSpacing: "0.05em", textTransform: "uppercase", fontFamily: "var(--font-mono),monospace", maxWidth: 218 }}>
                       {inv.desc}
                     </p>
                   </div>
 
-                  {/* Website — with flanking lines */}
+                  {/* Website — flanking lines, dark */}
                   <div style={{ position: "relative", width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 10 }}>
-                    <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, transparent, ${inv.accent}35)` }} />
-                    <span style={{ fontSize: 9, color: "#94979E", fontFamily: "var(--font-mono),monospace", letterSpacing: "0.14em", textTransform: "uppercase" }}>WEBSITE</span>
-                    <div style={{ flex: 1, height: 1, background: `linear-gradient(270deg, transparent, ${inv.accent}35)` }} />
+                    <div style={{ flex: 1, height: 1, background: "linear-gradient(90deg, transparent, rgba(0,0,0,0.12))" }} />
+                    <a href={`https://${inv.website}`} target="_blank" rel="noreferrer"
+                      style={{ fontSize: 9, color: "#6B7280", fontFamily: "var(--font-mono),monospace", letterSpacing: "0.14em", textTransform: "uppercase", textDecoration: "none" }}
+                      onMouseEnter={(e) => (e.currentTarget.style.color = "#0C0D0D")}
+                      onMouseLeave={(e) => (e.currentTarget.style.color = "#6B7280")}
+                    >WEBSITE</a>
+                    <div style={{ flex: 1, height: 1, background: "linear-gradient(270deg, transparent, rgba(0,0,0,0.12))" }} />
                   </div>
                 </div>
               ) : (
