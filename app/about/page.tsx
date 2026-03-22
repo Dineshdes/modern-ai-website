@@ -594,6 +594,89 @@ function Metrics() {
 }
 
 /* ════════════════════════════════════════════════════════
+   STATUS TICKER  (between Metrics + Story)
+════════════════════════════════════════════════════════ */
+function PipeLine({ count }: { count: number }) {
+  return (
+    <div className="flex items-center gap-[3px] shrink-0">
+      {Array.from({ length: count }).map((_, i) => (
+        <span
+          key={i}
+          style={{
+            display: "inline-block",
+            width: 1.5,
+            height: 12,
+            borderRadius: 1,
+            background: "rgba(52,213,154,0.45)",
+            animation: `pipePulse 1.6s ease-in-out ${(i * 0.06).toFixed(2)}s infinite alternate`,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+function StatusTicker() {
+  return (
+    <div style={{
+      background: "#080909",
+      borderTop: "1px solid rgba(255,255,255,0.05)",
+      borderBottom: "1px solid rgba(255,255,255,0.05)",
+      padding: "13px 0",
+    }}>
+      <style>{`
+        @keyframes pipePulse {
+          from { opacity: 0.2; transform: scaleY(0.55); }
+          to   { opacity: 0.9; transform: scaleY(1); }
+        }
+        @keyframes statusBlink {
+          0%,100% { opacity: 1; }
+          50%      { opacity: 0.4; }
+        }
+      `}</style>
+      <div className="max-w-[1200px] mx-auto px-8 flex items-center gap-6 overflow-hidden"
+        style={{ fontFamily: "var(--font-mono),monospace", fontSize: 10, letterSpacing: "0.1em", whiteSpace: "nowrap" }}>
+
+        {/* System indicator */}
+        <div className="flex items-center gap-2.5 shrink-0">
+          <div style={{
+            width: 16, height: 16, borderRadius: "50%",
+            border: "1.5px solid rgba(52,213,154,0.45)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+          }}>
+            <div style={{
+              width: 5, height: 5, borderRadius: "50%",
+              background: "#34D59A",
+              boxShadow: "0 0 6px rgba(52,213,154,0.9)",
+              animation: "statusBlink 2.4s ease-in-out infinite",
+            }} />
+          </div>
+          <span style={{ color: "rgba(255,255,255,0.38)" }}>SYSTEM: SYNAPSE AI PLATFORM</span>
+        </div>
+
+        <PipeLine count={24} />
+
+        <span style={{ color: "rgba(255,255,255,0.28)", shrinkTo: 0 } as React.CSSProperties}>
+          {"[ STATUS: "}<span style={{ color: "#34D59A" }}>ONLINE</span>{" ]"}
+        </span>
+
+        <PipeLine count={9} />
+
+        <span style={{ color: "rgba(255,255,255,0.28)" }}>{"[ CONNECTION: STABLE ]"}</span>
+
+        <PipeLine count={9} />
+
+        <span style={{ color: "rgba(255,255,255,0.18)" }}>{"[ LATENCY: 43ms ]"}</span>
+
+        <PipeLine count={6} />
+
+        <span style={{ color: "rgba(255,255,255,0.18)" }}>{"[ UPTIME: 99.99% ]"}</span>
+      </div>
+    </div>
+  );
+}
+
+/* ════════════════════════════════════════════════════════
    SECTION 4 — STORY TIMELINE
 ════════════════════════════════════════════════════════ */
 const TIMELINE = [
@@ -1033,61 +1116,37 @@ function Investors() {
                   padding: "32px 28px 26px",
                 }}>
 
-                  {/* ── Brand teal gradient + vertical running dashes ── */}
+                  {/* ── Halftone dot grid — dense top & bottom, fades to transparent centre ── */}
                   <svg aria-hidden style={{ position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none" }}
-                    viewBox={`0 0 ${CW} ${CH}`} preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                    viewBox={`0 0 ${CW} ${CH}`} xmlns="http://www.w3.org/2000/svg">
                     <defs>
-                      {/* Vertical teal gradient: bright top & bottom, transparent centre */}
-                      <linearGradient id="inv-vg" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%"   stopColor="#34D59A" stopOpacity="0.18" />
-                        <stop offset="32%"  stopColor="#34D59A" stopOpacity="0"    />
-                        <stop offset="68%"  stopColor="#34D59A" stopOpacity="0"    />
-                        <stop offset="100%" stopColor="#34D59A" stopOpacity="0.12" />
-                      </linearGradient>
-                      {/* Dot grid pattern */}
-                      <pattern id="inv-dots" x="0" y="0" width="18" height="18" patternUnits="userSpaceOnUse">
-                        <circle cx="1" cy="1" r="0.7" fill="white" fillOpacity="0.028" />
+                      {/* Teal dot grid — tight 8×8 spacing */}
+                      <pattern id="htdots" x="0" y="0" width="8" height="8" patternUnits="userSpaceOnUse">
+                        <circle cx="4" cy="4" r="1.1" fill="#34D59A" />
                       </pattern>
-                      {/* Vertical edge-fade mask for left/right dashes */}
-                      <linearGradient id="inv-vm" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%"   stopColor="white" stopOpacity="0"  />
-                        <stop offset="10%"  stopColor="white" stopOpacity="1"  />
-                        <stop offset="90%"  stopColor="white" stopOpacity="1"  />
-                        <stop offset="100%" stopColor="white" stopOpacity="0"  />
+                      {/* Vertical fade mask: opaque top & bottom, fully transparent centre */}
+                      <linearGradient id="htmaskgrad" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%"   stopColor="white" stopOpacity="0.55" />
+                        <stop offset="28%"  stopColor="white" stopOpacity="0"    />
+                        <stop offset="72%"  stopColor="white" stopOpacity="0"    />
+                        <stop offset="100%" stopColor="white" stopOpacity="0.42" />
                       </linearGradient>
-                      <mask id="inv-vmsk">
-                        <rect width={CW} height={CH} fill="url(#inv-vm)" />
+                      <mask id="htmask">
+                        <rect width={CW} height={CH} fill="url(#htmaskgrad)" />
                       </mask>
+                      {/* Teal colour wash top & bottom */}
+                      <linearGradient id="htwash" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%"   stopColor="#34D59A" stopOpacity="0.14" />
+                        <stop offset="30%"  stopColor="#34D59A" stopOpacity="0"    />
+                        <stop offset="70%"  stopColor="#34D59A" stopOpacity="0"    />
+                        <stop offset="100%" stopColor="#34D59A" stopOpacity="0.10" />
+                      </linearGradient>
                     </defs>
 
-                    {/* Gradient wash */}
-                    <rect width={CW} height={CH} fill="url(#inv-vg)" />
-                    {/* Dot grid */}
-                    <rect width={CW} height={CH} fill="url(#inv-dots)" />
-
-                    {/* LEFT vertical running dashes — top to bottom */}
-                    <g mask="url(#inv-vmsk)">
-                      <line x1="1" y1="0" x2="1" y2={CH}
-                        stroke="#34D59A" strokeWidth="1.4" strokeDasharray="10 16" strokeLinecap="round" opacity="0.65">
-                        <animate attributeName="stroke-dashoffset" from="0" to="104" dur="2.4s" repeatCount="indefinite" />
-                      </line>
-                      <line x1="1" y1="0" x2="1" y2={CH}
-                        stroke="#34D59A" strokeWidth="0.5" strokeDasharray="5 21" strokeLinecap="round" opacity="0.28">
-                        <animate attributeName="stroke-dashoffset" from="0" to="104" dur="3.8s" repeatCount="indefinite" />
-                      </line>
-                    </g>
-
-                    {/* RIGHT vertical running dashes — bottom to top */}
-                    <g mask="url(#inv-vmsk)">
-                      <line x1={CW - 1} y1="0" x2={CW - 1} y2={CH}
-                        stroke="#34D59A" strokeWidth="1.4" strokeDasharray="10 16" strokeLinecap="round" opacity="0.45">
-                        <animate attributeName="stroke-dashoffset" from="104" to="0" dur="2.4s" repeatCount="indefinite" />
-                      </line>
-                      <line x1={CW - 1} y1="0" x2={CW - 1} y2={CH}
-                        stroke="#34D59A" strokeWidth="0.5" strokeDasharray="5 21" strokeLinecap="round" opacity="0.2">
-                        <animate attributeName="stroke-dashoffset" from="104" to="0" dur="3.8s" repeatCount="indefinite" />
-                      </line>
-                    </g>
+                    {/* Dot grid with vertical mask */}
+                    <rect width={CW} height={CH} fill="url(#htdots)" mask="url(#htmask)" />
+                    {/* Teal colour wash */}
+                    <rect width={CW} height={CH} fill="url(#htwash)" />
                   </svg>
 
                   {/* Corner brackets — brand teal */}
@@ -1255,6 +1314,7 @@ export default function AboutPage() {
         <Hero />
         <Mission />
         <Metrics />
+        <StatusTicker />
         <Story />
         <Team />
         <Values />
