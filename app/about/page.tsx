@@ -883,131 +883,70 @@ function Values() {
 }
 
 /* ════════════════════════════════════════════════════════
-   SECTION 7 — INVESTORS  (bento grid · design-system aligned)
+   SECTION 7 — INVESTORS  (draggable showcase carousel)
 ════════════════════════════════════════════════════════ */
-function useTilt() {
-  const ref = useRef<HTMLDivElement>(null);
-  const onMove = (e: React.MouseEvent) => {
-    const el = ref.current; if (!el) return;
-    const r = el.getBoundingClientRect();
-    const x = (e.clientX - r.left) / r.width - 0.5;
-    const y = (e.clientY - r.top) / r.height - 0.5;
-    gsap.to(el, { rotateY: x * 8, rotateX: -y * 8, scale: 1.018, transformPerspective: 900, duration: 0.28, ease: "power2.out" });
-  };
-  const onLeave = () => gsap.to(ref.current, { rotateY: 0, rotateX: 0, scale: 1, duration: 0.55, ease: "elastic.out(1,0.5)" });
-  return { ref, onMove, onLeave };
-}
 
-/* Single card shell — one consistent design-system card */
-function ICard({
-  accent = "rgba(255,255,255,0.07)",
-  glow,
-  mono,
-  name,
-  sub,
-  tag,
-  tagColor = "#94979E",
-  tagBg = "rgba(255,255,255,0.06)",
-  featured = false,
-  wide = false,
-  style: extraStyle,
-}: {
-  accent?: string;
-  glow?: string;
-  mono: string;
-  name: string;
-  sub: string;
-  tag: string;
-  tagColor?: string;
-  tagBg?: string;
-  featured?: boolean;
-  wide?: boolean;
-  style?: React.CSSProperties;
-}) {
-  const t = useTilt();
+/* Corner bracket decoration */
+function Brackets({ color = "rgba(255,255,255,0.18)" }: { color?: string }) {
+  const s: React.CSSProperties = { position: "absolute", width: 14, height: 14, pointerEvents: "none" };
+  const b = `1.5px solid ${color}`;
   return (
-    <div
-      ref={t.ref}
-      className="inv-card relative overflow-hidden"
-      onMouseMove={t.onMove}
-      onMouseLeave={t.onLeave}
-      style={{
-        borderRadius: 20,
-        border: `1px solid ${accent}`,
-        background: "#111215",
-        willChange: "transform",
-        transformStyle: "preserve-3d",
-        opacity: 0,
-        minHeight: featured ? 260 : wide ? 88 : 158,
-        boxShadow: "0 8px 32px rgba(0,0,0,0.45)",
-        ...extraStyle,
-      }}
-    >
-      {/* Ambient glow blob */}
-      {glow && (
-        <div style={{ position: "absolute", top: -50, right: -50, width: 180, height: 180, borderRadius: "50%", background: glow, filter: "blur(55px)", pointerEvents: "none" }} />
-      )}
-
-      {/* Top accent line */}
-      <div style={{ position: "absolute", top: 0, left: 20, right: 20, height: 1, background: `linear-gradient(90deg, transparent, ${accent}, transparent)` }} />
-
-      {!wide ? (
-        <>
-          {/* Monogram */}
-          <div style={{ padding: "22px 22px 0" }}>
-            <span style={{ fontSize: featured ? 56 : 36, fontWeight: 700, letterSpacing: "-0.05em", lineHeight: 1, color: accent, opacity: 0.55, userSelect: "none", display: "block" }}>{mono}</span>
-          </div>
-
-          {/* Bottom info */}
-          <div style={{
-            position: "absolute", bottom: 0, left: 0, right: 0,
-            padding: "14px 22px 18px",
-            backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)",
-            background: "rgba(12,13,13,0.55)",
-            borderTop: `1px solid ${accent}`,
-          }}>
-            {featured && (
-              <div className="flex items-center gap-1.5 mb-2">
-                <span style={{ width: 5, height: 5, borderRadius: "50%", background: tagColor, display: "inline-block", boxShadow: `0 0 6px ${tagColor}` }} />
-                <span style={{ fontSize: 10, color: tagColor, fontFamily: "var(--font-mono),monospace", letterSpacing: "0.1em", textTransform: "uppercase" }}>{tag}</span>
-              </div>
-            )}
-            <div style={{ fontSize: featured ? 16 : 14, fontWeight: 600, color: "#F9FAFA", letterSpacing: "-0.02em" }}>{name}</div>
-            <div style={{ fontSize: 12, color: "#6B7280", marginTop: 3, lineHeight: 1.45 }}>{sub}</div>
-            {!featured && (
-              <div style={{ display: "inline-flex", alignItems: "center", marginTop: 8, padding: "3px 9px", borderRadius: 6, background: tagBg, border: `1px solid ${accent}`, fontSize: 10, color: tagColor, fontFamily: "var(--font-mono),monospace", letterSpacing: "0.06em", textTransform: "uppercase" }}>{tag}</div>
-            )}
-          </div>
-        </>
-      ) : (
-        /* Wide card — horizontal layout */
-        <div className="flex items-center justify-between h-full" style={{ padding: "0 24px" }}>
-          <div className="flex items-center gap-4">
-            <div style={{ width: 40, height: 40, borderRadius: 10, background: tagBg, border: `1px solid ${accent}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 700, color: tagColor, letterSpacing: "-0.02em", flexShrink: 0 }}>{mono}</div>
-            <div>
-              <div style={{ fontSize: 15, fontWeight: 600, color: "#F9FAFA", letterSpacing: "-0.02em" }}>{name}</div>
-              <div style={{ fontSize: 12, color: "#6B7280", marginTop: 2 }}>{sub}</div>
-            </div>
-          </div>
-          <div style={{ padding: "5px 13px", borderRadius: 999, background: tagBg, border: `1px solid ${accent}`, fontSize: 10, color: tagColor, fontFamily: "var(--font-mono),monospace", letterSpacing: "0.08em", textTransform: "uppercase", flexShrink: 0 }}>{tag}</div>
-        </div>
-      )}
-    </div>
+    <>
+      <div style={{ ...s, top: 16, left: 16, borderTop: b, borderLeft: b }} />
+      <div style={{ ...s, top: 16, right: 16, borderTop: b, borderRight: b }} />
+      <div style={{ ...s, bottom: 16, left: 16, borderBottom: b, borderLeft: b }} />
+      <div style={{ ...s, bottom: 16, right: 16, borderBottom: b, borderRight: b }} />
+    </>
   );
 }
 
+const INV_DATA = [
+  { name: "Y Combinator",        mono: "YC",   role: "Lead Investor",   accent: "#F59D4A",
+    desc: "The world's most powerful startup accelerator backing Synapse's vision for the AI inference era.",
+    website: "ycombinator.com" },
+  { name: "Andreessen Horowitz", mono: "a16z", role: "Series A Lead",   accent: "#7C6FFF",
+    desc: "Pioneering venture firm backing transformational technology companies from seed to public markets.",
+    website: "a16z.com" },
+  { name: "Index Ventures",      mono: "IX",   role: "Series A",        accent: "#3482D5",
+    desc: "Global venture capital firm backing bold founders building category-defining companies worldwide.",
+    website: "indexventures.com" },
+  { name: "Elad Gil",            mono: "EG",   role: "Angel Investor",  accent: "#34D59A",
+    desc: "Prolific investor and operator. Backed Stripe, Airbnb, and dozens of generational companies.",
+    website: "eladgil.com" },
+  { name: "Nat Friedman",        mono: "NF",   role: "Angel Investor",  accent: "#94979E",
+    desc: "Former CEO of GitHub. Deep believer in open-source, developer tools, and AI infrastructure.",
+    website: "nat.org" },
+  { name: "Andrej Karpathy",     mono: "AK",   role: "Advisor",         accent: "#c084fc",
+    desc: "Founding scientist at Tesla AI and OpenAI. One of the world's foremost AI researchers.",
+    website: "karpathy.ai" },
+];
+
 function Investors() {
-  const sec = useRef<HTMLElement>(null);
+  const [active, setActive] = useState(0);
+  const sec       = useRef<HTMLElement>(null);
+  const dragStart = useRef(0);
+  const dragging  = useRef(false);
+  const n = INV_DATA.length;
+
+  const goTo = (i: number) => setActive(Math.max(0, Math.min(n - 1, i)));
+
+  const onPD = (e: React.PointerEvent) => {
+    dragging.current = true;
+    dragStart.current = e.clientX;
+    (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
+  };
+  const onPU = (e: React.PointerEvent) => {
+    if (!dragging.current) return;
+    dragging.current = false;
+    const d = e.clientX - dragStart.current;
+    if (d < -55) goTo(active + 1);
+    else if (d > 55) goTo(active - 1);
+  };
 
   useEffect(() => {
     const ctx = gsap.context(() => {
-      gsap.fromTo(".inv-card",
-        { opacity: 0, y: 30, scale: 0.97 },
-        { opacity: 1, y: 0, scale: 1, stagger: 0.07, duration: 0.6, ease: "power3.out",
-          scrollTrigger: { trigger: sec.current, start: "top 74%" } }
-      );
-      gsap.fromTo(".inv-hl",
-        { opacity: 0, y: 32 },
+      gsap.fromTo(".inv-header",
+        { opacity: 0, y: 28 },
         { opacity: 1, y: 0, duration: 0.7, ease: "power3.out",
           scrollTrigger: { trigger: sec.current, start: "top 82%" } }
       );
@@ -1015,138 +954,142 @@ function Investors() {
     return () => ctx.revert();
   }, []);
 
-  const STATS = [
-    { val: "$18M", label: "Total raised" },
-    { val: "2",    label: "Funding rounds" },
-    { val: "6",    label: "Investors & advisors" },
-    { val: "2024", label: "Latest round" },
-  ];
+  const CW = 300; // card width
+  const CH = 460; // card height
+  const GAP = 330; // centre-to-centre distance
 
   return (
     <section ref={sec} className="relative overflow-hidden border-t border-b"
-      style={{ background: "#0C0D0D", borderColor: "rgba(255,255,255,0.06)", paddingTop: 112, paddingBottom: 112 }}>
+      style={{ background: "#0C0D0D", borderColor: "rgba(255,255,255,0.06)", paddingTop: 100, paddingBottom: 80 }}>
 
-      {/* Dot grid bg */}
-      <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.022) 1px, transparent 1px)", backgroundSize: "28px 28px" }} />
-      {/* Teal glow */}
-      <div className="absolute pointer-events-none" style={{ top: -100, right: -100, width: 700, height: 700, background: "radial-gradient(circle, rgba(52,213,154,0.035) 0%, transparent 65%)" }} />
+      {/* Dot-grid bg */}
+      <div className="absolute inset-0 pointer-events-none"
+        style={{ backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.022) 1px, transparent 1px)", backgroundSize: "28px 28px" }} />
 
-      <div className="relative z-10 max-w-[1240px] mx-auto px-8">
+      {/* Header row */}
+      <div className="inv-header relative z-10 max-w-[1240px] mx-auto px-8 mb-16 flex items-end justify-between" style={{ opacity: 0 }}>
+        <div>
+          <div className="flex items-center gap-2 mb-5">
+            <Diamond />
+            <span style={{ fontSize: 11, letterSpacing: "0.18em", textTransform: "uppercase", color: "#94979E", fontFamily: "var(--font-mono),monospace" }}>Investors</span>
+          </div>
+          <h2 style={{ fontSize: "clamp(26px, 3vw, 44px)", fontWeight: 400, letterSpacing: "-0.045em", lineHeight: 1.1, color: "#F9FAFA", maxWidth: 540 }}>
+            People who build the frontier{" "}
+            <span style={{ color: "#6B7280" }}>fund the frontier.</span>
+          </h2>
+        </div>
+        <div className="flex items-center gap-10 pb-1 shrink-0">
+          {[["$18M","Raised"],["W2024","YC batch"],["6","Backers"]].map(([v,l]) => (
+            <div key={l} className="text-right">
+              <div style={{ fontSize: "clamp(18px,1.9vw,26px)", fontWeight: 400, letterSpacing: "-0.04em", color: "#F9FAFA", lineHeight: 1 }}>{v}</div>
+              <div style={{ fontSize: 11, color: "#6B7280", marginTop: 5 }}>{l}</div>
+            </div>
+          ))}
+        </div>
+      </div>
 
-        {/* Eyebrow */}
-        <div className="flex items-center gap-2 mb-14">
-          <Diamond />
-          <span style={{ fontSize: 11, letterSpacing: "0.18em", textTransform: "uppercase", color: "#94979E", fontFamily: "var(--font-mono),monospace" }}>Investors</span>
+      {/* Carousel stage */}
+      <div
+        style={{ position: "relative", height: CH + 40, display: "flex", alignItems: "center", justifyContent: "center", cursor: "grab", userSelect: "none" }}
+        onPointerDown={onPD}
+        onPointerUp={onPU}
+      >
+        {/* DRAG pill — sits just right of center card */}
+        <div style={{ position: "absolute", left: `calc(50% + ${CW / 2 + 20}px)`, top: "50%", transform: "translateY(-50%)", zIndex: 50, pointerEvents: "none" }}>
+          <div style={{ background: "#F9FAFA", color: "#0C0D0D", borderRadius: 999, padding: "9px 18px", fontSize: 10, fontWeight: 700, letterSpacing: "0.14em", fontFamily: "var(--font-mono),monospace" }}>DRAG</div>
         </div>
 
-        {/* Two-col layout */}
-        <div className="grid gap-16 items-start" style={{ gridTemplateColumns: "390px 1fr" }}>
+        {INV_DATA.map((inv, i) => {
+          const off    = i - active;
+          const absOff = Math.abs(off);
+          const isC    = off === 0;
+          const scale  = isC ? 1 : Math.max(0.7, 1 - absOff * 0.1);
+          const opa    = isC ? 1 : Math.max(0.12, 0.52 - absOff * 0.16);
+          const tx     = off * GAP;
+          const zi     = 20 - absOff;
 
-          {/* ── LEFT: editorial ── */}
-          <div className="inv-hl" style={{ opacity: 0 }}>
-            <h2 style={{ fontSize: "clamp(26px, 3vw, 44px)", fontWeight: 400, letterSpacing: "-0.045em", lineHeight: 1.1, marginBottom: 20, color: "#F9FAFA" }}>
-              People who build the frontier{" "}
-              <span style={{ color: "#6B7280" }}>fund the frontier.</span>
-            </h2>
-            <p style={{ fontSize: 15, color: "#94979E", lineHeight: 1.8, marginBottom: 48 }}>
-              Every check came with conviction in open, fast, operator-free AI — from people who have built foundational infrastructure, not just funded it.
-            </p>
+          return (
+            <div key={inv.name}
+              onClick={() => !isC && goTo(i)}
+              style={{
+                position: "absolute",
+                transform: `translateX(${tx}px) scale(${scale})`,
+                opacity: opa,
+                zIndex: zi,
+                transition: "all 0.52s cubic-bezier(0.22,1,0.36,1)",
+                willChange: "transform,opacity",
+                cursor: isC ? "grab" : "pointer",
+              }}
+            >
+              {isC ? (
+                /* ── Active centre card ── */
+                <div style={{
+                  width: CW, height: CH, borderRadius: 22,
+                  background: "#111215",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                  boxShadow: `0 40px 80px rgba(0,0,0,0.65), 0 0 0 1px rgba(255,255,255,0.04) inset, 0 0 80px ${inv.accent}14`,
+                  position: "relative", overflow: "hidden",
+                  display: "flex", flexDirection: "column", alignItems: "center",
+                  padding: "32px 26px 24px",
+                }}>
+                  {/* Ambient glow */}
+                  <div style={{ position: "absolute", top: -80, left: "50%", transform: "translateX(-50%)", width: 260, height: 260, borderRadius: "50%", background: `${inv.accent}14`, filter: "blur(60px)", pointerEvents: "none" }} />
+                  {/* Dot texture */}
+                  <div style={{ position: "absolute", inset: 0, backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.028) 1px, transparent 1px)", backgroundSize: "18px 18px", pointerEvents: "none" }} />
+                  {/* Corner brackets */}
+                  <Brackets color={`${inv.accent}55`} />
 
-            {/* Stats 2×2 */}
-            <div className="grid grid-cols-2 gap-px" style={{ background: "rgba(255,255,255,0.06)", borderRadius: 16, overflow: "hidden" }}>
-              {STATS.map((s) => (
-                <div key={s.label} style={{ background: "#111215", padding: "20px 22px" }}>
-                  <div style={{ fontSize: "clamp(20px, 2.2vw, 30px)", fontWeight: 400, letterSpacing: "-0.04em", color: "#F9FAFA", lineHeight: 1 }}>{s.val}</div>
-                  <div style={{ fontSize: 12, color: "#6B7280", marginTop: 6 }}>{s.label}</div>
+                  {/* Role pill */}
+                  <div style={{ position: "relative", display: "flex", alignItems: "center", gap: 6, marginBottom: 14 }}>
+                    <span style={{ width: 5, height: 5, borderRadius: "50%", background: inv.accent, display: "inline-block", boxShadow: `0 0 7px ${inv.accent}` }} />
+                    <span style={{ fontSize: 9, color: inv.accent, fontFamily: "var(--font-mono),monospace", letterSpacing: "0.14em", textTransform: "uppercase" }}>{inv.role}</span>
+                  </div>
+
+                  {/* Name */}
+                  <div style={{ position: "relative", fontSize: 15, fontWeight: 600, color: "#F9FAFA", letterSpacing: "-0.015em", textAlign: "center", lineHeight: 1.3 }}>{inv.name}</div>
+
+                  {/* Monogram — large, centered */}
+                  <div style={{ position: "relative", flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <span style={{ fontSize: 90, fontWeight: 800, letterSpacing: "-0.06em", color: inv.accent, opacity: 0.16, lineHeight: 1, userSelect: "none" }}>{inv.mono}</span>
+                  </div>
+
+                  {/* Description */}
+                  <div style={{ position: "relative", textAlign: "center", marginBottom: 22 }}>
+                    <p style={{ fontSize: 9.5, color: "#6B7280", lineHeight: 1.85, letterSpacing: "0.07em", textTransform: "uppercase", fontFamily: "var(--font-mono),monospace", maxWidth: 210 }}>
+                      {inv.desc}
+                    </p>
+                  </div>
+
+                  {/* Website — with flanking lines */}
+                  <div style={{ position: "relative", width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 10 }}>
+                    <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, transparent, ${inv.accent}35)` }} />
+                    <span style={{ fontSize: 9, color: "#94979E", fontFamily: "var(--font-mono),monospace", letterSpacing: "0.14em", textTransform: "uppercase" }}>WEBSITE</span>
+                    <div style={{ flex: 1, height: 1, background: `linear-gradient(270deg, transparent, ${inv.accent}35)` }} />
+                  </div>
                 </div>
-              ))}
+              ) : (
+                /* ── Ghost side card ── */
+                <div style={{ width: 180, textAlign: "center" }}>
+                  <div style={{ fontSize: 9, color: "rgba(255,255,255,0.28)", fontFamily: "var(--font-mono),monospace", letterSpacing: "0.16em", textTransform: "uppercase", marginBottom: 20, lineHeight: 1.5 }}>{inv.name}</div>
+                  <div style={{ fontSize: 76, fontWeight: 800, letterSpacing: "-0.05em", color: "rgba(255,255,255,0.09)", lineHeight: 1, userSelect: "none" }}>{inv.mono}</div>
+                </div>
+              )}
             </div>
-          </div>
+          );
+        })}
+      </div>
 
-          {/* ── RIGHT: bento ── 3 col × 3 row */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gridTemplateRows: "1fr 1fr auto", gap: 10 }}>
-
-            {/* YC — col 1 · rows 1–2 (tall) */}
-            <div style={{ gridColumn: 1, gridRow: "1 / 3" }}>
-              <ICard
-                accent="rgba(245,157,74,0.35)"
-                glow="rgba(245,157,74,0.2)"
-                mono="YC"
-                name="Y Combinator"
-                sub="W2024 batch · $500k check"
-                tag="Lead Investor"
-                tagColor="#F59D4A"
-                tagBg="rgba(245,157,74,0.1)"
-                featured
-                style={{ height: "100%", minHeight: 0 }}
-              />
-            </div>
-
-            {/* a16z — col 2 · row 1 */}
-            <ICard
-              accent="rgba(124,111,255,0.3)"
-              glow="rgba(124,111,255,0.18)"
-              mono="a16z"
-              name="Andreessen Horowitz"
-              sub="Series A lead · 2024"
-              tag="Series A"
-              tagColor="#7C6FFF"
-              tagBg="rgba(124,111,255,0.1)"
-            />
-
-            {/* Index — col 3 · row 1 */}
-            <ICard
-              accent="rgba(52,130,213,0.28)"
-              glow="rgba(52,130,213,0.15)"
-              mono="IX"
-              name="Index Ventures"
-              sub="Global venture firm"
-              tag="Series A"
-              tagColor="#3482D5"
-              tagBg="rgba(52,130,213,0.1)"
-            />
-
-            {/* Elad Gil — col 2 · row 2 */}
-            <ICard
-              accent="rgba(52,213,154,0.28)"
-              glow="rgba(52,213,154,0.14)"
-              mono="EG"
-              name="Elad Gil"
-              sub="High Growth Handbook"
-              tag="Angel"
-              tagColor="#34D59A"
-              tagBg="rgba(52,213,154,0.08)"
-            />
-
-            {/* Nat Friedman — col 3 · row 2 */}
-            <ICard
-              accent="rgba(255,255,255,0.1)"
-              glow="rgba(255,255,255,0.05)"
-              mono="NF"
-              name="Nat Friedman"
-              sub="Former CEO · GitHub"
-              tag="Angel"
-              tagColor="#94979E"
-              tagBg="rgba(255,255,255,0.06)"
-            />
-
-            {/* Andrej Karpathy — full width row 3 */}
-            <div style={{ gridColumn: "1 / 4" }}>
-              <ICard
-                accent="rgba(192,132,252,0.28)"
-                glow="rgba(192,132,252,0.12)"
-                mono="AK"
-                name="Andrej Karpathy"
-                sub="Founding scientist · Tesla AI · OpenAI · Stanford PhD"
-                tag="Advisor"
-                tagColor="#c084fc"
-                tagBg="rgba(192,132,252,0.1)"
-                wide
-              />
-            </div>
-
-          </div>{/* /bento */}
-        </div>{/* /two-col */}
+      {/* Dot nav */}
+      <div className="flex items-center justify-center gap-2 mt-6">
+        {INV_DATA.map((_, i) => (
+          <button key={i} onClick={() => goTo(i)} style={{
+            width: i === active ? 22 : 6, height: 6, borderRadius: 999,
+            background: i === active ? "#34D59A" : "rgba(255,255,255,0.14)",
+            border: "none", cursor: "pointer",
+            transition: "all 0.3s cubic-bezier(0.22,1,0.36,1)",
+            padding: 0,
+          }} />
+        ))}
       </div>
     </section>
   );
