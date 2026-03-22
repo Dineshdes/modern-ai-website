@@ -385,18 +385,53 @@ export default function CTAFinal() {
       </div>
 
       {/* Bottom CTA bar */}
-      <div className="border-t" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
-        <div className="max-w-[1400px] mx-auto px-8 py-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-          <div style={{ color: "#94979E", lineHeight: 1.6 }}>
-            <p style={{ fontSize: 17 }}>Trusted by developers, ready for agents.</p>
-            <p style={{ fontSize: 17 }}>Build and scale AI faster with Synapse.</p>
+      <div className="relative border-t overflow-hidden" style={{ borderColor: "rgba(255,255,255,0.07)" }}>
+
+        {/* Two-colour SVG gradient background */}
+        <svg
+          aria-hidden
+          className="absolute inset-0 w-full h-full pointer-events-none"
+          preserveAspectRatio="none"
+          viewBox="0 0 1440 96"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <defs>
+            <linearGradient id="barGrad" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%"   stopColor="#34D59A" stopOpacity="0.10" />
+              <stop offset="50%"  stopColor="#080A09" stopOpacity="0"    />
+              <stop offset="100%" stopColor="#F59D4A" stopOpacity="0.10" />
+            </linearGradient>
+            {/* Subtle noise-dot grid overlay */}
+            <pattern id="barDots" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
+              <circle cx="1" cy="1" r="0.8" fill="white" fillOpacity="0.025" />
+            </pattern>
+          </defs>
+          <rect width="1440" height="96" fill="url(#barGrad)" />
+          <rect width="1440" height="96" fill="url(#barDots)" />
+          {/* Left teal edge fade */}
+          <rect width="320" height="96" fill="url(#barGrad)" opacity="0.6" />
+          {/* Right orange edge fade — mirrored */}
+          <rect x="1120" width="320" height="96" fill="url(#barGrad)" opacity="0.6" />
+          {/* Hairline dividers */}
+          <line x1="0" y1="0" x2="1440" y2="0" stroke="rgba(52,213,154,0.15)" strokeWidth="0.5" />
+          <line x1="0" y1="95" x2="1440" y2="95" stroke="rgba(245,157,74,0.08)" strokeWidth="0.5" />
+        </svg>
+
+        <div className="relative z-10 max-w-[1400px] mx-auto px-8 py-9 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          <div style={{ lineHeight: 1.55 }}>
+            <p style={{ fontSize: 20, fontWeight: 400, letterSpacing: "-0.02em", color: "#F9FAFA" }}>
+              Trusted by developers, ready for agents.
+            </p>
+            <p style={{ fontSize: 20, fontWeight: 400, letterSpacing: "-0.02em", color: "#6B7280" }}>
+              Build and scale AI faster with Synapse.
+            </p>
           </div>
 
           <div className="flex items-center gap-3 shrink-0">
             <a
               href="#"
               className="inline-flex items-center px-6 h-11 rounded-full font-medium transition-colors"
-              style={{ fontSize: 16, background: "#F9FAFA", color: "#0C0D0D" }}
+              style={{ fontSize: 15, background: "#F9FAFA", color: "#0C0D0D" }}
               onMouseEnter={(e) => (e.currentTarget.style.background = "#e5e7eb")}
               onMouseLeave={(e) => (e.currentTarget.style.background = "#F9FAFA")}
             >
@@ -405,7 +440,7 @@ export default function CTAFinal() {
             <a
               href="#"
               className="inline-flex items-center px-6 h-11 rounded-full transition-colors"
-              style={{ fontSize: 16, color: "#F9FAFA", border: "1px solid rgba(255,255,255,0.2)" }}
+              style={{ fontSize: 15, color: "#F9FAFA", border: "1px solid rgba(255,255,255,0.2)" }}
               onMouseEnter={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.4)")}
               onMouseLeave={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.2)")}
             >
@@ -415,24 +450,24 @@ export default function CTAFinal() {
             <button
               className="inline-flex items-center gap-2 px-5 h-11 rounded-xl transition-all"
               style={{
-                fontSize: 15,
+                fontSize: 14,
                 background: "linear-gradient(135deg, #34D59A 0%, #1a8f65 100%)",
                 color: "#0C0D0D",
                 fontFamily: "var(--font-mono), monospace",
-                fontWeight: 500,
-                boxShadow: "0 0 24px rgba(52,213,154,0.25)",
+                fontWeight: 600,
+                boxShadow: "0 0 24px rgba(52,213,154,0.28)",
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.boxShadow = "0 0 36px rgba(52,213,154,0.5)";
+                e.currentTarget.style.boxShadow = "0 0 40px rgba(52,213,154,0.55)";
                 e.currentTarget.style.transform = "translateY(-1px)";
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.boxShadow = "0 0 24px rgba(52,213,154,0.25)";
+                e.currentTarget.style.boxShadow = "0 0 24px rgba(52,213,154,0.28)";
                 e.currentTarget.style.transform = "translateY(0)";
               }}
             >
               $ npx synapsectl init
-              <span style={{ opacity: 0.6, fontSize: 13 }}>⧉</span>
+              <span style={{ opacity: 0.55, fontSize: 12 }}>⧉</span>
             </button>
           </div>
         </div>
