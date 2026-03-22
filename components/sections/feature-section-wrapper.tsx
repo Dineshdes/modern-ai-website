@@ -94,14 +94,20 @@ export default function FeatureSectionWrapper({
                 style={{
                   width: 6,
                   height: 6,
-                  background: active === id ? "#34D59A" : "transparent",
-                  border: active === id ? "none" : "1px solid rgba(255,255,255,0.2)",
+                  background: active === id
+                    ? (isLight ? "#1a3a2a" : "#34D59A")
+                    : "transparent",
+                  border: active === id
+                    ? "none"
+                    : `1px solid ${isLight ? "rgba(0,0,0,0.3)" : "rgba(255,255,255,0.2)"}`,
                 }}
               />
               <span
                 className="text-[14px] leading-tight transition-colors"
                 style={{
-                  color: active === id ? "#F9FAFA" : "#797D86",
+                  color: active === id
+                    ? (isLight ? "#111215" : "#F9FAFA")
+                    : (isLight ? "rgba(0,0,0,0.4)" : "#797D86"),
                 }}
               >
                 {label}
