@@ -209,7 +209,7 @@ export default function Hero() {
       {/* Content — positioned to match neon's above-fold layout */}
       <div
         className="relative z-20"
-        style={{ paddingTop: "clamp(220px, 40vh, 400px)", paddingBottom: 80 }}
+        style={{ paddingTop: "clamp(260px, 45vh, 460px)", paddingBottom: 100 }}
       >
         <div
           className="w-full px-8"

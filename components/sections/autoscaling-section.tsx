@@ -97,7 +97,7 @@ export default function AutoscalingSection() {
   return (
     <section
       id="autoscaling"
-      className="relative py-28 overflow-hidden border-b"
+      className="relative py-36 overflow-hidden border-b"
       style={{ background: "#E4F1EB", borderColor: "rgba(0,0,0,0.06)" }}
     >
       <SectionGlow variant="corner" color="#2C6D4C" opacity={0.03} />
