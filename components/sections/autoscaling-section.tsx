@@ -106,10 +106,10 @@ export default function AutoscalingSection() {
             style={{
               fontSize: "clamp(28px, 3.2vw, 48px)",
               fontWeight: 400,
-              lineHeight: 1.17,
-              letterSpacing: "-1.92px",
-              color: "#94979E",
-              maxWidth: 820,
+              lineHeight: 1.125,
+              letterSpacing: "-0.04em",
+              color: "#4D5560",
+              textIndent: "96px",
             }}
           >
             <span style={{ color: "#111215" }}>Advanced autoscaling.</span>{" "}

@@ -38,8 +38,8 @@ export default function BackedBy() {
               style={{
                 fontSize: "clamp(26px, 2.8vw, 38px)",
                 fontWeight: 400,
-                lineHeight: 1.18,
-                letterSpacing: "-1.5px",
+                lineHeight: 1.125,
+                letterSpacing: "-0.04em",
                 color: "#111215",
               }}
             >

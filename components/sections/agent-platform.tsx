@@ -91,7 +91,7 @@ export default function AgentPlatform() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.06 }}
-            style={{ fontSize: "clamp(44px, 6vw, 82px)", fontWeight: 400, lineHeight: 1.02, letterSpacing: "-3.3px", color: "#F9FAFA" }}
+            style={{ fontSize: "clamp(44px, 6vw, 82px)", fontWeight: 400, lineHeight: 1.05, letterSpacing: "-0.04em", color: "#F9FAFA" }}
           >
             Speed and scale for agents. And devs.
           </motion.h2>

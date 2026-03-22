@@ -99,10 +99,10 @@ export default function FineTuningSection() {
             style={{
               fontSize: "clamp(28px, 3.2vw, 48px)",
               fontWeight: 400,
-              lineHeight: 1.17,
-              letterSpacing: "-1.92px",
-              color: "#94979E",
-              maxWidth: 820,
+              lineHeight: 1.125,
+              letterSpacing: "-0.04em",
+              color: "#6B7280",
+              textIndent: "96px",
             }}
           >
             <span style={{ color: "#F9FAFA" }}>Instant branching.</span>{" "}

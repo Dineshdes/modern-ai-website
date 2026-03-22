@@ -112,8 +112,8 @@ export default function CTAFinal() {
           style={{
             fontSize: "clamp(36px, 5.5vw, 72px)",
             fontWeight: 400,
-            lineHeight: 1.04,
-            letterSpacing: "-2.9px",
+            lineHeight: 1.08,
+            letterSpacing: "-0.04em",
             color: "#F9FAFA",
             maxWidth: 720,
           }}

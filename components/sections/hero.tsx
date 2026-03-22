@@ -239,12 +239,12 @@ export default function Hero() {
             initial={{ opacity: 0, y: 16 }}
             transition={{ duration: 0.6, delay: 0.08, ease: [0.16, 1, 0.3, 1] }}
             style={{
-              fontSize: "clamp(40px, 5.2vw, 62px)",
+              fontSize: "clamp(36px, 5vw, 60px)",
               fontWeight: 400,
-              lineHeight: 1.1,
-              letterSpacing: "-2.4px",
+              lineHeight: 1.125,
+              letterSpacing: "-0.04em",
               color: "#F9FAFA",
-              maxWidth: 640,
+              maxWidth: 890,
             }}
           >
             Fast AI Inference for Teams and Agents
