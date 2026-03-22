@@ -8,7 +8,6 @@ import Navbar from "@/components/layout/navbar";
 import Footer from "@/components/layout/footer";
 import HalftoneEdges from "@/components/ui/halftone-edges";
 import SectionGlow from "@/components/ui/section-glow";
-import { WarpBackground } from "@/components/ui/warp-background";
 import { GlowingEffect } from "@/components/ui/glowing-effect";
 
 if (typeof window !== "undefined") {
@@ -1279,11 +1278,13 @@ function BottomCTA() {
           <pattern id="cta-dots" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
             <circle cx="5" cy="5" r="1.2" fill="#34D59A" />
           </pattern>
-          {/* Radial fade mask — opaque edges, transparent centre */}
-          <radialGradient id="cta-rmask" cx="50%" cy="50%" r="55%">
-            <stop offset="0%"   stopColor="black" stopOpacity="1" />
-            <stop offset="55%"  stopColor="black" stopOpacity="0.2" />
-            <stop offset="100%" stopColor="white" stopOpacity="1" />
+          {/* Radial fade mask — dots visible at edges, hidden at centre */}
+          <radialGradient id="cta-rmask" cx="50%" cy="50%" r="70%" gradientUnits="userSpaceOnUse"
+            fx="720" fy="260">
+            <stop offset="0%"   stopColor="white" stopOpacity="0"   />
+            <stop offset="45%"  stopColor="white" stopOpacity="0"   />
+            <stop offset="75%"  stopColor="white" stopOpacity="0.6" />
+            <stop offset="100%" stopColor="white" stopOpacity="1"   />
           </radialGradient>
           <mask id="cta-dotsm">
             <rect width="1440" height="520" fill="url(#cta-rmask)" />
