@@ -28,7 +28,7 @@ function DotIcon({ dark = false }: { dark?: boolean }) {
 function IDEMockup() {
   return (
     <div
-      className="w-full rounded-2xl overflow-hidden mt-14"
+      className="w-full overflow-hidden"
       style={{ background: "#131415", border: "1px solid rgba(255,255,255,0.07)" }}
     >
       {/* Window chrome */}
@@ -197,8 +197,9 @@ export default function InferenceSection() {
       style={{ background: "#0C0D0D", borderColor: "rgba(255,255,255,0.06)" }}
     >
       <SectionGlow variant="default" />
-      <HalftoneEdges />
       <div className="relative max-w-[1400px] mx-auto px-8 lg:pl-[260px]">
+
+        {/* Heading */}
         <motion.div initial={{ opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
           <DotIcon />
           <h2
@@ -216,32 +217,50 @@ export default function InferenceSection() {
           </h2>
         </motion.div>
 
-        {/* Tab headers */}
+        {/* IDE mockup wrapped in halftone-edged container */}
         <motion.div
           initial={{ opacity: 0, y: 28 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.08 }}
-          className="mt-12 flex border-t border-b"
-          style={{ borderColor: "rgba(255,255,255,0.06)" }}
+          className="mt-14 relative overflow-hidden rounded-2xl"
         >
-          {["Adds Synapse Rules for correct code", "Adds MCP for safe access to Synapse"].map((tab, i) => (
-            <div
-              key={tab}
-              className="px-6 py-3 text-sm border-r"
-              style={{
-                borderColor: "rgba(255,255,255,0.06)",
-                color: i === 0 ? "rgba(249,250,250,0.7)" : "#94979E",
-                borderLeft: i === 0 ? "1px solid rgba(255,255,255,0.06)" : undefined,
-              }}
-            >
-              {tab}
-            </div>
-          ))}
-        </motion.div>
+          {/* Halftone wraps only the IDE mockup */}
+          <HalftoneEdges
+            leftColor="rgba(52, 213, 154, 0.60)"
+            rightColor="rgba(210, 100, 40, 0.55)"
+            dotSize={2}
+            spacing={8}
+            edgeWidth={220}
+            fadeStop={100}
+          />
 
-        <motion.div initial={{ opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.14 }}>
-          <IDEMockup />
+          {/* Tab headers — sit on top of halftone, above the IDE */}
+          <div
+            className="relative z-10 flex"
+            style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}
+          >
+            {["Adds Synapse Rules for correct code", "Adds MCP for safe access to Synapse"].map((tab, i) => (
+              <div
+                key={tab}
+                className="px-6 py-3 text-sm border-r"
+                style={{
+                  borderColor: "rgba(255,255,255,0.06)",
+                  color: i === 0 ? "rgba(249,250,250,0.7)" : "#94979E",
+                  borderLeft: i === 0 ? "1px solid rgba(255,255,255,0.06)" : undefined,
+                  background: "rgba(12,13,13,0.6)",
+                  backdropFilter: "blur(8px)",
+                }}
+              >
+                {tab}
+              </div>
+            ))}
+          </div>
+
+          {/* IDE mockup */}
+          <div className="relative z-10">
+            <IDEMockup />
+          </div>
         </motion.div>
 
         <motion.div initial={{ opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.2 }}>
