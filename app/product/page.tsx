@@ -1,404 +1,493 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import HalftoneEdges from "@/components/ui/halftone-edges";
 import AnnouncementBar from "@/components/layout/announcement-bar";
 import Navbar from "@/components/layout/navbar";
 import Footer from "@/components/layout/footer";
 
-/* ─── Fade-up helper ─── */
 const fadeUp = (delay = 0) => ({
   initial: { opacity: 0, y: 28 },
   whileInView: { opacity: 1, y: 0 },
   viewport: { once: true },
-  transition: { duration: 0.6, delay, ease: "easeOut" as const },
+  transition: { duration: 0.65, delay, ease: "easeOut" as const },
 });
 
-/* ─── Stat card ─── */
-function Stat({ value, label, sub }: { value: string; label: string; sub?: string }) {
+/* ══════════════════════════════════════════
+   MINI MOCKUP COMPONENTS
+══════════════════════════════════════════ */
+
+/* Agent pipeline trace */
+function AgentTraceMockup() {
+  const steps = [
+    { label: "user_intent",     status: "done",    ms: 12,  color: "#34D59A" },
+    { label: "route → llama-3.1-70b", status: "done", ms: 4,  color: "#34D59A" },
+    { label: "kv_cache_lookup", status: "done",    ms: 1,   color: "#34D59A" },
+    { label: "prefill",         status: "done",    ms: 18,  color: "#34D59A" },
+    { label: "decode (stream)", status: "active",  ms: null, color: "#F59D4A" },
+    { label: "tool_call → search", status: "pending", ms: null, color: "#94979E" },
+    { label: "aggregate + respond", status: "pending", ms: null, color: "#94979E" },
+  ];
   return (
-    <div className="flex flex-col gap-1 p-8 border-r last:border-r-0" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
-      <span style={{ fontSize: "clamp(36px,4vw,56px)", fontWeight: 300, letterSpacing: "-0.04em", color: "#34D59A", lineHeight: 1 }}>{value}</span>
-      <span style={{ fontSize: 15, color: "#F9FAFA", fontWeight: 500, marginTop: 6 }}>{label}</span>
-      {sub && <span style={{ fontSize: 13, color: "#94979E" }}>{sub}</span>}
+    <div className="rounded-2xl overflow-hidden" style={{ background: "#0d0e0f", border: "1px solid rgba(255,255,255,0.07)" }}>
+      <div className="flex items-center gap-2 px-5 py-3" style={{ background: "#111215", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+        <div className="w-2.5 h-2.5 rounded-full" style={{ background: "#FF5F57" }} />
+        <div className="w-2.5 h-2.5 rounded-full" style={{ background: "#FEBC2E" }} />
+        <div className="w-2.5 h-2.5 rounded-full" style={{ background: "#28C840" }} />
+        <span className="ml-3 text-[11px]" style={{ color: "#94979E", fontFamily: "var(--font-mono)" }}>agent / execution-trace</span>
+        <span className="ml-auto text-[10px] px-2 py-0.5 rounded" style={{ background: "rgba(52,213,154,0.12)", color: "#34D59A", fontFamily: "var(--font-mono)" }}>LIVE</span>
+      </div>
+      <div className="p-4 flex flex-col gap-1.5">
+        {steps.map((s, i) => (
+          <div key={i} className="flex items-center gap-3">
+            <div className="w-1.5 h-1.5 rounded-full shrink-0" style={{
+              background: s.status === "active" ? "#F59D4A" : s.status === "done" ? "#34D59A" : "rgba(255,255,255,0.15)",
+            }} />
+            <span className="text-[12px] flex-1" style={{ color: s.status === "pending" ? "#4a4d54" : "#94979E", fontFamily: "var(--font-mono)" }}>{s.label}</span>
+            {s.ms !== null && (
+              <span className="text-[11px]" style={{ color: "#34D59A", fontFamily: "var(--font-mono)" }}>{s.ms}ms</span>
+            )}
+            {s.status === "active" && (
+              <span className="text-[10px] px-1.5 py-0.5 rounded" style={{ background: "rgba(245,157,74,0.15)", color: "#F59D4A" }}>running</span>
+            )}
+          </div>
+        ))}
+      </div>
+      <div className="px-5 py-3 border-t flex items-center justify-between" style={{ borderColor: "rgba(255,255,255,0.04)" }}>
+        <span className="text-[11px]" style={{ color: "#94979E", fontFamily: "var(--font-mono)" }}>total latency</span>
+        <span className="text-[13px] font-semibold" style={{ color: "#34D59A", fontFamily: "var(--font-mono)" }}>p99 &lt;50ms</span>
+      </div>
     </div>
   );
 }
 
-/* ─── Feature card ─── */
-function FeatureCard({
-  icon, title, body, tag,
-}: {
-  icon: React.ReactNode; title: string; body: string; tag?: string;
-}) {
+/* Coverage map — model capability grid */
+function CoverageMapMockup() {
+  const axes = {
+    x: ["7B", "13B", "70B", "405B"],
+    y: ["Llama 3", "Mistral", "DeepSeek", "Qwen", "Gemma"],
+  };
+  const heat: number[][] = [
+    [0.9, 0.95, 1,    1   ],
+    [0.85, 0.9, 1,    0   ],
+    [0.9, 0,    1,    0   ],
+    [0.7, 0,    0.95, 0   ],
+    [0.8, 0.9,  0,    0   ],
+  ];
+  const col = (v: number) =>
+    v === 0   ? "rgba(255,255,255,0.04)"
+    : v > 0.9 ? `rgba(52,213,154,${v})`
+    :           `rgba(52,213,154,${v * 0.7})`;
+
   return (
-    <motion.div
-      {...fadeUp()}
-      className="rounded-2xl p-8 flex flex-col gap-4"
-      style={{ background: "#111215", border: "1px solid rgba(255,255,255,0.06)" }}
-    >
-      <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: "rgba(52,213,154,0.1)" }}>
-        {icon}
+    <div className="rounded-2xl overflow-hidden" style={{ background: "#0d0e0f", border: "1px solid rgba(255,255,255,0.07)" }}>
+      <div className="flex items-center justify-between px-5 py-3" style={{ background: "#111215", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+        <span className="text-[11px]" style={{ color: "#94979E", fontFamily: "var(--font-mono)" }}>model / coverage-map</span>
+        <span className="text-[10px]" style={{ color: "#34D59A", fontFamily: "var(--font-mono)" }}>200+ variants</span>
       </div>
-      <div>
-        <div className="flex items-center gap-2 mb-2">
-          <span style={{ fontSize: 18, fontWeight: 500, color: "#F9FAFA", letterSpacing: "-0.02em" }}>{title}</span>
-          {tag && (
-            <span className="px-2 py-0.5 rounded text-[10px] uppercase tracking-widest" style={{ background: "rgba(52,213,154,0.12)", color: "#34D59A", fontFamily: "var(--font-mono), monospace" }}>{tag}</span>
-          )}
+      <div className="p-5">
+        {/* Col headers */}
+        <div className="flex gap-2 mb-2 pl-[88px]">
+          {axes.x.map((x) => (
+            <div key={x} className="flex-1 text-center text-[10px]" style={{ color: "#94979E", fontFamily: "var(--font-mono)" }}>{x}</div>
+          ))}
         </div>
-        <p style={{ fontSize: 15, color: "#94979E", lineHeight: 1.6 }}>{body}</p>
+        {axes.y.map((y, ri) => (
+          <div key={y} className="flex items-center gap-2 mb-1.5">
+            <span className="text-[11px] w-20 shrink-0" style={{ color: "#94979E", fontFamily: "var(--font-mono)" }}>{y}</span>
+            {axes.x.map((_, ci) => (
+              <div key={ci} className="flex-1 h-7 rounded" style={{ background: col(heat[ri][ci]) }} />
+            ))}
+          </div>
+        ))}
       </div>
-    </motion.div>
+      <div className="flex items-center gap-4 px-5 pb-4">
+        <div className="flex items-center gap-1.5">
+          <div className="w-3 h-3 rounded-sm" style={{ background: "rgba(52,213,154,0.9)" }} />
+          <span className="text-[10px]" style={{ color: "#94979E" }}>Available</span>
+        </div>
+        <div className="flex items-center gap-1.5">
+          <div className="w-3 h-3 rounded-sm" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }} />
+          <span className="text-[10px]" style={{ color: "#94979E" }}>Coming soon</span>
+        </div>
+      </div>
+    </div>
   );
 }
 
-/* ─── SVG icons ─── */
-const Icon = {
-  inference: (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-      <path d="M3 10h14M10 3l7 7-7 7" stroke="#34D59A" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
-  ),
-  scale: (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-      <rect x="3" y="11" width="3" height="6" rx="1" fill="#34D59A" fillOpacity=".5"/>
-      <rect x="8.5" y="7" width="3" height="10" rx="1" fill="#34D59A" fillOpacity=".75"/>
-      <rect x="14" y="3" width="3" height="14" rx="1" fill="#34D59A"/>
-    </svg>
-  ),
-  branch: (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-      <circle cx="5" cy="5" r="2" stroke="#34D59A" strokeWidth="1.6"/>
-      <circle cx="5" cy="15" r="2" stroke="#34D59A" strokeWidth="1.6"/>
-      <circle cx="15" cy="10" r="2" stroke="#34D59A" strokeWidth="1.6"/>
-      <path d="M5 7v6M7 5h4a2 2 0 0 1 2 2v1M7 15h4a2 2 0 0 0 2-2v-1" stroke="#34D59A" strokeWidth="1.4" strokeLinecap="round"/>
-    </svg>
-  ),
-  auth: (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-      <rect x="4" y="9" width="12" height="9" rx="2" stroke="#34D59A" strokeWidth="1.6"/>
-      <path d="M7 9V6a3 3 0 0 1 6 0v3" stroke="#34D59A" strokeWidth="1.6" strokeLinecap="round"/>
-      <circle cx="10" cy="13.5" r="1.5" fill="#34D59A"/>
-    </svg>
-  ),
-  observe: (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-      <path d="M2 10c2-5 5-7 8-7s6 2 8 7c-2 5-5 7-8 7s-6-2-8-7Z" stroke="#34D59A" strokeWidth="1.6"/>
-      <circle cx="10" cy="10" r="3" stroke="#34D59A" strokeWidth="1.6"/>
-    </svg>
-  ),
-  agent: (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-      <rect x="3" y="3" width="6" height="6" rx="1.5" stroke="#34D59A" strokeWidth="1.6"/>
-      <rect x="11" y="3" width="6" height="6" rx="1.5" stroke="#34D59A" strokeWidth="1.6"/>
-      <rect x="3" y="11" width="6" height="6" rx="1.5" stroke="#34D59A" strokeWidth="1.6"/>
-      <rect x="11" y="11" width="6" height="6" rx="1.5" stroke="#34D59A" strokeWidth="1.6"/>
-    </svg>
-  ),
-};
+/* Observability dashboard */
+function ObservabilityMockup() {
+  const rows = [
+    { id: "req_8Hq2t", model: "llama-3.1-70b", tokens: 1842, lat: "43ms",  cost: "$0.0012", status: "200" },
+    { id: "req_fK9mP", model: "deepseek-r1",   tokens: 3201, lat: "91ms",  cost: "$0.0031", status: "200" },
+    { id: "req_aX7vN", model: "mistral-7b",    tokens: 512,  lat: "18ms",  cost: "$0.0004", status: "200" },
+    { id: "req_oQ3rL", model: "llama-3.1-70b", tokens: 2048, lat: "51ms",  cost: "$0.0015", status: "429" },
+    { id: "req_jY1cB", model: "qwen-72b",      tokens: 4096, lat: "122ms", cost: "$0.0041", status: "200" },
+  ];
+  return (
+    <div className="rounded-2xl overflow-hidden" style={{ background: "#0d0e0f", border: "1px solid rgba(255,255,255,0.07)" }}>
+      <div className="flex items-center justify-between px-5 py-3" style={{ background: "#111215", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+        <span className="text-[11px]" style={{ color: "#94979E", fontFamily: "var(--font-mono)" }}>observability / request-log</span>
+        <div className="flex items-center gap-3">
+          <span className="text-[10px] px-2 py-0.5 rounded" style={{ background: "rgba(52,213,154,0.1)", color: "#34D59A" }}>1.2k req/s</span>
+          <span className="text-[10px]" style={{ color: "#94979E" }}>last 5m</span>
+        </div>
+      </div>
+      <div>
+        {/* Header */}
+        <div className="grid px-4 py-2" style={{ gridTemplateColumns: "1.4fr 1.6fr .8fr .7fr .9fr .5fr", fontSize: 10, color: "#4a4d54", fontFamily: "var(--font-mono)" }}>
+          {["request_id","model","tokens","latency","cost","status"].map((h) => (
+            <span key={h}>{h}</span>
+          ))}
+        </div>
+        {rows.map((r) => (
+          <div key={r.id} className="grid px-4 py-2 border-t" style={{ gridTemplateColumns: "1.4fr 1.6fr .8fr .7fr .9fr .5fr", borderColor: "rgba(255,255,255,0.03)", fontSize: 11, fontFamily: "var(--font-mono)", color: "#94979E" }}>
+            <span style={{ color: "rgba(249,250,250,0.5)" }}>{r.id}</span>
+            <span>{r.model}</span>
+            <span>{r.tokens.toLocaleString()}</span>
+            <span style={{ color: "#34D59A" }}>{r.lat}</span>
+            <span>{r.cost}</span>
+            <span style={{ color: r.status === "200" ? "#34D59A" : "#ef4444" }}>{r.status}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
-/* ─── Architecture pipeline ─── */
-const PIPELINE = [
-  { step: "01", label: "Request", desc: "Client sends inference request via REST or SDK" },
-  { step: "02", label: "Router", desc: "Smart routing selects the optimal compute node" },
-  { step: "03", label: "Inference", desc: "Model runs on dedicated GPU with continuous batching" },
-  { step: "04", label: "Cache", desc: "KV-cache reuse across requests cuts latency by 4×" },
-  { step: "05", label: "Response", desc: "Streamed tokens returned with <50ms p99 latency" },
+/* ══════════════════════════════════════════
+   FEATURE SECTIONS
+══════════════════════════════════════════ */
+
+const FEATURES = [
+  {
+    tag: "Agentic Inference",
+    headline: "Serve agents, not just prompts.",
+    body: "Static request-response APIs can't handle multi-step agents. Synapse maintains persistent sessions, streams tokens across tool calls, and handles retries — so your agents never stall waiting on infrastructure.",
+    bullets: [
+      "Persistent context across agent turns",
+      "Parallel tool-call execution with streaming",
+      "Automatic retry with exponential backoff",
+      "Multi-model routing within a single session",
+    ],
+    mockup: <AgentTraceMockup />,
+    accent: "#34D59A",
+    flipped: false,
+  },
+  {
+    tag: "Coverage Mapping",
+    headline: "Know exactly what you can run, and what's coming.",
+    body: "Teams waste days debugging incompatible model versions. Synapse's model coverage map shows availability at a glance — parameter size, quantisation, region — and automatically suggests alternatives when a variant isn't available.",
+    bullets: [
+      "200+ model variants across 6 families",
+      "Region availability at a glance",
+      "Automatic fallback to the next-best variant",
+      "Context-window and capability tags per model",
+    ],
+    mockup: <CoverageMapMockup />,
+    accent: "#7C6FFF",
+    flipped: true,
+  },
+  {
+    tag: "Observability",
+    headline: "Every token, every request, fully traceable.",
+    body: "Black-box inference is a liability in production. Synapse logs every request — latency, tokens, cost, model version — with searchable history, cost breakdowns, and OpenTelemetry export for your existing stack.",
+    bullets: [
+      "Per-request latency, token, and cost breakdown",
+      "Searchable request history with replay",
+      "OpenTelemetry-compatible trace export",
+      "Automated cost anomaly alerts",
+    ],
+    mockup: <ObservabilityMockup />,
+    accent: "#F59D4A",
+    flipped: false,
+  },
 ];
 
-/* ─── Supported models ─── */
-const MODELS = [
-  { family: "Llama", versions: ["3.1-8B", "3.1-70B", "3.1-405B", "3.3-70B"] },
-  { family: "Mistral", versions: ["7B", "8×7B MoE", "Large 2", "Codestral"] },
-  { family: "DeepSeek", versions: ["R1", "V3", "Coder-V2"] },
-  { family: "Qwen", versions: ["2.5-7B", "2.5-72B", "QwQ-32B"] },
-  { family: "Gemma", versions: ["2-9B", "2-27B"] },
-  { family: "Phi", versions: ["3.5-mini", "3.5-MoE"] },
+/* ══════════════════════════════════════════
+   TESTIMONIALS
+══════════════════════════════════════════ */
+const TESTIMONIALS = [
+  {
+    quote: "Inference used to mean manually tuning capacity across a dozen servers. Now Synapse handles it automatically and our p99 dropped by 60%.",
+    name: "Senior ML Engineer",
+    org: "2,000+ employee fintech",
+  },
+  {
+    quote: "We migrated from a self-hosted vLLM cluster in a weekend. The OpenAI-compatible API meant zero changes to our application code.",
+    name: "Principal Engineer",
+    org: "Series B AI startup",
+  },
+  {
+    quote: "Being able to branch a deployment and A/B test fine-tunes without spinning up new infra changed how we ship model updates entirely.",
+    name: "Head of AI",
+    org: "Enterprise SaaS company",
+  },
 ];
 
-/* ─── Integration logos (text-based) ─── */
+/* ══════════════════════════════════════════
+   ENTERPRISE BADGES
+══════════════════════════════════════════ */
+const BADGES = ["SOC 2 Type II", "ISO 27001", "GDPR", "HIPAA", "CCPA", "RBAC", "SSO", "Audit Logs"];
+
+/* ══════════════════════════════════════════
+   INTEGRATIONS
+══════════════════════════════════════════ */
 const INTEGRATIONS = [
-  "OpenAI SDK", "LangChain", "LlamaIndex", "Vercel AI SDK",
-  "Haystack", "Semantic Kernel", "AutoGen", "CrewAI",
+  { name: "OpenAI SDK",     note: "Drop-in compatible" },
+  { name: "LangChain",      note: "Official provider" },
+  { name: "LlamaIndex",     note: "Native integration" },
+  { name: "Vercel AI SDK",  note: "Edge-ready" },
+  { name: "Haystack",       note: "Pipeline support" },
+  { name: "AutoGen",        note: "Agent framework" },
+  { name: "CrewAI",         note: "Multi-agent" },
+  { name: "Semantic Kernel",note: "Plugin compatible" },
 ];
 
+/* ══════════════════════════════════════════
+   PAGE
+══════════════════════════════════════════ */
 export default function ProductPage() {
   return (
     <>
-    <AnnouncementBar />
-    <Navbar />
-    <main style={{ background: "#0C0D0D", minHeight: "100vh" }}>
+      <AnnouncementBar />
+      <Navbar />
 
-      {/* ══════════════════════════════════════════
-          HERO
-      ══════════════════════════════════════════ */}
-      <section className="relative overflow-hidden" style={{ paddingTop: "clamp(140px,18vw,220px)", paddingBottom: 120 }}>
-        <HalftoneEdges leftColor="rgba(52,213,154,0.75)" rightColor="rgba(220,120,60,0.70)" edgeWidth={320} />
+      <main style={{ background: "#0C0D0D", minHeight: "100vh" }}>
 
-        {/* Radial glow */}
-        <div className="absolute inset-0 pointer-events-none" style={{
-          background: "radial-gradient(ellipse 70% 50% at 50% 0%, rgba(52,213,154,0.07) 0%, transparent 70%)",
-        }} />
+        {/* ── HERO ── */}
+        <section className="relative overflow-hidden" style={{ paddingTop: "clamp(140px,18vw,220px)", paddingBottom: 100 }}>
+          <HalftoneEdges leftColor="rgba(52,213,154,0.75)" rightColor="rgba(220,120,60,0.70)" edgeWidth={300} />
+          <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 60% 45% at 50% 0%, rgba(52,213,154,0.07) 0%, transparent 70%)" }} />
 
-        <div className="relative max-w-[1100px] mx-auto px-8 text-center">
-          <motion.div {...fadeUp()} className="inline-flex items-center gap-2 mb-8 px-4 py-2 rounded-full" style={{ background: "rgba(52,213,154,0.08)", border: "1px solid rgba(52,213,154,0.18)" }}>
-            <span className="w-1.5 h-1.5 rounded-full" style={{ background: "#34D59A" }} />
-            <span style={{ fontSize: 12, color: "#34D59A", fontFamily: "var(--font-mono), monospace", letterSpacing: "0.1em", textTransform: "uppercase" }}>Platform Overview</span>
-          </motion.div>
+          <div className="relative max-w-[960px] mx-auto px-8 text-center">
+            <motion.div {...fadeUp()} className="inline-flex items-center gap-2 mb-8 px-4 py-2 rounded-full" style={{ background: "rgba(52,213,154,0.08)", border: "1px solid rgba(52,213,154,0.18)" }}>
+              <span className="w-1.5 h-1.5 rounded-full" style={{ background: "#34D59A" }} />
+              <span style={{ fontSize: 12, color: "#34D59A", fontFamily: "var(--font-mono)", letterSpacing: "0.10em", textTransform: "uppercase" }}>Platform</span>
+            </motion.div>
 
-          <motion.h1 {...fadeUp(0.08)} style={{ fontSize: "clamp(40px,5.5vw,72px)", fontWeight: 400, lineHeight: 1.1, letterSpacing: "-0.04em", color: "#F9FAFA" }}>
-            The AI inference stack,<br />
-            <span style={{ color: "#34D59A" }}>complete.</span>
-          </motion.h1>
+            <motion.h1 {...fadeUp(0.08)} style={{ fontSize: "clamp(40px,5.5vw,72px)", fontWeight: 400, lineHeight: 1.1, letterSpacing: "-0.04em", color: "#F9FAFA" }}>
+              Inference that runs what<br />
+              <span style={{ color: "#34D59A" }}>static APIs can&apos;t.</span>
+            </motion.h1>
 
-          <motion.p {...fadeUp(0.16)} style={{ fontSize: "clamp(16px,1.5vw,20px)", color: "#94979E", lineHeight: 1.65, maxWidth: 640, margin: "24px auto 0" }}>
-            From a single API call to production-scale multi-agent systems — Synapse handles inference, scaling, branching, auth, and observability in one unified platform.
-          </motion.p>
+            <motion.p {...fadeUp(0.16)} style={{ fontSize: "clamp(16px,1.5vw,19px)", color: "#94979E", lineHeight: 1.65, maxWidth: 580, margin: "24px auto 0" }}>
+              Rule-based infrastructure breaks when agents go multi-step. Synapse keeps up — persistent sessions, automatic scaling, full observability — so you ship AI products instead of managing servers.
+            </motion.p>
 
-          <motion.div {...fadeUp(0.24)} className="flex items-center justify-center gap-3 mt-10">
-            <Link href="#" className="inline-flex items-center px-7 h-12 rounded-full text-[15px] font-medium transition-colors" style={{ background: "#F9FAFA", color: "#0C0D0D" }}>
-              Get started free
-            </Link>
-            <Link href="#" className="inline-flex items-center gap-2 px-7 h-12 rounded-full text-[15px] transition-colors" style={{ color: "#F9FAFA", border: "1px solid rgba(255,255,255,0.18)" }}>
-              View docs
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-            </Link>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════════════
-          STATS BAR
-      ══════════════════════════════════════════ */}
-      <section style={{ borderTop: "1px solid rgba(255,255,255,0.06)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-        <div className="max-w-[1200px] mx-auto" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)" }}>
-          <Stat value="<50ms" label="p99 Latency" sub="First token out" />
-          <Stat value="10k+" label="Requests / sec" sub="Per deployment" />
-          <Stat value="99.99%" label="Uptime SLA" sub="Across all regions" />
-          <Stat value="200+" label="Model variants" sub="Open & proprietary" />
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════════════
-          CAPABILITY CARDS
-      ══════════════════════════════════════════ */}
-      <section style={{ padding: "120px 0" }}>
-        <div className="max-w-[1200px] mx-auto px-8">
-          <motion.div {...fadeUp()} className="mb-16">
-            <p style={{ fontSize: 12, color: "#34D59A", fontFamily: "var(--font-mono), monospace", letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 12 }}>Capabilities</p>
-            <h2 style={{ fontSize: "clamp(28px,3.5vw,48px)", fontWeight: 400, letterSpacing: "-0.04em", color: "#F9FAFA", maxWidth: 560 }}>
-              Every layer of the stack, handled.
-            </h2>
-          </motion.div>
-
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16 }}>
-            <FeatureCard
-              icon={Icon.inference}
-              title="Inference Engine"
-              tag="Core"
-              body="Continuous batching, PagedAttention, and speculative decoding built in. Serve any open-weight model with sub-50ms first-token latency out of the box."
-            />
-            <FeatureCard
-              icon={Icon.scale}
-              title="Autoscaling"
-              body="Separate compute and memory planes scale independently. Go from zero to thousands of concurrent requests with no cold-start penalty."
-            />
-            <FeatureCard
-              icon={Icon.branch}
-              title="Instant Branching"
-              tag="New"
-              body="Fork a deployment in milliseconds. Test prompts, fine-tunes, or entire model versions in parallel without duplicating infrastructure."
-            />
-            <FeatureCard
-              icon={Icon.auth}
-              title="Auth Included"
-              body="User management, API key provisioning, and rate-limiting baked in. No third-party auth service needed — ship production apps on day one."
-            />
-            <FeatureCard
-              icon={Icon.observe}
-              title="Observability"
-              body="Token usage, latency histograms, error rates, and cost breakdowns in real time. OpenTelemetry-compatible for your existing stack."
-            />
-            <FeatureCard
-              icon={Icon.agent}
-              title="Agent Platform"
-              body="First-class support for multi-step agents. Persistent sessions, tool calling, structured outputs, and prompt caching across turns."
-            />
+            <motion.div {...fadeUp(0.24)} className="flex items-center justify-center gap-3 mt-10">
+              <Link href="#" className="inline-flex items-center px-7 h-12 rounded-full text-[15px] font-medium" style={{ background: "#F9FAFA", color: "#0C0D0D" }}>
+                Get started free
+              </Link>
+              <Link href="#" className="inline-flex items-center gap-2 px-7 h-12 rounded-full text-[15px]" style={{ color: "#F9FAFA", border: "1px solid rgba(255,255,255,0.18)" }}>
+                View docs →
+              </Link>
+            </motion.div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* ══════════════════════════════════════════
-          ARCHITECTURE / HOW IT WORKS
-      ══════════════════════════════════════════ */}
-      <section style={{ background: "#080A09", padding: "120px 0", borderTop: "1px solid rgba(255,255,255,0.05)", borderBottom: "1px solid rgba(255,255,255,0.05)" }}>
-        <div className="max-w-[1200px] mx-auto px-8">
-          <motion.div {...fadeUp()} className="mb-16 text-center">
-            <p style={{ fontSize: 12, color: "#34D59A", fontFamily: "var(--font-mono), monospace", letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 12 }}>Architecture</p>
-            <h2 style={{ fontSize: "clamp(28px,3.5vw,48px)", fontWeight: 400, letterSpacing: "-0.04em", color: "#F9FAFA" }}>
-              Request to response in five steps.
-            </h2>
-          </motion.div>
+        {/* ── STATS BAR ── */}
+        <section style={{ borderTop: "1px solid rgba(255,255,255,0.06)", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+          <div className="max-w-[1200px] mx-auto" style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)" }}>
+            {[
+              { v: "<50ms",  l: "p99 First Token",     s: "At any scale" },
+              { v: "10k+",   l: "Requests / second",   s: "Per deployment" },
+              { v: "99.99%", l: "Uptime SLA",           s: "All regions" },
+              { v: "200+",   l: "Model variants",       s: "Open & proprietary" },
+            ].map(({ v, l, s }) => (
+              <div key={l} className="flex flex-col gap-1 p-8 border-r last:border-r-0" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
+                <span style={{ fontSize: "clamp(32px,3.5vw,52px)", fontWeight: 300, letterSpacing: "-0.04em", color: "#34D59A", lineHeight: 1 }}>{v}</span>
+                <span style={{ fontSize: 15, color: "#F9FAFA", fontWeight: 500, marginTop: 6 }}>{l}</span>
+                <span style={{ fontSize: 13, color: "#94979E" }}>{s}</span>
+              </div>
+            ))}
+          </div>
+        </section>
 
-          {/* Pipeline */}
-          <div className="relative">
-            {/* Connector line */}
-            <div className="absolute top-8 left-0 right-0 h-px" style={{ background: "linear-gradient(to right, transparent, rgba(52,213,154,0.3) 20%, rgba(52,213,154,0.3) 80%, transparent)" }} />
+        {/* ── FEATURES (alternating) ── */}
+        {FEATURES.map(({ tag, headline, body, bullets, mockup, accent, flipped }, i) => (
+          <section key={tag} style={{ padding: "120px 0", borderBottom: "1px solid rgba(255,255,255,0.05)", background: i % 2 === 1 ? "#080A09" : "#0C0D0D" }}>
+            <div className="max-w-[1200px] mx-auto px-8">
+              <div className={`flex flex-col ${flipped ? "lg:flex-row-reverse" : "lg:flex-row"} gap-16 items-center`}>
 
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 0 }}>
-              {PIPELINE.map(({ step, label, desc }, i) => (
-                <motion.div key={step} {...fadeUp(i * 0.08)} className="flex flex-col items-center text-center px-4">
-                  {/* Node */}
-                  <div
-                    className="relative z-10 w-16 h-16 rounded-2xl flex flex-col items-center justify-center mb-6"
-                    style={{
-                      background: i === 2 ? "#34D59A" : "#111215",
-                      border: `1px solid ${i === 2 ? "#34D59A" : "rgba(255,255,255,0.08)"}`,
-                      boxShadow: i === 2 ? "0 0 32px rgba(52,213,154,0.35)" : "none",
-                    }}
-                  >
-                    <span style={{ fontSize: 10, color: i === 2 ? "#0C0D0D" : "#94979E", fontFamily: "var(--font-mono), monospace", letterSpacing: "0.06em" }}>{step}</span>
+                {/* Text */}
+                <div className="flex-1">
+                  <motion.div {...fadeUp()}>
+                    <span className="inline-block text-[11px] uppercase tracking-[0.12em] px-3 py-1 rounded-full mb-5"
+                      style={{ background: `${accent}14`, color: accent, fontFamily: "var(--font-mono)", border: `1px solid ${accent}30` }}>
+                      {tag}
+                    </span>
+                    <h2 style={{ fontSize: "clamp(26px,3vw,42px)", fontWeight: 400, letterSpacing: "-0.04em", color: "#F9FAFA", lineHeight: 1.2, marginBottom: 16 }}>
+                      {headline}
+                    </h2>
+                    <p style={{ fontSize: 16, color: "#94979E", lineHeight: 1.7, marginBottom: 28 }}>{body}</p>
+                    <ul className="flex flex-col gap-3">
+                      {bullets.map((b) => (
+                        <li key={b} className="flex items-start gap-3">
+                          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="mt-0.5 shrink-0">
+                            <circle cx="8" cy="8" r="7" stroke={accent} strokeOpacity="0.3" strokeWidth="1.2" />
+                            <path d="M5 8l2 2 4-4" stroke={accent} strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+                          </svg>
+                          <span style={{ fontSize: 15, color: "#94979E" }}>{b}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </motion.div>
+                </div>
+
+                {/* Mockup */}
+                <motion.div {...fadeUp(0.1)} className="flex-1 w-full">
+                  {mockup}
+                </motion.div>
+              </div>
+            </div>
+          </section>
+        ))}
+
+        {/* ── TESTIMONIALS ── */}
+        <section style={{ padding: "120px 0", background: "#0C0D0D" }}>
+          <div className="max-w-[1200px] mx-auto px-8">
+            <motion.div {...fadeUp()} className="mb-16 text-center">
+              <p style={{ fontSize: 12, color: "#34D59A", fontFamily: "var(--font-mono)", letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 12 }}>From teams in production</p>
+              <h2 style={{ fontSize: "clamp(26px,3vw,42px)", fontWeight: 400, letterSpacing: "-0.04em", color: "#F9FAFA" }}>
+                Trusted by the teams shipping AI.
+              </h2>
+            </motion.div>
+
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 16 }}>
+              {TESTIMONIALS.map(({ quote, name, org }, i) => (
+                <motion.div key={i} {...fadeUp(i * 0.08)}
+                  className="rounded-2xl p-8 flex flex-col gap-6"
+                  style={{ background: "#111215", border: "1px solid rgba(255,255,255,0.06)" }}>
+                  {/* Quote mark */}
+                  <svg width="24" height="18" viewBox="0 0 24 18" fill="none">
+                    <path d="M0 18V10.8C0 7.2 1.2 4.2 3.6 1.8L6 0l1.2 1.2C5.2 3.2 4 5.6 4 8.4V10h4v8H0zm14 0V10.8C14 7.2 15.2 4.2 17.6 1.8L20 0l1.2 1.2C19.2 3.2 18 5.6 18 8.4V10h4v8h-8z" fill="rgba(52,213,154,0.3)" />
+                  </svg>
+                  <p style={{ fontSize: 16, color: "#94979E", lineHeight: 1.65, flex: 1 }}>&ldquo;{quote}&rdquo;</p>
+                  <div>
+                    <p style={{ fontSize: 14, color: "#F9FAFA", fontWeight: 500 }}>{name}</p>
+                    <p style={{ fontSize: 13, color: "#94979E" }}>{org}</p>
                   </div>
-                  <span style={{ fontSize: 15, fontWeight: 500, color: "#F9FAFA", marginBottom: 8, letterSpacing: "-0.01em" }}>{label}</span>
-                  <span style={{ fontSize: 13, color: "#94979E", lineHeight: 1.55 }}>{desc}</span>
                 </motion.div>
               ))}
             </div>
           </div>
+        </section>
 
-          {/* Code snippet */}
-          <motion.div {...fadeUp(0.3)} className="mt-20 rounded-2xl overflow-hidden" style={{ border: "1px solid rgba(255,255,255,0.07)" }}>
-            {/* Window chrome */}
-            <div className="flex items-center gap-2 px-5 py-3" style={{ background: "#111215", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-              <div className="w-3 h-3 rounded-full" style={{ background: "#FF5F57" }} />
-              <div className="w-3 h-3 rounded-full" style={{ background: "#FEBC2E" }} />
-              <div className="w-3 h-3 rounded-full" style={{ background: "#28C840" }} />
-              <span className="ml-4 text-xs" style={{ color: "#94979E", fontFamily: "var(--font-mono), monospace" }}>example.ts</span>
-            </div>
-            <div className="p-8 overflow-x-auto" style={{ background: "#0d0e0f", fontFamily: "var(--font-mono), monospace", fontSize: 14, lineHeight: 1.75 }}>
-              <pre style={{ margin: 0, color: "#94979E" }}><code>{`import Synapse from "@synapse-ai/sdk";
-
-const client = new Synapse();
-
-`}<span style={{ color: "#94979E" }}>{`// Stream inference — sub-50ms first token`}</span>{`
-const stream = await client.chat.stream(\{
-  model: `}<span style={{ color: "#34D59A" }}>{`"llama-3.1-70b"`}</span>{`,
-  messages: [\{ role: `}<span style={{ color: "#34D59A" }}>{`"user"`}</span>{`, content: `}<span style={{ color: "#34D59A" }}>{`"Explain KV-cache."`}</span>{` \}],
-  max_tokens: `}<span style={{ color: "#F9FAFA" }}>{`512`}</span>{`,
-\});
-
-for await (const chunk of stream) \{
-  process.stdout.write(chunk.choices[`}<span style={{ color: "#F9FAFA" }}>{`0`}</span>{`].delta.content ?? `}<span style={{ color: "#34D59A" }}>{`""`}</span>{`);
-\}`}</code></pre>
-            </div>
-          </motion.div>
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════════════
-          MODEL SUPPORT
-      ══════════════════════════════════════════ */}
-      <section style={{ padding: "120px 0" }}>
-        <div className="max-w-[1200px] mx-auto px-8">
-          <motion.div {...fadeUp()} className="mb-16">
-            <p style={{ fontSize: 12, color: "#34D59A", fontFamily: "var(--font-mono), monospace", letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 12 }}>Model Support</p>
-            <div className="flex items-end justify-between flex-wrap gap-4">
-              <h2 style={{ fontSize: "clamp(28px,3.5vw,48px)", fontWeight: 400, letterSpacing: "-0.04em", color: "#F9FAFA", maxWidth: 480 }}>
-                200+ models, one endpoint.
+        {/* ── INTEGRATIONS ── */}
+        <section style={{ background: "#080A09", padding: "100px 0", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+          <div className="max-w-[1200px] mx-auto px-8">
+            <motion.div {...fadeUp()} className="text-center mb-14">
+              <p style={{ fontSize: 12, color: "#34D59A", fontFamily: "var(--font-mono)", letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 12 }}>Integrations</p>
+              <h2 style={{ fontSize: "clamp(24px,3vw,40px)", fontWeight: 400, letterSpacing: "-0.04em", color: "#F9FAFA" }}>
+                Works with every framework you use.
               </h2>
-              <Link href="#" style={{ fontSize: 14, color: "#34D59A", textDecoration: "none" }} className="flex items-center gap-1.5 hover:opacity-75 transition-opacity">
-                Full model catalogue
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M3 7h8M7 3l4 4-4 4" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-              </Link>
-            </div>
-          </motion.div>
+              <p style={{ fontSize: 15, color: "#94979E", marginTop: 12 }}>40+ native integrations. OpenAI-compatible API means zero migration cost.</p>
+            </motion.div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 1, background: "rgba(255,255,255,0.05)", borderRadius: 16, overflow: "hidden" }}>
-            {MODELS.map(({ family, versions }, i) => (
-              <motion.div key={family} {...fadeUp(i * 0.06)} className="p-6" style={{ background: "#0C0D0D" }}>
-                <span style={{ fontSize: 13, color: "#94979E", fontFamily: "var(--font-mono), monospace", textTransform: "uppercase", letterSpacing: "0.08em", display: "block", marginBottom: 12 }}>{family}</span>
-                <div className="flex flex-col gap-2">
-                  {versions.map((v) => (
-                    <div key={v} className="flex items-center gap-2">
-                      <div className="w-1 h-1 rounded-full" style={{ background: "#34D59A" }} />
-                      <span style={{ fontSize: 14, color: "#F9FAFA" }}>{family} {v}</span>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 12 }}>
+              {INTEGRATIONS.map(({ name, note }, i) => (
+                <motion.div key={name} {...fadeUp(i * 0.05)}
+                  className="rounded-xl p-5 flex flex-col gap-1.5"
+                  style={{ background: "#111215", border: "1px solid rgba(255,255,255,0.06)" }}>
+                  <span style={{ fontSize: 15, color: "#F9FAFA", fontWeight: 500 }}>{name}</span>
+                  <span style={{ fontSize: 12, color: "#94979E" }}>{note}</span>
+                </motion.div>
+              ))}
+            </div>
+
+            <motion.div {...fadeUp(0.3)} className="mt-10 flex items-center justify-center">
+              <div className="flex items-center gap-3 px-6 py-4 rounded-2xl" style={{ background: "#111215", border: "1px solid rgba(52,213,154,0.2)" }}>
+                <div className="w-2 h-2 rounded-full" style={{ background: "#34D59A" }} />
+                <span style={{ fontSize: 14, color: "#F9FAFA" }}>OpenAI-compatible API</span>
+                <span style={{ fontSize: 13, color: "#94979E" }}>— swap your base URL and you&apos;re done</span>
+              </div>
+            </motion.div>
+          </div>
+        </section>
+
+        {/* ── ENTERPRISE ── */}
+        <section style={{ padding: "100px 0", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+          <div className="max-w-[1200px] mx-auto px-8">
+            <div className="flex flex-col lg:flex-row gap-16 items-start">
+              <motion.div {...fadeUp()} className="flex-1">
+                <p style={{ fontSize: 12, color: "#34D59A", fontFamily: "var(--font-mono)", letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 12 }}>Enterprise Ready</p>
+                <h2 style={{ fontSize: "clamp(26px,3vw,42px)", fontWeight: 400, letterSpacing: "-0.04em", color: "#F9FAFA", marginBottom: 16 }}>
+                  Built for teams that can&apos;t afford downtime.
+                </h2>
+                <p style={{ fontSize: 16, color: "#94979E", lineHeight: 1.7, maxWidth: 480 }}>
+                  Synapse meets the security and compliance bar for regulated industries. RBAC, SSO, audit logging, and a 99.99% uptime SLA — all included.
+                </p>
+                <div className="mt-8">
+                  <Link href="#" style={{ fontSize: 14, color: "#34D59A", display: "inline-flex", alignItems: "center", gap: 6 }}>
+                    Talk to our enterprise team →
+                  </Link>
+                </div>
+              </motion.div>
+
+              <motion.div {...fadeUp(0.1)} className="flex-1">
+                <div className="flex flex-wrap gap-2">
+                  {BADGES.map((b) => (
+                    <div key={b} className="px-4 py-2.5 rounded-lg text-[13px]" style={{ background: "#111215", border: "1px solid rgba(255,255,255,0.08)", color: "#94979E" }}>
+                      {b}
                     </div>
                   ))}
                 </div>
+
+                {/* Uptime bar */}
+                <div className="mt-8 rounded-xl p-5" style={{ background: "#111215", border: "1px solid rgba(255,255,255,0.07)" }}>
+                  <div className="flex items-center justify-between mb-3">
+                    <span style={{ fontSize: 13, color: "#F9FAFA" }}>API Availability</span>
+                    <span style={{ fontSize: 13, color: "#34D59A", fontFamily: "var(--font-mono)" }}>99.99%</span>
+                  </div>
+                  <div className="flex gap-1">
+                    {Array.from({ length: 90 }).map((_, i) => (
+                      <div key={i} className="flex-1 rounded-sm" style={{ height: 24, background: i === 37 || i === 71 ? "#F59D4A" : "#34D59A", opacity: 0.7 + Math.random() * 0.3 }} />
+                    ))}
+                  </div>
+                  <div className="flex justify-between mt-2">
+                    <span style={{ fontSize: 11, color: "#94979E" }}>90 days ago</span>
+                    <span style={{ fontSize: 11, color: "#94979E" }}>Today</span>
+                  </div>
+                </div>
               </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ══════════════════════════════════════════
-          INTEGRATIONS
-      ══════════════════════════════════════════ */}
-      <section style={{ background: "#080A09", padding: "100px 0", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
-        <div className="max-w-[1200px] mx-auto px-8">
-          <motion.div {...fadeUp()} className="text-center mb-14">
-            <p style={{ fontSize: 12, color: "#34D59A", fontFamily: "var(--font-mono), monospace", letterSpacing: "0.12em", textTransform: "uppercase", marginBottom: 12 }}>Integrations</p>
-            <h2 style={{ fontSize: "clamp(24px,3vw,40px)", fontWeight: 400, letterSpacing: "-0.04em", color: "#F9FAFA" }}>
-              Works with every framework you use.
-            </h2>
-          </motion.div>
-
-          <div className="flex flex-wrap justify-center gap-3">
-            {INTEGRATIONS.map((name, i) => (
-              <motion.div key={name} {...fadeUp(i * 0.04)}
-                className="px-5 py-2.5 rounded-full"
-                style={{ background: "#111215", border: "1px solid rgba(255,255,255,0.07)", fontSize: 14, color: "#94979E" }}
-              >
-                {name}
-              </motion.div>
-            ))}
-          </div>
-
-          {/* OpenAI-compatible badge */}
-          <motion.div {...fadeUp(0.3)} className="mt-12 flex items-center justify-center gap-3">
-            <div className="flex items-center gap-3 px-6 py-4 rounded-2xl" style={{ background: "#111215", border: "1px solid rgba(52,213,154,0.2)" }}>
-              <div className="w-2 h-2 rounded-full" style={{ background: "#34D59A" }} />
-              <span style={{ fontSize: 14, color: "#F9FAFA" }}>OpenAI-compatible API</span>
-              <span style={{ fontSize: 13, color: "#94979E" }}>— drop in your existing SDK, zero migration cost</span>
             </div>
-          </motion.div>
-        </div>
-      </section>
+          </div>
+        </section>
 
-      {/* ══════════════════════════════════════════
-          FINAL CTA
-      ══════════════════════════════════════════ */}
-      <section className="relative overflow-hidden" style={{ padding: "140px 0", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
-        <HalftoneEdges leftColor="rgba(52,213,154,0.55)" rightColor="rgba(220,120,60,0.50)" edgeWidth={300} />
+        {/* ── FINAL CTA ── */}
+        <section className="relative overflow-hidden" style={{ padding: "140px 0", borderTop: "1px solid rgba(255,255,255,0.05)", background: "#080A09" }}>
+          <HalftoneEdges leftColor="rgba(52,213,154,0.55)" rightColor="rgba(220,120,60,0.50)" edgeWidth={280} />
+          <div className="relative max-w-[760px] mx-auto px-8 text-center">
+            <motion.h2 {...fadeUp()} style={{ fontSize: "clamp(32px,4vw,56px)", fontWeight: 400, letterSpacing: "-0.04em", color: "#F9FAFA", lineHeight: 1.15 }}>
+              Start serving models in minutes.
+            </motion.h2>
+            <motion.p {...fadeUp(0.1)} style={{ fontSize: 17, color: "#94979E", marginTop: 20, lineHeight: 1.65 }}>
+              No infra to manage. No capacity planning. Just an API key and your model.
+            </motion.p>
+            <motion.div {...fadeUp(0.18)} className="flex items-center justify-center gap-3 mt-10">
+              <Link href="#" className="inline-flex items-center px-8 h-12 rounded-full text-[15px] font-medium"
+                style={{ background: "linear-gradient(135deg,#34D59A,#1a8f65)", color: "#0C0D0D", boxShadow: "0 0 28px rgba(52,213,154,0.3)" }}>
+                Get started free
+              </Link>
+              <Link href="#" className="inline-flex items-center px-8 h-12 rounded-full text-[15px]"
+                style={{ color: "#F9FAFA", border: "1px solid rgba(255,255,255,0.18)" }}>
+                Talk to sales
+              </Link>
+            </motion.div>
+            <motion.div {...fadeUp(0.26)} className="mt-10 rounded-xl px-6 py-4 inline-flex items-center gap-3"
+              style={{ background: "#111215", border: "1px solid rgba(255,255,255,0.07)" }}>
+              <span style={{ color: "#34D59A", fontFamily: "var(--font-mono)", fontSize: 13 }}>$</span>
+              <span style={{ color: "#94979E", fontFamily: "var(--font-mono)", fontSize: 13 }}>npm install @synapse-ai/sdk</span>
+            </motion.div>
+          </div>
+        </section>
 
-        <div className="relative max-w-[800px] mx-auto px-8 text-center">
-          <motion.h2 {...fadeUp()} style={{ fontSize: "clamp(32px,4vw,56px)", fontWeight: 400, letterSpacing: "-0.04em", color: "#F9FAFA", lineHeight: 1.15 }}>
-            Start serving models in minutes.
-          </motion.h2>
-          <motion.p {...fadeUp(0.1)} style={{ fontSize: 17, color: "#94979E", marginTop: 20, lineHeight: 1.65 }}>
-            No infrastructure to manage. No capacity planning. Just an API key and your model.
-          </motion.p>
-          <motion.div {...fadeUp(0.18)} className="flex items-center justify-center gap-3 mt-10">
-            <Link href="#" className="inline-flex items-center px-8 h-12 rounded-full text-[15px] font-medium" style={{ background: "#34D59A", color: "#0C0D0D" }}>
-              Get started free
-            </Link>
-            <Link href="#" className="inline-flex items-center px-8 h-12 rounded-full text-[15px]" style={{ color: "#F9FAFA", border: "1px solid rgba(255,255,255,0.18)" }}>
-              Talk to sales
-            </Link>
-          </motion.div>
+      </main>
 
-          {/* Terminal teaser */}
-          <motion.div {...fadeUp(0.26)} className="mt-12 rounded-xl px-6 py-4 inline-flex items-center gap-3" style={{ background: "#111215", border: "1px solid rgba(255,255,255,0.07)" }}>
-            <span style={{ color: "#34D59A", fontFamily: "var(--font-mono), monospace", fontSize: 13 }}>$</span>
-            <span style={{ color: "#94979E", fontFamily: "var(--font-mono), monospace", fontSize: 13 }}>npm install @synapse-ai/sdk</span>
-          </motion.div>
-        </div>
-      </section>
-
-    </main>
-    <Footer />
+      <Footer />
     </>
   );
 }
