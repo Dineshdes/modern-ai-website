@@ -3,79 +3,81 @@
 import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 
-/* ─── Company logo marks (inline SVG) matching neon's style ─── */
-function LogoReplit() {
-  return (
-    <svg height="18" viewBox="0 0 24 28" fill="none" style={{ color: "#94979E" }}>
-      <path d="M0 0h8a8 8 0 0 1 0 16H0V0Z" fill="currentColor" fillOpacity={0.7}/>
-      <path d="M0 16h8a8 8 0 0 1 0 16H0V16Z" fill="currentColor" fillOpacity={0.5}/>
-      <path d="M8 8h8a8 8 0 0 1 0 16H8V8Z" fill="currentColor" fillOpacity={0.6}/>
-      <text x="26" y="20" fontSize="13" fontFamily="inherit" fontWeight="500" fill="currentColor" fillOpacity={0.7}>replit</text>
-    </svg>
-  );
-}
-function LogoDoorDash() {
-  return (
-    <svg height="16" viewBox="0 0 110 20" fill="none" style={{ color: "#94979E" }}>
-      <rect x="0" y="2" width="16" height="16" rx="4" fill="currentColor" fillOpacity={0.6}/>
-      <path d="M5 6h6a4 4 0 0 1 0 8H5V6Z" fill="#0C0D0D"/>
-      <text x="22" y="15" fontSize="13" fontFamily="inherit" fontWeight="600" fill="currentColor" fillOpacity={0.7} letterSpacing="0.5">DOORDASH</text>
-    </svg>
-  );
-}
-function LogoFramer() {
-  return (
-    <svg height="16" viewBox="0 0 80 20" fill="none" style={{ color: "#94979E" }}>
-      <path d="M0 0h14v7H7L0 0Z" fill="currentColor" fillOpacity={0.7}/>
-      <path d="M0 7h7l7 7H0V7Z" fill="currentColor" fillOpacity={0.5}/>
-      <path d="M7 14l7 7V14H7Z" fill="currentColor" fillOpacity={0.6}/>
-      <text x="20" y="15" fontSize="13" fontFamily="inherit" fontWeight="500" fill="currentColor" fillOpacity={0.7}>Framer</text>
-    </svg>
-  );
-}
-function LogoRetool() {
-  return (
-    <svg height="16" viewBox="0 0 78 20" fill="none" style={{ color: "#94979E" }}>
-      <rect x="0" y="1" width="16" height="16" rx="3" fill="currentColor" fillOpacity={0.15}/>
-      <path d="M4 5h5a3 3 0 0 1 0 6H4V5ZM4 11l4 5" stroke="currentColor" strokeWidth="1.8" strokeOpacity={0.7} strokeLinecap="round"/>
-      <text x="21" y="15" fontSize="13" fontFamily="inherit" fontWeight="500" fill="currentColor" fillOpacity={0.7}>Retool</text>
-    </svg>
-  );
-}
-function LogoOutfront() {
-  return (
-    <svg height="14" viewBox="0 0 102 18" fill="none" style={{ color: "#94979E" }}>
-      <text x="0" y="14" fontSize="13" fontFamily="inherit" fontWeight="700" fill="currentColor" fillOpacity={0.7} letterSpacing="0.3">OUTFRONT/</text>
-    </svg>
-  );
-}
-function LogoVercel() {
-  return (
-    <svg height="16" viewBox="0 0 72 20" fill="none" style={{ color: "#94979E" }}>
-      <path d="M8 2L16 18H0L8 2Z" fill="currentColor" fillOpacity={0.7}/>
-      <text x="22" y="15" fontSize="13" fontFamily="inherit" fontWeight="500" fill="currentColor" fillOpacity={0.7}>Vercel</text>
-    </svg>
-  );
-}
-function LogoLinear() {
-  return (
-    <svg height="16" viewBox="0 0 70 20" fill="none" style={{ color: "#94979E" }}>
-      <circle cx="8" cy="10" r="7" stroke="currentColor" strokeWidth="1.5" strokeOpacity={0.6}/>
-      <path d="M3 15L13 5" stroke="currentColor" strokeWidth="1.5" strokeOpacity={0.6} strokeLinecap="round"/>
-      <text x="21" y="15" fontSize="13" fontFamily="inherit" fontWeight="500" fill="currentColor" fillOpacity={0.7}>Linear</text>
-    </svg>
-  );
-}
-function LogoMeta() {
-  return (
-    <svg height="16" viewBox="0 0 68 20" fill="none" style={{ color: "#94979E" }}>
-      <path d="M2 12c0-3 1.5-5.5 3-5.5 1 0 2 1.5 3 3.5 1-2 2-3.5 3-3.5 1.5 0 3 2.5 3 5.5a2.5 2.5 0 0 1-5 0c0 1.5-.5 2.5-1 2.5s-1-1-1-2.5a2.5 2.5 0 0 1-5 0Z" stroke="currentColor" strokeWidth="1.4" strokeOpacity={0.7} fill="none"/>
-      <text x="18" y="15" fontSize="13" fontFamily="inherit" fontWeight="500" fill="currentColor" fillOpacity={0.7}>Meta</text>
-    </svg>
-  );
-}
-
-const LOGO_COMPONENTS = [LogoReplit, LogoDoorDash, LogoFramer, LogoRetool, LogoOutfront, LogoVercel, LogoLinear, LogoMeta];
+/* ─── Company logo marks matching neon's style: icon mark + wordmark ─── */
+const LOGOS: { icon: React.ReactNode; label: string }[] = [
+  {
+    label: "replit",
+    icon: (
+      <svg width="14" height="16" viewBox="0 0 14 16" fill="currentColor">
+        <path d="M0 0h6a4 4 0 0 1 0 8H0V0Z" fillOpacity={0.8}/>
+        <path d="M0 8h6a4 4 0 0 1 0 8H0V8Z" fillOpacity={0.5}/>
+        <path d="M6 4h6a4 4 0 0 1 0 8H6V4Z" fillOpacity={0.65}/>
+      </svg>
+    ),
+  },
+  {
+    label: "OUTFRONT/",
+    icon: (
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
+        <rect width="14" height="14" rx="2" fillOpacity={0.7}/>
+        <path d="M3 3h5v3H5v2h3v3H3V3Z" fill="#0C0D0D"/>
+      </svg>
+    ),
+  },
+  {
+    label: "DoorDash",
+    icon: (
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="currentColor">
+        <rect width="14" height="14" rx="3" fillOpacity={0.7}/>
+        <path d="M4 4h4a3 3 0 0 1 0 6H4V4Z" fill="#0C0D0D"/>
+      </svg>
+    ),
+  },
+  {
+    label: "Retool",
+    icon: (
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <rect width="14" height="14" rx="2" fill="currentColor" fillOpacity={0.15}/>
+        <path d="M3 3h5a2.5 2.5 0 0 1 0 5H3V3ZM3 8l4 4" stroke="currentColor" strokeWidth="1.6" strokeOpacity={0.8} strokeLinecap="round"/>
+      </svg>
+    ),
+  },
+  {
+    label: "Framer",
+    icon: (
+      <svg width="11" height="16" viewBox="0 0 11 16" fill="currentColor">
+        <path d="M0 0h11v5.5H5.5L0 0Z" fillOpacity={0.8}/>
+        <path d="M0 5.5h5.5L11 11H0V5.5Z" fillOpacity={0.6}/>
+        <path d="M5.5 11L11 16.5V11H5.5Z" fillOpacity={0.7}/>
+      </svg>
+    ),
+  },
+  {
+    label: "Vercel",
+    icon: (
+      <svg width="14" height="12" viewBox="0 0 14 12" fill="currentColor">
+        <path d="M7 0L14 12H0L7 0Z" fillOpacity={0.8}/>
+      </svg>
+    ),
+  },
+  {
+    label: "Linear",
+    icon: (
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+        <circle cx="7" cy="7" r="6.5" stroke="currentColor" strokeWidth="1.4" strokeOpacity={0.7}/>
+        <path d="M2.5 11.5L11.5 2.5" stroke="currentColor" strokeWidth="1.4" strokeOpacity={0.7} strokeLinecap="round"/>
+      </svg>
+    ),
+  },
+  {
+    label: "Meta",
+    icon: (
+      <svg width="20" height="12" viewBox="0 0 20 12" fill="none">
+        <path d="M1.5 8c0-2 1-4 2.5-4 .8 0 1.7 1.2 2.5 2.8C7.3 5.2 8.2 4 9 4c1.5 0 2.5 2 2.5 4s-.7 2.2-1.75 2.2c-.5 0-.75-.6-.75-1.2C9 10.4 8.7 11 8 11s-1-.6-1-2.2c-1.05 0-1.75-.7-1.75-2.2a2.25 2.25 0 0 1-4.5 0" stroke="currentColor" strokeWidth="1.3" strokeOpacity={0.75} strokeLinecap="round"/>
+      </svg>
+    ),
+  },
+];
 
 /* ─── Animated bars canvas ─── */
 function HeroBars() {
@@ -204,13 +206,13 @@ export default function Hero() {
       {/* Canvas bars */}
       <HeroBars />
 
-      {/* Content — bottom left pinned, matches neon's pt-[409px] approach */}
+      {/* Content — positioned to match neon's above-fold layout */}
       <div
-        className="relative z-20 flex flex-col justify-end"
-        style={{ minHeight: "calc(100vh - 56px)" }}
+        className="relative z-20"
+        style={{ paddingTop: "clamp(220px, 40vh, 400px)", paddingBottom: 80 }}
       >
         <div
-          className="w-full px-8 pb-16"
+          className="w-full px-8"
           style={{ maxWidth: 1600, margin: "0 auto" }}
         >
           {/* "A DATABRICKS COMPANY" label */}
@@ -284,9 +286,10 @@ export default function Hero() {
             style={{ borderTop: "1px solid rgba(255,255,255,0.07)", paddingTop: 28 }}
           >
             <div className="flex items-center gap-10 overflow-hidden flex-wrap">
-              {LOGO_COMPONENTS.map((Logo, i) => (
-                <div key={i} className="shrink-0 flex items-center opacity-60 hover:opacity-90 transition-opacity">
-                  <Logo />
+              {LOGOS.map(({ icon, label }) => (
+                <div key={label} className="shrink-0 flex items-center gap-2 opacity-55 hover:opacity-85 transition-opacity" style={{ color: "#94979E" }}>
+                  {icon}
+                  <span className="text-[13px] font-medium" style={{ letterSpacing: label === "OUTFRONT/" ? "0.04em" : "-0.01em" }}>{label}</span>
                 </div>
               ))}
             </div>
