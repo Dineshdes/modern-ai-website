@@ -278,7 +278,7 @@ export default function Hero() {
             </a>
           </motion.div>
 
-          {/* Company logos — thin line separator + logos row */}
+          {/* Company logos — marquee carousel */}
           <motion.div
             animate={{ opacity: 1, y: 0 }}
             initial={{ opacity: 0, y: 16 }}
@@ -286,13 +286,30 @@ export default function Hero() {
             className="mt-14"
             style={{ borderTop: "1px solid rgba(255,255,255,0.07)", paddingTop: 28 }}
           >
-            <div className="flex items-center gap-10 overflow-hidden flex-wrap">
-              {LOGOS.map(({ icon, label }) => (
-                <div key={label} className="shrink-0 flex items-center gap-2 opacity-55 hover:opacity-85 transition-opacity" style={{ color: "#94979E" }}>
-                  {icon}
-                  <span className="text-[13px] font-medium" style={{ letterSpacing: label === "OUTFRONT/" ? "0.04em" : "-0.01em" }}>{label}</span>
-                </div>
-              ))}
+            {/* Mask edges so logos fade in/out smoothly */}
+            <div
+              className="overflow-hidden"
+              style={{
+                WebkitMaskImage: "linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)",
+                maskImage:        "linear-gradient(to right, transparent 0%, black 8%, black 92%, transparent 100%)",
+              }}
+            >
+              {/* Duplicate set so the loop is seamless */}
+              <div className="flex items-center animate-scroll-left" style={{ width: "max-content" }}>
+                {[...LOGOS, ...LOGOS].map(({ icon, label }, i) => (
+                  <div
+                    key={`${label}-${i}`}
+                    className="shrink-0 flex items-center gap-3 opacity-55 hover:opacity-90 transition-opacity"
+                    style={{ color: "#94979E", marginRight: 56 }}
+                  >
+                    {/* Scale up icon wrapper */}
+                    <span style={{ transform: "scale(1.55)", transformOrigin: "center", display: "inline-flex" }}>
+                      {icon}
+                    </span>
+                    <span className="text-[16px] font-medium" style={{ letterSpacing: label === "OUTFRONT/" ? "0.04em" : "-0.01em" }}>{label}</span>
+                  </div>
+                ))}
+              </div>
             </div>
           </motion.div>
         </div>
