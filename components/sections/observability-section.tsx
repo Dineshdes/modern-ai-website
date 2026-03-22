@@ -103,8 +103,8 @@ export default function ObservabilitySection() {
               }}
             >
               <GreenIcon>{f.icon}</GreenIcon>
-              <h3 className="text-[15px] font-medium mb-2" style={{ color: "#F9FAFA" }}>{f.title}</h3>
-              <p className="text-sm leading-relaxed" style={{ color: "#94979E" }}>{f.desc}</p>
+              <h3 className="font-medium mb-2" style={{ fontSize: 18, color: "#F9FAFA" }}>{f.title}</h3>
+              <p className="leading-relaxed" style={{ fontSize: 15, color: "#94979E" }}>{f.desc}</p>
             </div>
           ))}
         </motion.div>

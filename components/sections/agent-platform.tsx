@@ -129,10 +129,10 @@ export default function AgentPlatform() {
           <div>
             <div className="flex items-start gap-5 mb-8">
               <div className="shrink-0 pt-0.5">
-                <span className="text-[13px]" style={{ color: "#94979E", fontFamily: "var(--font-mono), monospace" }}>01</span>
+                <span className="font-mono" style={{ fontSize: 14, color: "#94979E", fontFamily: "var(--font-mono), monospace" }}>01</span>
               </div>
               <div className="flex-1">
-                <p className="text-[15px] mb-3" style={{ color: "rgba(249,250,250,0.7)" }}>
+                <p className="mb-3" style={{ fontSize: 16, color: "rgba(249,250,250,0.7)" }}>
                   Send API call and receive connection string in{" "}
                   <span style={{ color: "#34D59A" }}>120ms</span>
                 </p>
@@ -148,10 +148,10 @@ export default function AgentPlatform() {
 
             <div className="flex items-start gap-5 mb-12">
               <div className="shrink-0 pt-0.5">
-                <span className="text-[13px]" style={{ color: "#94979E", fontFamily: "var(--font-mono), monospace" }}>02</span>
+                <span className="font-mono" style={{ fontSize: 14, color: "#94979E", fontFamily: "var(--font-mono), monospace" }}>02</span>
               </div>
               <div className="flex-1">
-                <p className="text-[15px] mb-3" style={{ color: "rgba(249,250,250,0.7)" }}>
+                <p className="mb-3" style={{ fontSize: 16, color: "rgba(249,250,250,0.7)" }}>
                   Test and deploy <span style={{ color: "#94979E" }}>&gt;&gt;</span>
                 </p>
                 <div className="rounded-xl p-4" style={{ background: "#131415", border: "1px solid rgba(255,255,255,0.07)", fontFamily: "var(--font-mono), monospace", fontSize: 11, color: "#94979E", minHeight: 88 }}>
@@ -171,7 +171,7 @@ export default function AgentPlatform() {
                   Synapse endpoints spin up in milliseconds, with APIs for quota controls and fleet scaling.
                 </span>
               </p>
-              <a href="#" className="mt-4 inline-flex items-center gap-1.5 text-sm transition-colors" style={{ color: "rgba(249,250,250,0.5)" }}
+              <a href="#" className="mt-4 inline-flex items-center gap-1.5 transition-colors" style={{ fontSize: 15, color: "rgba(249,250,250,0.5)" }}
                 onMouseEnter={(e) => (e.currentTarget.style.color = "#F9FAFA")}
                 onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(249,250,250,0.5)")}
               >

@@ -66,7 +66,7 @@ export default function FeatureSectionWrapper({
         className="hidden lg:block"
         style={{
           position: "sticky",
-          top: 60,
+          top: 120,
           height: 0,
           overflow: "visible",
           zIndex: 20,
