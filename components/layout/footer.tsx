@@ -1,4 +1,4 @@
-const footerColumns = [
+const COLS = [
   {
     heading: "Company",
     links: [
@@ -32,49 +32,60 @@ const footerColumns = [
   {
     heading: "Compliance",
     links: [
-      { label: "CCPA Compliant", href: "#" },
-      { label: "GDPR Compliant", href: "#" },
-      { label: "ISO 27001", href: "#" },
-      { label: "SOC 2", href: "#" },
-      { label: "HIPAA", href: "#" },
+      { label: "CCPA Compliant", href: "#", muted: true },
+      { label: "GDPR Compliant", href: "#", muted: true },
+      { label: "ISO 27001", href: "#", muted: true },
+      { label: "SOC 2", href: "#", muted: true },
+      { label: "HIPAA", href: "#", muted: true },
     ],
   },
 ];
 
 export default function Footer() {
   return (
-    <footer className="bg-black border-t border-white/[0.06] pt-16 pb-8">
-      <div className="max-w-7xl mx-auto px-6">
-        {/* Top row */}
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-12">
-          <div className="flex items-center gap-4">
-            <a href="/" className="flex items-center gap-1.5">
-              <span className="text-[#00E599] text-lg">✦</span>
-              <span className="text-white font-medium text-[18px]">Synapse</span>
+    <footer style={{ background: "#0C0D0D", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+      <div className="max-w-[1400px] mx-auto px-8 pt-14 pb-8">
+        {/* Logo row */}
+        <div className="flex items-center justify-between mb-14">
+          <div className="flex items-center gap-3">
+            <a href="/" className="flex items-center gap-2.5">
+              <div
+                className="flex items-center justify-center rounded"
+                style={{ width: 26, height: 26, background: "#34D59A" }}
+              >
+                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                  <path d="M2.5 2h9v6.5L7 12V7.5H2.5V2z" fill="#0C0D0D" />
+                </svg>
+              </div>
+              <span className="font-semibold text-[16px]" style={{ color: "#F9FAFA" }}>Synapse</span>
             </a>
-            <span className="text-[#797D86] text-sm">
-              A DEVELOPER FIRST PLATFORM
-            </span>
+            <span className="text-[12px] ml-1" style={{ color: "#94979E" }}>An AI Inference Company</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="size-1.5 rounded-full bg-[#00E599] animate-pulse" />
-            <span className="text-xs text-[#797D86]">All systems operational</span>
+            <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#34D59A", display: "inline-block" }} />
+            <span className="text-xs" style={{ color: "#94979E" }}>All systems operational</span>
           </div>
         </div>
 
-        {/* Footer grid */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-12">
-          {footerColumns.map((col) => (
+        {/* Link grid */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-10 mb-14">
+          {COLS.map((col) => (
             <div key={col.heading}>
-              <h3 className="text-xs font-medium text-[#797D86] uppercase tracking-widest mb-5">
+              <h3
+                className="text-xs font-medium uppercase tracking-widest mb-5"
+                style={{ color: "#94979E" }}
+              >
                 {col.heading}
               </h3>
-              <ul>
+              <ul className="space-y-3">
                 {col.links.map((link) => (
                   <li key={link.label}>
                     <a
                       href={link.href}
-                      className="text-sm text-[#797D86] hover:text-white transition-colors block mb-3"
+                      className="text-[13px] transition-colors block"
+                      style={{ color: "#94979E" }}
+                      onMouseEnter={(e) => (e.currentTarget.style.color = "#F9FAFA")}
+                      onMouseLeave={(e) => (e.currentTarget.style.color = "#94979E")}
                     >
                       {link.label}
                     </a>
@@ -85,38 +96,31 @@ export default function Footer() {
           ))}
         </div>
 
-        {/* Bottom bar */}
-        <div className="border-t border-white/[0.06] mt-12 pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
-          <div className="flex flex-col md:flex-row items-center gap-3">
-            <span className="text-xs text-[#797D86]">
-              Made in SF and the World.
-            </span>
-            <span className="hidden md:inline text-[#797D86] text-xs">·</span>
-            <span className="text-xs text-[#797D86]">
-              Copyright © 2025 Synapse AI, Inc.
-            </span>
+        {/* Bottom */}
+        <div
+          className="flex flex-col md:flex-row justify-between items-center gap-4 pt-6"
+          style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}
+        >
+          <div className="flex items-center gap-3 text-xs" style={{ color: "#94979E" }}>
+            <span>Made in SF and the World.</span>
+            <span style={{ opacity: 0.4 }}>·</span>
+            <span>Copyright © 2024–2026 Synapse AI, Inc.</span>
           </div>
-          <div className="flex items-center gap-4">
-            <a
-              href="#"
-              className="text-xs text-[#797D86] hover:text-white transition-colors"
-            >
-              Privacy
-            </a>
-            <span className="text-[#797D86] text-xs">·</span>
-            <a
-              href="#"
-              className="text-xs text-[#797D86] hover:text-white transition-colors"
-            >
-              Terms
-            </a>
-            <span className="text-[#797D86] text-xs">·</span>
-            <a
-              href="#"
-              className="text-xs text-[#797D86] hover:text-white transition-colors"
-            >
-              Cookie Settings
-            </a>
+          <div className="flex items-center gap-4 text-xs" style={{ color: "#94979E" }}>
+            {["Privacy", "Terms", "Cookie Settings"].map((item, i, arr) => (
+              <>
+                <a
+                  key={item}
+                  href="#"
+                  className="transition-colors"
+                  onMouseEnter={(e) => (e.currentTarget.style.color = "#F9FAFA")}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = "#94979E")}
+                >
+                  {item}
+                </a>
+                {i < arr.length - 1 && <span key={`sep-${i}`} style={{ opacity: 0.3 }}>·</span>}
+              </>
+            ))}
           </div>
         </div>
       </div>

@@ -1,42 +1,88 @@
 @import "tailwindcss";
 
+:root {
+  --color-bg: #0C0D0D;
+  --color-surface: #181B1B;
+  --color-surface-2: #232E2A;
+  --color-border: rgba(255,255,255,0.07);
+  --color-text: #F9FAFA;
+  --color-muted: #94979E;
+  --color-accent: #34D59A;
+  --color-accent-dark: #39A57D;
+  --color-mint: #E4F1EB;
+  --font-sans: 'IBM Plex Sans';
+  --font-mono: 'IBM Plex Mono';
+}
+
+html {
+  color-scheme: dark;
+}
+
 body {
-  background-color: #000;
-  color: #fff;
-  font-family: "Inter", system-ui, sans-serif;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans), 'IBM Plex Sans', system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 * {
   box-sizing: border-box;
 }
 
+/* Scrollbar */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--color-bg); }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 3px; }
+
+/* Marquee animation */
 @keyframes scroll-left {
-  from {
-    transform: translateX(0);
-  }
-  to {
-    transform: translateX(-50%);
-  }
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
 }
-
 .animate-scroll-left {
-  animation: scroll-left 30s linear infinite;
+  animation: scroll-left 40s linear infinite;
 }
 
-.animate-scroll-right {
-  animation: scroll-left 25s linear infinite reverse;
+/* Rainbow gradient bar */
+.rainbow-bar {
+  background: linear-gradient(90deg,
+    #ff6b35 0%,
+    #ff3621 8%,
+    #c94a9a 20%,
+    #7c5cfc 35%,
+    #3b82f6 50%,
+    #06b6d4 62%,
+    #34d59a 75%,
+    #84cc16 88%,
+    #eab308 100%
+  );
 }
 
-::-webkit-scrollbar {
-  width: 6px;
+/* Range input reset */
+input[type="range"] {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 2px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
 }
-
-::-webkit-scrollbar-track {
-  background: #000;
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  border: 2px solid var(--color-bg);
+  cursor: pointer;
 }
-
-::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 3px;
+input[type="range"]::-moz-range-thumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--color-accent);
+  border: 2px solid var(--color-bg);
+  cursor: pointer;
 }

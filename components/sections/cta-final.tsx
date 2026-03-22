@@ -3,75 +3,120 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 
+const TICKS = [0.25, 0.5, 1, 2, 3, 4];
+
 function AutoscalingSlider() {
-  const [min, setMin] = useState(1);
-  const [max, setMax] = useState(3);
-  const ticks = [0.25, 0.5, 1, 2, 3, 4];
+  const [minVal, setMinVal] = useState(1);
+  const [maxVal, setMaxVal] = useState(3);
+
+  const toPercent = (v: number) => ((v - 0.25) / (4 - 0.25)) * 100;
 
   return (
-    <div className="mt-16 max-w-xl">
-      <p className="text-sm text-[#797D86] mb-6 font-mono">Autoscaling</p>
-      <div className="relative">
-        {/* Track */}
-        <div className="h-px bg-white/[0.1] relative">
-          <div
-            className="absolute h-full bg-[#00E599]"
-            style={{
-              left: `${((min - 0.25) / (4 - 0.25)) * 100}%`,
-              right: `${100 - ((max - 0.25) / (4 - 0.25)) * 100}%`,
-            }}
-          />
-          {/* Min thumb */}
-          <div
-            className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-[#00E599] border-2 border-black cursor-pointer"
-            style={{ left: `${((min - 0.25) / (4 - 0.25)) * 100}%` }}
-          />
-          {/* Max thumb */}
-          <div
-            className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-4 h-4 rounded-full bg-[#00E599] border-2 border-black cursor-pointer"
-            style={{ left: `${((max - 0.25) / (4 - 0.25)) * 100}%` }}
-          />
-        </div>
-        {/* Tick labels */}
-        <div className="flex justify-between mt-4">
-          {ticks.map((t) => (
-            <span key={t} className="text-xs font-mono text-[#797D86]">{t}</span>
-          ))}
-        </div>
+    <div className="mt-14 max-w-[520px]">
+      <p className="text-sm mb-6" style={{ color: "#94979E", fontFamily: "var(--font-mono), monospace" }}>
+        Autoscaling
+      </p>
+
+      {/* Slider track */}
+      <div className="relative" style={{ height: 2, background: "rgba(255,255,255,0.1)", borderRadius: 2, margin: "12px 0 24px" }}>
+        {/* Active range */}
+        <div
+          className="absolute h-full"
+          style={{
+            background: "#34D59A",
+            left: `${toPercent(minVal)}%`,
+            right: `${100 - toPercent(maxVal)}%`,
+            borderRadius: 2,
+          }}
+        />
+        {/* Min thumb */}
+        <div
+          className="absolute"
+          style={{
+            left: `${toPercent(minVal)}%`,
+            top: "50%",
+            transform: "translate(-50%,-50%)",
+            width: 16,
+            height: 16,
+            borderRadius: "50%",
+            background: "#34D59A",
+            border: "2px solid #0C0D0D",
+            cursor: "pointer",
+          }}
+        />
+        {/* Max thumb */}
+        <div
+          className="absolute"
+          style={{
+            left: `${toPercent(maxVal)}%`,
+            top: "50%",
+            transform: "translate(-50%,-50%)",
+            width: 16,
+            height: 16,
+            borderRadius: "50%",
+            background: "#34D59A",
+            border: "2px solid #0C0D0D",
+            cursor: "pointer",
+          }}
+        />
       </div>
 
-      <div className="mt-8 grid grid-cols-2 gap-8">
-        <div>
-          <p className="text-xs text-[#797D86] font-mono mb-1">Scale from</p>
-          <p className="text-[15px] font-mono text-white/70">{min} vCPU, {min * 2} RAM</p>
-        </div>
-        <div>
-          <p className="text-xs text-[#797D86] font-mono mb-1">Scale up to</p>
-          <p className="text-[15px] font-mono text-white/70">{max} vCPU, {max * 4} RAM</p>
-        </div>
+      {/* Range inputs (invisible, positioned over the track) */}
+      <div className="relative" style={{ marginTop: -20, height: 20 }}>
+        <input
+          type="range" min={0.25} max={4} step={0.25} value={minVal}
+          onChange={(e) => setMinVal(Math.min(Number(e.target.value), maxVal - 0.25))}
+          className="absolute w-full cursor-pointer opacity-0"
+          style={{ zIndex: 2 }}
+        />
+        <input
+          type="range" min={0.25} max={4} step={0.25} value={maxVal}
+          onChange={(e) => setMaxVal(Math.max(Number(e.target.value), minVal + 0.25))}
+          className="absolute w-full cursor-pointer opacity-0"
+          style={{ zIndex: 2 }}
+        />
       </div>
 
-      {/* Hidden range inputs for interactivity */}
-      <input
-        type="range" min={0.25} max={4} step={0.25} value={min}
-        onChange={(e) => setMin(Math.min(Number(e.target.value), max - 0.25))}
-        className="sr-only"
-      />
+      {/* Tick labels */}
+      <div className="flex justify-between mt-4">
+        {TICKS.map((t) => (
+          <span key={t} className="text-[12px]" style={{ color: "#94979E", fontFamily: "var(--font-mono), monospace" }}>{t}</span>
+        ))}
+      </div>
+
+      {/* Values */}
+      <div className="mt-6 grid grid-cols-2 gap-8">
+        <div>
+          <p className="text-xs mb-1" style={{ color: "#94979E", fontFamily: "var(--font-mono), monospace" }}>Scale from</p>
+          <p className="text-[15px]" style={{ color: "rgba(249,250,250,0.65)", fontFamily: "var(--font-mono), monospace" }}>{minVal} vCPU, {minVal * 2} RAM</p>
+        </div>
+        <div>
+          <p className="text-xs mb-1" style={{ color: "#94979E", fontFamily: "var(--font-mono), monospace" }}>Scale up to</p>
+          <p className="text-[15px]" style={{ color: "rgba(249,250,250,0.65)", fontFamily: "var(--font-mono), monospace" }}>{maxVal} vCPU, {maxVal * 4} RAM</p>
+        </div>
+      </div>
     </div>
   );
 }
 
 export default function CTAFinal() {
   return (
-    <section className="bg-black border-t border-white/[0.06]">
-      <div className="max-w-[1400px] mx-auto px-8 py-24">
+    <section style={{ background: "#0C0D0D" }}>
+      {/* Big heading section */}
+      <div className="max-w-[1400px] mx-auto px-8 pt-24 pb-16">
         <motion.h2
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.55 }}
-          className="font-normal text-white"
-          style={{ fontSize: "clamp(36px,5vw,68px)", lineHeight: 1.05, letterSpacing: "-2.7px", maxWidth: 700 }}
+          transition={{ duration: 0.6 }}
+          style={{
+            fontSize: "clamp(36px, 5.5vw, 72px)",
+            fontWeight: 400,
+            lineHeight: 1.04,
+            letterSpacing: "-2.9px",
+            color: "#F9FAFA",
+            maxWidth: 720,
+          }}
         >
           The world&apos;s most advanced AI platform.
         </motion.h2>
@@ -80,39 +125,54 @@ export default function CTAFinal() {
           initial={{ opacity: 0, y: 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.55, delay: 0.1 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
         >
           <AutoscalingSlider />
         </motion.div>
       </div>
 
-      {/* Footer CTA bar */}
-      <div className="border-t border-white/[0.06]">
-        <div className="max-w-[1400px] mx-auto px-8 py-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-          <div className="text-[#797D86] text-[15px] leading-snug">
+      {/* Bottom CTA bar */}
+      <div className="border-t" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
+        <div
+          className="max-w-[1400px] mx-auto px-8 py-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-6"
+        >
+          <div className="text-[15px] leading-snug" style={{ color: "#94979E" }}>
             <p>Trusted by developers, ready for agents.</p>
             <p>Build and scale AI faster with Synapse.</p>
           </div>
+
           <div className="flex items-center gap-3 shrink-0">
             <a
               href="#"
-              className="bg-white text-[#111215] font-medium px-6 h-11 rounded-full text-sm inline-flex items-center hover:bg-white/90 transition-colors"
+              className="inline-flex items-center px-6 h-11 rounded-full text-sm font-medium transition-colors"
+              style={{ background: "#F9FAFA", color: "#0C0D0D" }}
+              onMouseEnter={(e) => (e.currentTarget.style.background = "#e5e7eb")}
+              onMouseLeave={(e) => (e.currentTarget.style.background = "#F9FAFA")}
             >
               Get started
             </a>
             <a
               href="#"
-              className="border border-white/20 text-white px-6 h-11 rounded-full text-sm inline-flex items-center hover:border-white/40 transition-colors"
+              className="inline-flex items-center px-6 h-11 rounded-full text-sm transition-colors"
+              style={{ color: "#F9FAFA", border: "1px solid rgba(255,255,255,0.2)" }}
+              onMouseEnter={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.4)")}
+              onMouseLeave={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.2)")}
             >
               Read the docs
             </a>
             <button
-              className="flex items-center gap-2 px-4 h-11 rounded-xl text-sm font-mono border border-white/[0.08] hover:border-white/20 transition-colors"
-              style={{ background: "#111215" }}
+              className="inline-flex items-center gap-2 px-4 h-11 rounded-xl text-sm transition-colors"
+              style={{
+                background: "#34D59A",
+                color: "#0C0D0D",
+                fontFamily: "var(--font-mono), monospace",
+                fontWeight: 500,
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.background = "#2cb885")}
+              onMouseLeave={(e) => (e.currentTarget.style.background = "#34D59A")}
             >
-              <span className="text-[#00E599]">$</span>
-              <span className="text-[#797D86]">npx synapsectl init</span>
-              <span className="text-[#797D86] text-xs border border-white/10 rounded px-1">⧉</span>
+              $ npx synapsectl init
+              <span className="opacity-60 text-xs">⧉</span>
             </button>
           </div>
         </div>

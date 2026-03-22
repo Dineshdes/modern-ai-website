@@ -4,102 +4,107 @@ import { motion } from "framer-motion";
 
 function DotIcon() {
   return (
-    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" className="mb-8 opacity-60">
-      {[0,1,2,3,4].map((row) =>
-        [0,1,2,3,4].map((col) => {
-          if (col > row) return null;
-          const opacity = 0.15 + ((row + col) / 8) * 0.85;
-          return (
-            <circle key={`${row}-${col}`} cx={col*6+3} cy={row*6+3} r={1.5} fill="white" fillOpacity={opacity} />
-          );
+    <svg width="40" height="32" viewBox="0 0 40 32" fill="none" className="mb-10">
+      {[5,4,3,2,1].map((cols, row) =>
+        Array.from({ length: cols }, (_, col) => {
+          const x = col * 7 + (5 - cols) * 3.5 + 3;
+          const y = row * 6 + 3;
+          const opacity = 0.2 + ((row + col) / (5 + cols)) * 0.8;
+          return <circle key={`${row}-${col}`} cx={x} cy={y} r={1.6} fill="#94979E" fillOpacity={opacity} />;
         })
       )}
     </svg>
   );
 }
 
-const TABLE_ROWS = [
-  { id: "a79HQ2Ts6M6YLUF0nKZsp", name: "Susan Frank", slug: "gretchen-siphron", email: "sfrank@invite.de", token: "upx_7V191LeVVc9cF8:vA28.d9C1c4…" },
-  { id: "6WrjhHJaxMq77bvEP2uWw", name: "Alfredo Curtis", slug: "alfredo-curtis", email: "alfredo.c@acme.com", token: "upx_b29A8ch8bctu_d07VtqD9h8tuf00Gf2…" },
-  { id: "Q6jDsVGtJt0ARPh06Z8fy", name: "Jakob Septimus", slug: "j-septimus", email: "j-septimus@nitbit500.dev", token: "yx25_A0ATI6K1bDo4VNbN7HIDInGDJvx16Jk…" },
-  { id: "2X7mnOtkRgE5A6_FcKlQnw", name: "Noran Vaccaro", slug: "noran-vacc", email: "noran-vacc@atforge.co", token: "ya29_A0ATin6CLCEFJi1Vfs4yHwOS2oPc7P…" },
-  { id: "cAvJro2yFsMDC2oGev:cDJBz", name: "Martin Kotopaxi", slug: "martin-kot", email: "martin-kot@plannerworks.io", token: "uhc_2lnff55IeCJnTFPFC0wMmH8I0cn4…" },
-  { id: "GHfS7OF2AoN9nBLdKPA6F7u", name: "Joslyn Calzoni", slug: "joslyn-calzoni", email: "joslyn.calzoni@arcania.tech.com", token: "ya29_A0ATin6MLjGux2Xl0G5TlMInEkl31lx…" },
+const ROWS = [
+  { id: "a79HQ2Ts6M…", name: "Susan Frank", slug: "gretchen-siphron", email: "sfrank@invite.de", token: "upx_7V191Le…" },
+  { id: "6WrjhHJax…", name: "Alfredo Curtis", slug: "alfredo-curtis", email: "alfredo.c@acme.com", token: "upx_b29A8ch…" },
+  { id: "Q6jDsVGtJ…", name: "Jakob Septimus", slug: "j-septimus", email: "j-septimus@dev.io", token: "yx25_A0ATI6…" },
+  { id: "2X7mnOtk…", name: "Noran Vaccaro", slug: "noran-vacc", email: "noran@atforge.co", token: "ya29_A0ATin…" },
+  { id: "cAvJro2y…", name: "Martin Kotopaxi", slug: "martin-kot", email: "martin@planners.io", token: "uhc_2lnff55…" },
+  { id: "GHfS7OF2…", name: "Joslyn Calzoni", slug: "joslyn-calzoni", email: "joslyn@arcania.tech", token: "ya29_A0ATin…" },
+  { id: "1MLjGp0J…", name: "Sianna Bettervolt", slug: "sianna-westervolt", email: "sianna@acme.dev", token: "uhc_Dlgh7ph…" },
+  { id: "8ZtolHek…", name: "Corey Septimus", slug: "corey-septimus", email: "corey@northwave.dev", token: "ya29_lo1G4a…" },
 ];
-
-function AuthTableMockup() {
-  return (
-    <div
-      className="w-full rounded-2xl overflow-hidden border border-white/[0.07] mt-14 relative"
-      style={{ background: "#0d1117" }}
-    >
-      {/* Table header */}
-      <div className="grid border-b border-white/[0.07] text-[11px] font-mono text-[#797D86]"
-        style={{ gridTemplateColumns: "1fr 1fr 1fr 1.5fr 2fr" }}
-      >
-        {["id", "name", "slug", "email", "access_token"].map((col) => (
-          <div key={col} className="px-4 py-3 border-r border-white/[0.05] last:border-0">{col}</div>
-        ))}
-      </div>
-
-      {/* Table rows */}
-      {TABLE_ROWS.map((row, i) => (
-        <div
-          key={row.id}
-          className={`grid border-b border-white/[0.04] text-[11px] font-mono text-[#797D86] hover:bg-white/[0.02] transition-colors ${
-            i === TABLE_ROWS.length - 1 ? "border-0" : ""
-          }`}
-          style={{ gridTemplateColumns: "1fr 1fr 1fr 1.5fr 2fr" }}
-        >
-          <div className="px-4 py-2.5 border-r border-white/[0.04] truncate text-[#6b7280]">{row.id.substring(0, 16)}…</div>
-          <div className="px-4 py-2.5 border-r border-white/[0.04] text-white/60">{row.name}</div>
-          <div className="px-4 py-2.5 border-r border-white/[0.04] text-[#6b7280]">{row.slug}</div>
-          <div className="px-4 py-2.5 border-r border-white/[0.04] text-[#6b7280] truncate">{row.email}</div>
-          <div className="px-4 py-2.5 truncate text-[#6b7280]">{row.token}</div>
-        </div>
-      ))}
-
-      {/* Centered CTA overlay */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div className="flex items-center gap-3 bg-white rounded-full px-5 py-3 shadow-2xl">
-          <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-sm">→</div>
-          <span className="text-[#111215] font-medium text-sm">Enable Auth</span>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 export default function VectorDBSection() {
   return (
     <section
       id="auth"
-      className="relative py-32 border-b border-white/[0.06] overflow-hidden bg-black"
+      className="relative py-28 overflow-hidden border-b"
+      style={{ background: "#0C0D0D", borderColor: "rgba(255,255,255,0.06)" }}
     >
       <div className="max-w-[1400px] mx-auto px-8 lg:pl-[260px]">
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.55 }}
-        >
+        <motion.div initial={{ opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
           <DotIcon />
           <h2
-            className="font-normal text-[#797D86] max-w-4xl"
-            style={{ fontSize: "clamp(32px,3.5vw,48px)", lineHeight: 1.17, letterSpacing: "-1.92px" }}
+            style={{
+              fontSize: "clamp(28px, 3.2vw, 48px)",
+              fontWeight: 400,
+              lineHeight: 1.17,
+              letterSpacing: "-1.92px",
+              color: "#94979E",
+              maxWidth: 820,
+            }}
           >
-            <span className="text-white">Authentication included, free.</span>{" "}
-            Simplify your application with user authentication and API key management built in to the platform.
+            <span style={{ color: "#F9FAFA" }}>Authentication included, free.</span>{" "}
+            Simplify your application with user authentication and management built in to the platform.
           </h2>
         </motion.div>
 
+        {/* Table mockup */}
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
+          initial={{ opacity: 0, y: 28 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.55, delay: 0.1 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="mt-14 relative rounded-2xl overflow-hidden"
+          style={{ border: "1px solid rgba(255,255,255,0.07)", background: "#0d0e0f" }}
         >
-          <AuthTableMockup />
+          {/* Header row */}
+          <div
+            className="grid border-b"
+            style={{ gridTemplateColumns: "1.2fr 1fr 1fr 1.4fr 1.6fr", borderColor: "rgba(255,255,255,0.06)", fontFamily: "var(--font-mono), monospace", fontSize: 11, color: "#94979E" }}
+          >
+            {["id", "name", "slug", "email", "access_token"].map((col) => (
+              <div key={col} className="px-4 py-3 border-r last:border-0" style={{ borderColor: "rgba(255,255,255,0.04)" }}>{col}</div>
+            ))}
+          </div>
+
+          {/* Data rows */}
+          {ROWS.map((row, i) => (
+            <div
+              key={row.id}
+              className="grid border-b last:border-0 transition-colors"
+              style={{
+                gridTemplateColumns: "1.2fr 1fr 1fr 1.4fr 1.6fr",
+                borderColor: "rgba(255,255,255,0.04)",
+                fontFamily: "var(--font-mono), monospace",
+                fontSize: 11,
+                color: i % 2 === 0 ? "#94979E" : "#7d8087",
+              }}
+            >
+              <div className="px-4 py-2.5 border-r truncate" style={{ borderColor: "rgba(255,255,255,0.03)" }}>{row.id}</div>
+              <div className="px-4 py-2.5 border-r truncate" style={{ borderColor: "rgba(255,255,255,0.03)", color: "rgba(249,250,250,0.6)" }}>{row.name}</div>
+              <div className="px-4 py-2.5 border-r truncate" style={{ borderColor: "rgba(255,255,255,0.03)" }}>{row.slug}</div>
+              <div className="px-4 py-2.5 border-r truncate" style={{ borderColor: "rgba(255,255,255,0.03)" }}>{row.email}</div>
+              <div className="px-4 py-2.5 truncate">{row.token}</div>
+            </div>
+          ))}
+
+          {/* "Enable Auth" CTA overlay — centered */}
+          <div className="absolute inset-0 flex items-center justify-center" style={{ pointerEvents: "none" }}>
+            <div
+              className="flex items-center gap-3 px-5 py-3 rounded-full shadow-2xl"
+              style={{ background: "#F9FAFA", boxShadow: "0 8px 40px rgba(0,0,0,0.6)" }}
+            >
+              <div className="w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-medium" style={{ background: "#3b82f6" }}>
+                →
+              </div>
+              <span className="text-[15px] font-medium" style={{ color: "#0C0D0D" }}>Enable Auth</span>
+            </div>
+          </div>
         </motion.div>
       </div>
     </section>

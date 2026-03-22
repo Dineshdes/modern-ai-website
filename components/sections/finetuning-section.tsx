@@ -4,143 +4,129 @@ import { motion } from "framer-motion";
 
 function DotIcon() {
   return (
-    <svg width="32" height="32" viewBox="0 0 32 32" fill="none" className="mb-8 opacity-60">
-      {[0,1,2,3,4].map((row) =>
-        [0,1,2,3,4].map((col) => {
-          if (col > row) return null;
-          const opacity = 0.15 + ((row + col) / 8) * 0.85;
-          return (
-            <circle key={`${row}-${col}`} cx={col*6+3} cy={row*6+3} r={1.5} fill="white" fillOpacity={opacity} />
-          );
+    <svg width="40" height="32" viewBox="0 0 40 32" fill="none" className="mb-10">
+      {[5,4,3,2,1].map((cols, row) =>
+        Array.from({ length: cols }, (_, col) => {
+          const x = col * 7 + (5 - cols) * 3.5 + 3;
+          const y = row * 6 + 3;
+          const opacity = 0.2 + ((row + col) / (5 + cols)) * 0.8;
+          return <circle key={`${row}-${col}`} cx={x} cy={y} r={1.6} fill="#94979E" fillOpacity={opacity} />;
         })
       )}
     </svg>
   );
 }
 
-function BranchingVisualization() {
+function BranchVisual() {
+  const COLS = 22;
+  const ROWS = 3;
   return (
     <div
-      className="w-full rounded-2xl overflow-hidden border border-white/[0.07] mt-14 relative"
-      style={{ background: "#0a0a0a", minHeight: 300 }}
+      className="w-full rounded-2xl overflow-hidden mt-14"
+      style={{ background: "#131415", border: "1px solid rgba(255,255,255,0.06)", minHeight: 280 }}
     >
-      {/* Timeline grid */}
-      <div className="relative">
-        {/* Grid columns */}
-        <svg viewBox="0 0 1000 280" className="w-full" style={{ height: 280 }}>
-          {/* Vertical grid lines */}
-          {Array.from({ length: 20 }, (_, i) => (
-            <line key={i} x1={i * 52} y1={0} x2={i * 52} y2={280} stroke="#ffffff08" strokeWidth={1} />
+      {/* Branch grid */}
+      <div className="relative p-6">
+        <svg viewBox="0 0 900 220" style={{ width: "100%", height: 220 }}>
+          {/* Grid lines vertical */}
+          {Array.from({ length: COLS }, (_, i) => (
+            <line key={i} x1={i * (900 / COLS)} y1={0} x2={i * (900 / COLS)} y2={220} stroke="rgba(255,255,255,0.04)" strokeWidth={1} />
           ))}
-          {/* Horizontal row lines */}
-          {[70, 140, 210].map((y) => (
-            <line key={y} x1={0} y1={y} x2={1000} y2={y} stroke="#ffffff06" strokeWidth={1} />
-          ))}
-
-          {/* Main branch line (horizontal) */}
-          <line x1={40} y1={70} x2={960} y2={70} stroke="#ffffff15" strokeWidth={1} strokeDasharray="3 5" />
-          <line x1={40} y1={140} x2={960} y2={140} stroke="#ffffff15" strokeWidth={1} strokeDasharray="3 5" />
-          <line x1={40} y1={210} x2={500} y2={210} stroke="#ffffff15" strokeWidth={1} strokeDasharray="3 5" />
-
-          {/* Tick markers on main line */}
-          {Array.from({ length: 14 }, (_, i) => (
-            <line key={i} x1={52 * (i + 1)} y1={65} x2={52 * (i + 1)} y2={75} stroke="#ffffff20" strokeWidth={1} />
+          {/* Grid lines horizontal */}
+          {[60, 120, 180].map((y) => (
+            <line key={y} x1={0} y1={y} x2={900} y2={y} stroke="rgba(255,255,255,0.04)" strokeWidth={1} />
           ))}
 
-          {/* Branch indicator dots */}
-          {[200, 350, 520].map((x) => (
-            <circle key={x} cx={x} cy={70} r={4} fill="none" stroke="#00E599" strokeWidth={1.5} />
-          ))}
-          {[280, 420].map((x) => (
-            <circle key={x} cx={x} cy={140} r={4} fill="none" stroke="#ffffff30" strokeWidth={1} />
+          {/* Main timeline line */}
+          <line x1={30} y1={60} x2={870} y2={60} stroke="rgba(255,255,255,0.12)" strokeWidth={1} strokeDasharray="3 5" />
+          {/* Secondary lines */}
+          <line x1={30} y1={120} x2={600} y2={120} stroke="rgba(255,255,255,0.07)" strokeWidth={1} strokeDasharray="3 5" />
+          <line x1={30} y1={180} x2={380} y2={180} stroke="rgba(255,255,255,0.05)" strokeWidth={1} strokeDasharray="3 5" />
+
+          {/* Tick marks on main line */}
+          {Array.from({ length: 18 }, (_, i) => (
+            <line key={i} x1={50 * (i + 1)} y1={55} x2={50 * (i + 1)} y2={65} stroke="rgba(255,255,255,0.15)" strokeWidth={1} />
           ))}
 
-          {/* "production" pill badge */}
-          <rect x={80} y={55} width={90} height={28} rx={14} fill="#111215" stroke="#ffffff20" strokeWidth={1} />
-          <text x={125} y={74} textAnchor="middle" fill="#ffffff80" fontSize="11" fontFamily="monospace">
+          {/* Branch circles */}
+          {[220, 380, 540].map((x) => (
+            <circle key={x} cx={x} cy={60} r={5} fill="none" stroke="#34D59A" strokeWidth={1.5} />
+          ))}
+          {[280, 460].map((x) => (
+            <circle key={x} cx={x} cy={120} r={4} fill="none" stroke="rgba(255,255,255,0.25)" strokeWidth={1} />
+          ))}
+
+          {/* "production" pill */}
+          <rect x={60} y={44} width={98} height={30} rx={15} fill="#1a1b1e" stroke="rgba(255,255,255,0.18)" strokeWidth={1} />
+          <text x={110} y={64} textAnchor="middle" fill="rgba(249,250,250,0.7)" fontSize="11" fontFamily="monospace">
             ≡ production
           </text>
 
-          {/* Active checkpoint line */}
-          <line x1={520} y1={0} x2={520} y2={280} stroke="#00E599" strokeWidth={1} strokeOpacity={0.6} />
-          <circle cx={520} cy={70} r={5} fill="#00E599" fillOpacity={0.8} />
+          {/* Active line */}
+          <line x1={540} y1={0} x2={540} y2={220} stroke="#34D59A" strokeWidth={1} strokeOpacity={0.5} />
+          <circle cx={540} cy={60} r={6} fill="#34D59A" fillOpacity={0.85} />
         </svg>
       </div>
 
-      {/* Timestamps row */}
-      <div className="border-t border-white/[0.06] px-6 py-3 grid grid-cols-4 text-[10px] font-mono text-[#797D86]">
-        <span>12:00 <br /><span className="text-white/30">main</span></span>
-        <span>12:24 <br /><span className="text-white/30">schema-v1</span></span>
-        <span className="text-[#00E599]">13:48 <br /><span>checkpoint</span></span>
-        <span>14:30 <br /><span className="text-white/30">dev-branch</span></span>
+      {/* Timestamps */}
+      <div className="border-t grid grid-cols-4 px-6 py-3" style={{ borderColor: "rgba(255,255,255,0.05)", fontFamily: "var(--font-mono), monospace", fontSize: 10, color: "#94979E" }}>
+        <span>12:00 <br /><span style={{ color: "rgba(255,255,255,0.3)" }}>main</span></span>
+        <span>12:24 <br /><span style={{ color: "rgba(255,255,255,0.3)" }}>schema-v1</span></span>
+        <span style={{ color: "#34D59A" }}>13:48 <br /><span>checkpoint</span></span>
+        <span>15:00 <br /><span style={{ color: "rgba(255,255,255,0.3)" }}>dev-branch</span></span>
       </div>
     </div>
   );
 }
 
-const features = [
-  {
-    icon: "⊞",
-    title: "Copy-on-write",
-    desc: "Create editable copies of models instantly with git-like branching, saving space and time.",
-  },
-  {
-    icon: "🛡",
-    title: "Anonymization",
-    desc: "Mask sensitive data with realistic fake values, enabling safe testing and sharing of datasets.",
-  },
-  {
-    icon: "⏱",
-    title: "Ephemerality",
-    desc: "Obsolete branches delete themselves automatically after work is complete.",
-  },
+const FEATURES = [
+  { icon: "⊞", title: "Copy-on-write", desc: "Create editable copies of models instantly with git-like versioning, saving space and time." },
+  { icon: "🛡", title: "Anonymization", desc: "Mask sensitive data with realistic fake values, enabling safe testing and sharing of datasets." },
+  { icon: "⏱", title: "Ephemerality", desc: "Obsolete model versions delete themselves automatically after work is complete." },
 ];
 
 export default function FineTuningSection() {
   return (
     <section
       id="branching"
-      className="relative py-32 border-b border-white/[0.06] overflow-hidden bg-black"
+      className="relative py-28 overflow-hidden border-b"
+      style={{ background: "#0C0D0D", borderColor: "rgba(255,255,255,0.06)" }}
     >
       <div className="max-w-[1400px] mx-auto px-8 lg:pl-[260px]">
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.55 }}
-        >
+        <motion.div initial={{ opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
           <DotIcon />
           <h2
-            className="font-normal text-[#797D86] max-w-4xl"
-            style={{ fontSize: "clamp(32px,3.5vw,48px)", lineHeight: 1.17, letterSpacing: "-1.92px" }}
+            style={{
+              fontSize: "clamp(28px, 3.2vw, 48px)",
+              fontWeight: 400,
+              lineHeight: 1.17,
+              letterSpacing: "-1.92px",
+              color: "#94979E",
+              maxWidth: 820,
+            }}
           >
-            <span className="text-white">Instant branching.</span>{" "}
+            <span style={{ color: "#F9FAFA" }}>Instant branching.</span>{" "}
             Develop and test with efficient copies of any model to eliminate surprises in production deploys.
           </h2>
         </motion.div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.55, delay: 0.1 }}
-        >
-          <BranchingVisualization />
+        <motion.div initial={{ opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.1 }}>
+          <BranchVisual />
         </motion.div>
 
-        {/* 3-col feature cards */}
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
+          initial={{ opacity: 0, y: 28 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.55, delay: 0.18 }}
-          className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6 border-t border-white/[0.06] pt-8"
+          transition={{ duration: 0.6, delay: 0.18 }}
+          className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-8 pt-8 border-t"
+          style={{ borderColor: "rgba(255,255,255,0.06)" }}
         >
-          {features.map((f) => (
+          {FEATURES.map((f) => (
             <div key={f.title}>
-              <div className="text-[#00E599] text-lg mb-3">{f.icon}</div>
-              <h3 className="text-[15px] font-medium text-white mb-2">{f.title}</h3>
-              <p className="text-sm text-[#797D86] leading-relaxed">{f.desc}</p>
+              <div className="text-[18px] mb-3" style={{ color: "#34D59A" }}>{f.icon}</div>
+              <h3 className="text-[15px] font-medium mb-2" style={{ color: "#F9FAFA" }}>{f.title}</h3>
+              <p className="text-sm leading-relaxed" style={{ color: "#94979E" }}>{f.desc}</p>
             </div>
           ))}
         </motion.div>
