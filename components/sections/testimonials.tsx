@@ -1,99 +1,98 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { SectionHeading } from "@/components/shared/section-heading";
+
+const EASE = "easeOut" as const;
 
 const companies = ["Stripe", "Vercel", "Linear", "Notion", "Figma", "Shopify"];
 
 const testimonials = [
   {
     quote:
-      "Synapse AI cut our model deployment time from two weeks to fifteen minutes. The API is dead-simple and the latency is genuinely impressive at scale. We run hundreds of millions of inferences a month on it.",
+      "Synapse cut our inference costs by 60% the week we switched. The autoscaling alone paid for itself.",
     name: "Sarah Chen",
-    title: "Staff Engineer",
-    company: "Stripe",
+    role: "Staff Eng @ Stripe",
     initials: "SC",
   },
   {
     quote:
-      "We evaluated every inference provider on the market. Synapse won on latency, price, and — most importantly — it just works. The observability dashboard alone has saved us hours of debugging time every week.",
-    name: "Marcus Reid",
-    title: "Head of AI Platform",
-    company: "Linear",
-    initials: "MR",
+      "Best developer experience I've had with AI infra. Deployed in production in under an hour.",
+    name: "Marcus A.",
+    role: "CTO @ Launchpad",
+    initials: "MA",
   },
   {
     quote:
-      "The fine-tuning pipeline is exceptional. We trained a custom Mistral variant on our internal codebase and deployed it before lunch the same day. Our VPC, our weights — no compromises on data security.",
-    name: "Yuki Tanaka",
-    title: "Principal ML Engineer",
-    company: "Notion",
-    initials: "YT",
+      "The branching feature changed how we do ML experiments. No more duplicating environments.",
+    name: "Priya N.",
+    role: "ML Lead @ Notion",
+    initials: "PN",
   },
 ];
 
-export function Testimonials() {
+export default function Testimonials() {
   return (
-    <section className="relative overflow-hidden px-6 py-24 md:py-32">
-      <div className="max-w-[1216px] mx-auto">
-        <SectionHeading
-          badge="Social Proof"
-          heading={"Trusted by engineering teams\nat world-class companies."}
-          centered
-        />
+    <section className="bg-black py-24 md:py-32">
+      <div className="max-w-6xl mx-auto px-6">
+        {/* Heading */}
+        <h2
+          className="text-white tracking-[-0.02em] text-center font-normal"
+          style={{ fontSize: "clamp(36px,4vw,42px)" }}
+        >
+          Loved by engineering teams.
+        </h2>
 
         {/* Logo bar */}
-        <motion.div
-          initial={{ opacity: 0, y: 16 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-          className="mt-12 flex flex-wrap gap-8 justify-center items-center"
-        >
-          {companies.map((company) => (
-            <span
-              key={company}
-              className="text-lg font-bold text-white/20 hover:text-white/50 transition-colors cursor-default"
-            >
-              {company}
-            </span>
-          ))}
-        </motion.div>
+        <div className="mt-10 mb-8">
+          <div className="h-px bg-white/[0.06]" />
+          <div className="flex flex-wrap items-center justify-center mt-8 mb-8">
+            {companies.map((company) => (
+              <span
+                key={company}
+                className="text-sm font-semibold text-white/20 hover:text-white/50 transition-colors px-6 py-2 cursor-default"
+              >
+                {company}
+              </span>
+            ))}
+          </div>
+        </div>
 
-        {/* Testimonial cards */}
-        <div className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {testimonials.map((t, i) => (
             <motion.div
               key={t.name}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 16 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: i * 0.1 }}
-              className="bg-[#111111] border border-white/[0.06] rounded-2xl p-8 flex flex-col gap-6 hover:border-white/[0.12] transition-all duration-300"
-              style={{
-                ["--hover-shadow" as string]: "0 0 40px rgba(0,229,153,0.08)",
-              }}
+              transition={{ duration: 0.5, delay: i * 0.08, ease: EASE }}
+              className="bg-[#18191B] border border-white/[0.06] rounded-2xl p-7 flex flex-col hover:border-white/[0.12] transition-colors duration-300"
             >
-              {/* Opening quote mark */}
-              <span className="text-[#00E599]/30 text-6xl font-serif leading-none select-none">
+              {/* Decorative quote mark */}
+              <span
+                className="leading-none mb-4 select-none"
+                style={{
+                  fontSize: "3rem",
+                  fontFamily: "Georgia, serif",
+                  color: "rgba(0,229,153,0.2)",
+                }}
+              >
                 &ldquo;
               </span>
 
               {/* Quote */}
-              <p className="text-[#A1A1AA] text-base leading-relaxed flex-1 -mt-4">
+              <p className="text-[#94979E] text-[15px] leading-relaxed flex-1">
                 {t.quote}
               </p>
 
               {/* Attribution */}
-              <div className="flex items-center gap-3">
-                <div className="w-9 h-9 rounded-full bg-[#00E599]/20 text-[#00E599] flex items-center justify-center text-xs font-bold flex-shrink-0">
+              <div className="flex items-center gap-3 mt-6">
+                <div className="size-8 rounded-full bg-[#00E599]/15 text-[#00E599] text-xs flex items-center justify-center font-medium shrink-0">
                   {t.initials}
                 </div>
                 <div>
-                  <p className="text-white text-sm font-semibold">{t.name}</p>
-                  <p className="text-[#71717A] text-xs">
-                    {t.title}, {t.company}
-                  </p>
+                  <p className="text-white text-sm font-medium">{t.name}</p>
+                  <p className="text-[#94979E] text-xs">{t.role}</p>
                 </div>
               </div>
             </motion.div>

@@ -7,25 +7,18 @@ export default {
         neon: {
           green: "#00E599",
           "green-dark": "#34D59A",
-          bg: "#0A0A0A",
-          surface: "#111111",
-          elevated: "#161616",
+          bg: "#000000",
+          surface: "#18191B",
+          elevated: "#111215",
+          mint: "#E4F1EB",
+          "mint-dark": "#CAE6D9",
+          forest: "#2C6D4C",
+          muted: "#94979E",
         },
       },
       fontFamily: {
         sans: ["Inter", "system-ui", "sans-serif"],
-        mono: ['"JetBrains Mono"', '"IBM Plex Mono"', "monospace"],
-      },
-      animation: {
-        "fade-in": "fadeIn 0.5s ease-out forwards",
-        "slide-up": "slideUp 0.5s ease-out forwards",
-      },
-      keyframes: {
-        fadeIn: { "0%": { opacity: "0" }, "100%": { opacity: "1" } },
-        slideUp: {
-          "0%": { opacity: "0", transform: "translateY(20px)" },
-          "100%": { opacity: "1", transform: "translateY(0)" },
-        },
+        mono: ['"JetBrains Mono"', "monospace"],
       },
     },
   },
