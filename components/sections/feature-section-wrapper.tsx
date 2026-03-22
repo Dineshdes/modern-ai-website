@@ -27,7 +27,9 @@ export default function FeatureSectionWrapper({
       const { top, bottom } = el.getBoundingClientRect();
       // Show only when wrapper is genuinely in the viewport,
       // with a 120px bottom margin so it disappears before the next section.
-      const visible = top < window.innerHeight * 0.85 && bottom > 120;
+      // Hide nav well before the wrapper ends — use 40% of viewport height
+      // so the sidebar disappears before the next (AgentPlatform) section appears.
+      const visible = top < window.innerHeight * 0.85 && bottom > window.innerHeight * 0.4;
       setNavVisible(visible);
     };
 
