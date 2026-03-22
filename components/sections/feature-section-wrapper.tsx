@@ -81,14 +81,6 @@ export default function FeatureSectionWrapper({
             left: "max(24px, calc(50vw - 740px))",
             top: 0,
             paddingTop: 40,
-            ...(isLight ? {
-              background: "rgba(255,255,255,0.65)",
-              backdropFilter: "blur(10px)",
-              WebkitBackdropFilter: "blur(10px)",
-              borderRadius: 10,
-              padding: "14px 16px",
-              paddingTop: 40,
-            } : {}),
           }}
         >
           {SECTIONS.map(({ id, label }) => (
@@ -102,20 +94,14 @@ export default function FeatureSectionWrapper({
                 style={{
                   width: 6,
                   height: 6,
-                  background: active === id
-                    ? (isLight ? "#2C4A3E" : "#34D59A")
-                    : "transparent",
-                  border: active === id
-                    ? "none"
-                    : `1px solid ${isLight ? "rgba(0,0,0,0.25)" : "rgba(255,255,255,0.2)"}`,
+                  background: active === id ? "#34D59A" : "transparent",
+                  border: active === id ? "none" : "1px solid rgba(255,255,255,0.2)",
                 }}
               />
               <span
                 className="text-[14px] leading-tight transition-colors"
                 style={{
-                  color: active === id
-                    ? (isLight ? "#111215" : "#F9FAFA")
-                    : (isLight ? "rgba(0,0,0,0.45)" : "#797D86"),
+                  color: active === id ? "#F9FAFA" : "#797D86",
                 }}
               >
                 {label}
