@@ -1270,47 +1270,61 @@ function BottomCTA() {
   return (
     <section ref={sec} className="relative overflow-hidden" style={{ background: "#0C0D0D" }}>
 
-      {/* ── Halftone dot texture background ── */}
+      {/* ── Two-colour halftone: orange top · teal bottom ── */}
       <svg aria-hidden className="absolute inset-0 w-full h-full pointer-events-none"
-        preserveAspectRatio="xMidYMid slice" viewBox="0 0 1440 520" xmlns="http://www.w3.org/2000/svg">
+        preserveAspectRatio="xMidYMid slice" viewBox="0 0 1440 560" xmlns="http://www.w3.org/2000/svg">
         <defs>
-          {/* Teal dot grid */}
-          <pattern id="cta-dots" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
-            <circle cx="5" cy="5" r="1.2" fill="#34D59A" />
+          {/* Orange dot grid — top */}
+          <pattern id="cta-dt" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
+            <circle cx="5" cy="5" r="1.3" fill="#C8702A" />
           </pattern>
-          {/* Radial fade mask — dots visible at edges, hidden at centre */}
-          <radialGradient id="cta-rmask" cx="50%" cy="50%" r="70%" gradientUnits="userSpaceOnUse"
-            fx="720" fy="260">
-            <stop offset="0%"   stopColor="white" stopOpacity="0"   />
-            <stop offset="45%"  stopColor="white" stopOpacity="0"   />
-            <stop offset="75%"  stopColor="white" stopOpacity="0.6" />
-            <stop offset="100%" stopColor="white" stopOpacity="1"   />
-          </radialGradient>
-          <mask id="cta-dotsm">
-            <rect width="1440" height="520" fill="url(#cta-rmask)" />
+          {/* Teal dot grid — bottom */}
+          <pattern id="cta-db" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
+            <circle cx="5" cy="5" r="1.3" fill="#34D59A" />
+          </pattern>
+
+          {/* Top mask: fully visible at top-edge, fades to transparent at ~48% height */}
+          <linearGradient id="cta-tm" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%"   stopColor="white" stopOpacity="1"   />
+            <stop offset="38%"  stopColor="white" stopOpacity="0.3" />
+            <stop offset="52%"  stopColor="white" stopOpacity="0"   />
+            <stop offset="100%" stopColor="white" stopOpacity="0"   />
+          </linearGradient>
+          <mask id="cta-tmsk">
+            <rect width="1440" height="560" fill="url(#cta-tm)" />
           </mask>
-          {/* Left-edge teal glow */}
-          <radialGradient id="cta-gl" cx="0%" cy="100%" r="60%">
-            <stop offset="0%"  stopColor="#34D59A" stopOpacity="0.18" />
-            <stop offset="100%" stopColor="#34D59A" stopOpacity="0" />
-          </radialGradient>
-          {/* Right-edge subtle warm glow */}
-          <radialGradient id="cta-gr" cx="100%" cy="0%" r="50%">
-            <stop offset="0%"  stopColor="#F59D4A" stopOpacity="0.09" />
-            <stop offset="100%" stopColor="#F59D4A" stopOpacity="0" />
-          </radialGradient>
+
+          {/* Bottom mask: fully visible at bottom-edge, fades to transparent at ~48% height */}
+          <linearGradient id="cta-bm" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%"   stopColor="white" stopOpacity="0"   />
+            <stop offset="48%"  stopColor="white" stopOpacity="0"   />
+            <stop offset="62%"  stopColor="white" stopOpacity="0.3" />
+            <stop offset="100%" stopColor="white" stopOpacity="1"   />
+          </linearGradient>
+          <mask id="cta-bmsk">
+            <rect width="1440" height="560" fill="url(#cta-bm)" />
+          </mask>
+
+          {/* Orange colour wash — top */}
+          <linearGradient id="cta-owash" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%"  stopColor="#C8702A" stopOpacity="0.12" />
+            <stop offset="40%" stopColor="#C8702A" stopOpacity="0"    />
+          </linearGradient>
+          {/* Teal colour wash — bottom */}
+          <linearGradient id="cta-twash" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="60%"  stopColor="#34D59A" stopOpacity="0"    />
+            <stop offset="100%" stopColor="#34D59A" stopOpacity="0.10" />
+          </linearGradient>
         </defs>
 
-        {/* Dot field with radial mask — dense at edges, fades to nothing at centre */}
-        <rect width="1440" height="520" fill="url(#cta-dots)" mask="url(#cta-dotsm)" opacity="0.45" />
-        {/* Colour glows */}
-        <rect width="1440" height="520" fill="url(#cta-gl)" />
-        <rect width="1440" height="520" fill="url(#cta-gr)" />
+        {/* Orange dots — top half, opacity 0.32 */}
+        <rect width="1440" height="560" fill="url(#cta-dt)" mask="url(#cta-tmsk)" opacity="0.32" />
+        {/* Teal dots — bottom half, opacity 0.36 */}
+        <rect width="1440" height="560" fill="url(#cta-db)" mask="url(#cta-bmsk)" opacity="0.36" />
+        {/* Colour wash overlays */}
+        <rect width="1440" height="560" fill="url(#cta-owash)" />
+        <rect width="1440" height="560" fill="url(#cta-twash)" />
       </svg>
-
-      {/* Centre ambient */}
-      <div className="absolute inset-0 pointer-events-none"
-        style={{ background: "radial-gradient(ellipse 55% 65% at 50% 50%, rgba(52,213,154,0.055) 0%, transparent 70%)" }} />
 
       <div className="relative z-10 max-w-[620px] mx-auto px-8 text-center py-36">
         <div className="flex items-center justify-center gap-2 mb-8">
