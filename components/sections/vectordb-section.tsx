@@ -1,125 +1,124 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { Search, Layers, Settings } from "lucide-react";
 
-const results = [
+function DotPattern({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      className={`absolute pointer-events-none opacity-40 ${className}`}
+      width="120"
+      height="120"
+      viewBox="0 0 120 120"
+    >
+      {Array.from({ length: 8 }, (_, row) =>
+        Array.from({ length: 8 }, (_, col) => (
+          <circle
+            key={`${row}-${col}`}
+            cx={col * 16 + 8}
+            cy={row * 16 + 8}
+            r={1.5}
+            fill="white"
+            opacity={0.3}
+          />
+        ))
+      )}
+    </svg>
+  );
+}
+
+const cards = [
   {
-    score: "0.97",
-    text: "Transformer architectures leverage self-attention mechanisms to process sequences...",
+    icon: <Search size={20} className="text-[#00E599] mb-4" />,
+    title: "HNSW indexing",
+    desc: "Approximate nearest neighbor search with 99% recall at millisecond latency.",
   },
   {
-    score: "0.94",
-    text: "Large language models are trained on diverse text corpora using next-token prediction...",
+    icon: <Layers size={20} className="text-[#00E599] mb-4" />,
+    title: "Hybrid search",
+    desc: "Combine vector similarity with BM25 keyword search for best results.",
   },
   {
-    score: "0.91",
-    text: "Embedding models convert text into dense vector representations that capture semantic...",
+    icon: <Settings size={20} className="text-[#00E599] mb-4" />,
+    title: "Auto-dimensionality",
+    desc: "Works with any embedding model. 768, 1536, or 3072 dimensions.",
   },
+];
+
+const searchResults = [
+  { text: "How to deploy a transformer model in production", score: 0.97 },
+  { text: "Best practices for LLM fine-tuning on custom data", score: 0.94 },
+  { text: "Optimizing inference latency for real-time applications", score: 0.91 },
 ];
 
 export default function VectorDBSection() {
   return (
     <section
       id="vectordb"
-      className="relative py-32 border-b border-white/[0.06] bg-black"
+      className="relative py-24 border-b border-white/[0.06]"
     >
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
-          {/* Text */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-          >
-            <p className="text-xs font-medium text-[#00E599] uppercase tracking-widest mb-6">
-              Vector DB
-            </p>
-            <h2 className="text-[48px] leading-[54px] font-normal tracking-[-0.04em] text-[#797D86]">
-              <span className="text-white">Semantic search.</span>{" "}
-              Sub-50ms queries across billions of embeddings.
-            </h2>
-            <p className="text-[#797D86] text-lg leading-relaxed mt-6 max-w-lg">
-              HNSW-indexed vector storage built in. Hybrid BM25 + vector search.
-              Query at millisecond latency with no infrastructure to manage.
-            </p>
-            <ul className="mt-6 space-y-3">
-              {["HNSW indexing", "Hybrid search", "Auto-dimensionality"].map(
-                (item) => (
-                  <li key={item} className="flex items-center">
-                    <span className="size-1.5 rounded-full bg-[#34D59A] mr-3 flex-shrink-0" />
-                    <span className="text-[15px] text-[#797D86]">{item}</span>
-                  </li>
-                )
-              )}
-            </ul>
-            <a
-              href="#"
-              className="text-[15px] text-white hover:text-[#00E599] transition-colors mt-8 inline-flex items-center gap-1.5"
-            >
-              Try vector search →
-            </a>
-          </motion.div>
+      <DotPattern className="top-0 right-0" />
 
-          {/* Visual */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-          >
-            <div className="bg-[#18191B] border border-white/[0.06] rounded-2xl overflow-hidden">
-              {/* Query line */}
-              <div className="bg-[#0D0D0D] rounded-xl m-4 p-5 font-mono text-sm">
-                <p className="text-[#797D86] text-xs mb-3">QUERY</p>
-                <div>
-                  <span className="text-[#797D86]">{"const results = "}</span>
-                  <span className="text-[#00E599]">{"await"}</span>
-                  <span className="text-white/80">
-                    {" synapse.vectors."}
-                  </span>
-                  <span className="text-[#00E599]">{"search"}</span>
-                  <span className="text-[#797D86]">{"({"}</span>
-                </div>
-                <div>
-                  <span className="text-[#797D86]">{"  query: "}</span>
-                  <span className="text-[#34D59A]">
-                    {'"how do transformers work"'}
-                  </span>
-                  <span className="text-[#797D86]">{","}</span>
-                </div>
-                <div>
-                  <span className="text-[#797D86]">{"  topK: "}</span>
-                  <span className="text-white/80">{"3"}</span>
-                </div>
-                <div>
-                  <span className="text-[#797D86]">{"});"}</span>
-                </div>
-              </div>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5 }}
+      >
+        <h2 className="text-[48px] leading-[54px] font-normal tracking-[-0.04em] text-center text-[#797D86] max-w-4xl mx-auto">
+          <span className="text-white">Semantic search.</span> Sub-50ms queries
+          across billions of embeddings, at any scale.
+        </h2>
+      </motion.div>
 
-              {/* Results */}
-              <div className="px-4 pb-4 space-y-2">
-                <p className="text-xs text-[#797D86] font-mono mb-3">
-                  RESULTS ({results.length})
-                </p>
-                {results.map((r, i) => (
-                  <div
-                    key={i}
-                    className="bg-[#0D0D0D] border border-white/[0.04] rounded-xl p-4 flex items-start gap-3"
-                  >
-                    <span className="text-[#00E599] font-mono text-xs pt-0.5 flex-shrink-0">
-                      {r.score}
-                    </span>
-                    <p className="text-xs text-[#797D86] leading-relaxed line-clamp-2">
-                      {r.text}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </motion.div>
+      {/* 3-col cards */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, delay: 0.1 }}
+        className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6"
+      >
+        {cards.map((card) => (
+          <div key={card.title}>
+            {card.icon}
+            <h3 className="text-base font-medium text-white">{card.title}</h3>
+            <p className="text-sm text-[#797D86] mt-2">{card.desc}</p>
+          </div>
+        ))}
+      </motion.div>
+
+      {/* Search results card */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        className="bg-[#111215] border border-white/[0.06] rounded-2xl p-6 mt-10"
+      >
+        <div className="flex items-center gap-2 mb-4">
+          <Search size={14} className="text-[#797D86]" />
+          <span className="font-mono text-sm text-[#797D86]">
+            &quot;LLM deployment best practices&quot;
+          </span>
+          <span className="ml-auto text-xs text-[#797D86] font-mono">
+            42ms
+          </span>
         </div>
-      </div>
+        <div className="flex flex-col gap-3">
+          {searchResults.map((r) => (
+            <div
+              key={r.text}
+              className="flex items-center justify-between border-b border-white/[0.04] pb-3 last:border-0 last:pb-0"
+            >
+              <span className="text-sm text-white/70">{r.text}</span>
+              <span className="text-xs font-mono text-[#00E599] ml-4 shrink-0">
+                {r.score}
+              </span>
+            </div>
+          ))}
+        </div>
+      </motion.div>
     </section>
   );
 }

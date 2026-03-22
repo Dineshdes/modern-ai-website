@@ -1,138 +1,135 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { FileText, BarChart2, TrendingUp } from "lucide-react";
+
+function DotPattern({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      className={`absolute pointer-events-none opacity-40 ${className}`}
+      width="120"
+      height="120"
+      viewBox="0 0 120 120"
+    >
+      {Array.from({ length: 8 }, (_, row) =>
+        Array.from({ length: 8 }, (_, col) => (
+          <circle
+            key={`${row}-${col}`}
+            cx={col * 16 + 8}
+            cy={row * 16 + 8}
+            r={1.5}
+            fill="white"
+            opacity={0.3}
+          />
+        ))
+      )}
+    </svg>
+  );
+}
+
+const cards = [
+  {
+    icon: <FileText size={20} className="text-[#00E599] mb-4" />,
+    title: "Request logs",
+    desc: "Every inference logged with model, tokens, latency, cost, and user ID.",
+  },
+  {
+    icon: <BarChart2 size={20} className="text-[#00E599] mb-4" />,
+    title: "Latency histograms",
+    desc: "P50, P95, P99 latency distributions updated in real time.",
+  },
+  {
+    icon: <TrendingUp size={20} className="text-[#00E599] mb-4" />,
+    title: "Cost analytics",
+    desc: "Per-model, per-user cost breakdowns. Set spend alerts and budgets.",
+  },
+];
 
 const metrics = [
-  { value: "12,847", label: "req/min", badge: "↑8%", badgeColor: "text-[#34D59A]" },
-  { value: "48ms", label: "p99 latency", badge: "✓", badgeColor: "text-[#34D59A]" },
-  { value: "0.02%", label: "error rate", badge: "✓", badgeColor: "text-[#34D59A]" },
-  { value: "$0.0012", label: "per 1k tokens", badge: null, badgeColor: "" },
+  {
+    value: "12,847 req/min",
+    badge: "↑8%",
+    badgeColor: "text-[#00E599]",
+    label: "Request rate",
+  },
+  {
+    value: "48ms",
+    badge: "✓ Within SLA",
+    badgeColor: "text-[#00E599]",
+    label: "P99 latency",
+  },
+  {
+    value: "0.02%",
+    badge: "✓ Normal",
+    badgeColor: "text-[#00E599]",
+    label: "Error rate",
+  },
+  {
+    value: "$0.0012",
+    badge: "per 1k tokens",
+    badgeColor: "text-[#797D86]",
+    label: "Avg cost",
+  },
 ];
 
 export default function ObservabilitySection() {
   return (
     <section
       id="observability"
-      className="relative py-32 border-b border-white/[0.06] bg-black"
+      className="relative py-24 border-b border-white/[0.06]"
     >
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
-          {/* Text */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-          >
-            <p className="text-xs font-medium text-[#00E599] uppercase tracking-widest mb-6">
-              Observability
-            </p>
-            <h2 className="text-[48px] leading-[54px] font-normal tracking-[-0.04em] text-[#797D86]">
-              <span className="text-white">Full visibility.</span>{" "}
-              Every inference request logged and measured.
-            </h2>
-            <p className="text-[#797D86] text-lg leading-relaxed mt-6 max-w-lg">
-              Token usage, latency distributions, error rates, and cost
-              breakdowns — streamed in real time. Set alerts in Slack,
-              PagerDuty, or any webhook.
-            </p>
-            <ul className="mt-6 space-y-3">
-              {["Real-time logs", "Latency histograms", "Cost analytics"].map(
-                (item) => (
-                  <li key={item} className="flex items-center">
-                    <span className="size-1.5 rounded-full bg-[#34D59A] mr-3 flex-shrink-0" />
-                    <span className="text-[15px] text-[#797D86]">{item}</span>
-                  </li>
-                )
-              )}
-            </ul>
-            <a
-              href="#"
-              className="text-[15px] text-white hover:text-[#00E599] transition-colors mt-8 inline-flex items-center gap-1.5"
-            >
-              View observability docs →
-            </a>
-          </motion.div>
+      <DotPattern className="top-0 right-0" />
 
-          {/* Visual */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-          >
-            <div className="bg-[#111215] rounded-2xl p-4 border border-white/[0.06]">
-              <p className="text-xs text-[#797D86] font-mono mb-4 px-1">
-                LIVE METRICS
-              </p>
-              <div className="grid grid-cols-2 gap-3">
-                {metrics.map((m, i) => (
-                  <div
-                    key={i}
-                    className="bg-[#18191B] rounded-xl p-4 border border-white/[0.06]"
-                  >
-                    <div className="flex items-start justify-between">
-                      <p className="text-[22px] font-normal text-white tracking-tight">
-                        {m.value}
-                      </p>
-                      {m.badge && (
-                        <span className={`text-xs font-medium ${m.badgeColor}`}>
-                          {m.badge}
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-xs text-[#797D86] mt-1">{m.label}</p>
-                  </div>
-                ))}
-              </div>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5 }}
+      >
+        <h2 className="text-[48px] leading-[54px] font-normal tracking-[-0.04em] text-center text-[#797D86] max-w-4xl mx-auto">
+          <span className="text-white">Full visibility.</span> Every inference
+          request logged and measured in real time.
+        </h2>
+      </motion.div>
 
-              {/* Sparkline */}
-              <div className="mt-4 bg-[#18191B] rounded-xl p-4 border border-white/[0.06]">
-                <p className="text-xs text-[#797D86] mb-3">Request volume</p>
-                <svg
-                  viewBox="0 0 280 50"
-                  className="w-full"
-                  preserveAspectRatio="none"
-                >
-                  <defs>
-                    <linearGradient
-                      id="sparkGrad"
-                      x1="0"
-                      y1="0"
-                      x2="0"
-                      y2="1"
-                    >
-                      <stop
-                        offset="0%"
-                        stopColor="#00E599"
-                        stopOpacity="0.15"
-                      />
-                      <stop
-                        offset="100%"
-                        stopColor="#00E599"
-                        stopOpacity="0"
-                      />
-                    </linearGradient>
-                  </defs>
-                  <polyline
-                    points="0,40 25,35 50,30 75,25 100,30 125,20 150,15 175,20 200,18 225,12 250,10 280,8"
-                    fill="none"
-                    stroke="#00E599"
-                    strokeWidth="1.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                  <polyline
-                    points="0,40 25,35 50,30 75,25 100,30 125,20 150,15 175,20 200,18 225,12 250,10 280,8 280,50 0,50"
-                    fill="url(#sparkGrad)"
-                    stroke="none"
-                  />
-                </svg>
-              </div>
-            </div>
-          </motion.div>
-        </div>
-      </div>
+      {/* 3-col cards */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, delay: 0.1 }}
+        className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6"
+      >
+        {cards.map((card) => (
+          <div key={card.title}>
+            {card.icon}
+            <h3 className="text-base font-medium text-white">{card.title}</h3>
+            <p className="text-sm text-[#797D86] mt-2">{card.desc}</p>
+          </div>
+        ))}
+      </motion.div>
+
+      {/* 2x2 metrics grid */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        className="grid grid-cols-2 gap-4 mt-10"
+      >
+        {metrics.map((m) => (
+          <div
+            key={m.label}
+            className="bg-[#111215] border border-white/[0.06] rounded-xl p-5"
+          >
+            <p className="text-xs text-[#797D86] mb-2">{m.label}</p>
+            <p className="text-2xl font-normal text-white tracking-tight">
+              {m.value}
+            </p>
+            <p className={`text-xs mt-1 ${m.badgeColor}`}>{m.badge}</p>
+          </div>
+        ))}
+      </motion.div>
     </section>
   );
 }

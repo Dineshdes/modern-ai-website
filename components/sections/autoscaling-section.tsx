@@ -2,155 +2,224 @@
 
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { TrendingDown, Zap, DollarSign } from "lucide-react";
+
+function DotPattern({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      className={`absolute pointer-events-none opacity-40 ${className}`}
+      width="120"
+      height="120"
+      viewBox="0 0 120 120"
+    >
+      {Array.from({ length: 8 }, (_, row) =>
+        Array.from({ length: 8 }, (_, col) => (
+          <circle
+            key={`${row}-${col}`}
+            cx={col * 16 + 8}
+            cy={row * 16 + 8}
+            r={1.5}
+            fill="white"
+            opacity={0.3}
+          />
+        ))
+      )}
+    </svg>
+  );
+}
+
+const cards = [
+  {
+    icon: <TrendingDown size={20} className="text-[#00E599] mb-4" />,
+    title: "Scales to zero",
+    desc: "Pay nothing when idle. Burst to thousands of concurrent requests in 100ms.",
+  },
+  {
+    icon: <Zap size={20} className="text-[#00E599] mb-4" />,
+    title: "No cold starts",
+    desc: "Predictive scaling keeps warm replicas ready before traffic arrives.",
+  },
+  {
+    icon: <DollarSign size={20} className="text-[#00E599] mb-4" />,
+    title: "Usage-based pricing",
+    desc: "Pay per token, per second. No reserved capacity, no minimums.",
+  },
+];
+
+type TabKey = "incidents" | "costs";
 
 export default function AutoscalingSection() {
-  const [activeTab, setActiveTab] = useState<"incidents" | "costs">(
-    "incidents"
-  );
+  const [activeTab, setActiveTab] = useState<TabKey>("incidents");
+
+  const statData: Record<TabKey, { value: string; label: string }> = {
+    incidents: {
+      value: "54,210",
+      label: "performance degradations prevented every day",
+    },
+    costs: {
+      value: "68%",
+      label: "average infrastructure cost savings vs fixed capacity",
+    },
+  };
 
   return (
     <section
       id="autoscaling"
-      className="relative py-32 border-b border-white/[0.06] bg-black"
+      className="relative py-24 border-b border-white/[0.06]"
     >
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
-          {/* Visual (left) */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="order-2 lg:order-1"
+      <DotPattern className="top-0 left-0" />
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5 }}
+      >
+        <h2 className="text-[48px] leading-[54px] font-normal tracking-[-0.04em] text-center text-[#797D86] max-w-4xl mx-auto">
+          <span className="text-white">Scale from zero.</span> Never overpay
+          for resources you don&apos;t use.
+        </h2>
+      </motion.div>
+
+      {/* Toggle tabs */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, delay: 0.05 }}
+        className="flex gap-2 mt-8 mb-10 justify-center"
+      >
+        {(
+          [
+            { key: "incidents" as TabKey, label: "Avoid incidents" },
+            { key: "costs" as TabKey, label: "Save costs" },
+          ] as { key: TabKey; label: string }[]
+        ).map(({ key, label }) => (
+          <button
+            key={key}
+            onClick={() => setActiveTab(key)}
+            className={`rounded-full px-5 py-2 text-sm transition-colors ${
+              activeTab === key
+                ? "border border-white/30 text-white"
+                : "border border-white/[0.08] text-[#797D86] hover:border-white/20"
+            }`}
           >
-            <div className="bg-[#18191B] border border-white/[0.06] rounded-2xl p-6">
-              <p className="text-xs text-[#797D86] font-mono mb-4">
-                LOAD VS CAPACITY — 24H
-              </p>
-              <svg
-                viewBox="0 0 400 200"
-                className="w-full"
-                preserveAspectRatio="xMidYMid meet"
-              >
-                {/* Grid lines */}
-                {[0, 50, 100, 150].map((y) => (
-                  <line
-                    key={y}
-                    x1="0"
-                    y1={y}
-                    x2="400"
-                    y2={y}
-                    stroke="rgba(255,255,255,0.04)"
-                    strokeWidth="1"
-                  />
-                ))}
+            {label}
+          </button>
+        ))}
+      </motion.div>
 
-                {/* Fixed resource (flat line, high) */}
-                <line
-                  x1="0"
-                  y1="50"
-                  x2="400"
-                  y2="50"
-                  stroke="#E5845A"
-                  strokeWidth="1.5"
-                  strokeDasharray="5,4"
-                  opacity="0.7"
-                />
+      {/* Large stat */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, delay: 0.1 }}
+        className="text-center mb-12"
+      >
+        <p className="text-[80px] font-normal tracking-[-0.04em] text-white leading-none">
+          {statData[activeTab].value}
+        </p>
+        <p className="text-[#797D86] text-base mt-2">
+          {statData[activeTab].label}
+        </p>
+      </motion.div>
 
-                {/* Database load (wavy) */}
-                <polyline
-                  points="0,150 40,140 80,120 120,100 160,80 200,60 240,70 280,85 320,110 360,130 400,145"
-                  fill="none"
-                  stroke="rgba(255,255,255,0.25)"
-                  strokeWidth="1.5"
-                  strokeDasharray="4,3"
-                />
+      {/* 3-col cards */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, delay: 0.15 }}
+        className="mt-16 grid grid-cols-1 md:grid-cols-3 gap-6"
+      >
+        {cards.map((card) => (
+          <div key={card.title}>
+            {card.icon}
+            <h3 className="text-base font-medium text-white">{card.title}</h3>
+            <p className="text-sm text-[#797D86] mt-2">{card.desc}</p>
+          </div>
+        ))}
+      </motion.div>
 
-                {/* Synapse autoscaling (follows load closely) */}
-                <polyline
-                  points="0,148 40,138 80,118 120,98 160,78 200,58 240,68 280,83 320,108 360,128 400,143"
-                  fill="none"
-                  stroke="#00E599"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-
-                {/* Legend */}
-                <circle cx="16" cy="185" r="4" fill="#00E599" />
-                <text x="26" y="189" fill="#797D86" fontSize="10">
-                  Synapse autoscaling
-                </text>
-                <circle cx="160" cy="185" r="4" fill="rgba(255,255,255,0.25)" />
-                <text x="170" y="189" fill="#797D86" fontSize="10">
-                  Database load
-                </text>
-                <circle cx="290" cy="185" r="4" fill="#E5845A" />
-                <text x="300" y="189" fill="#797D86" fontSize="10">
-                  Fixed-resource
-                </text>
-              </svg>
-            </div>
-          </motion.div>
-
-          {/* Text (right) */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5 }}
-            className="order-1 lg:order-2"
-          >
-            <p className="text-xs font-medium text-[#00E599] uppercase tracking-widest mb-6">
-              Autoscaling
-            </p>
-            <h2 className="text-[48px] leading-[54px] font-normal tracking-[-0.04em] text-[#797D86]">
-              <span className="text-white">Scale from zero.</span>{" "}
-              Never overpay for resources you don&apos;t use.
-            </h2>
-            <p className="text-[#797D86] text-lg leading-relaxed mt-6 max-w-lg">
-              Serverless inference that scales to zero when idle and bursts to
-              thousands of concurrent requests in under 100ms.
-            </p>
-
-            {/* Toggle buttons */}
-            <div className="flex gap-3 mt-8">
-              <button
-                onClick={() => setActiveTab("incidents")}
-                className={[
-                  "border rounded-full px-4 py-1.5 text-sm transition-colors",
-                  activeTab === "incidents"
-                    ? "text-white border-white/30"
-                    : "text-[#797D86] border-white/[0.1] hover:text-white",
-                ].join(" ")}
-              >
-                Avoid incidents
-              </button>
-              <button
-                onClick={() => setActiveTab("costs")}
-                className={[
-                  "border rounded-full px-4 py-1.5 text-sm transition-colors",
-                  activeTab === "costs"
-                    ? "text-white border-white/30"
-                    : "text-[#797D86] border-white/[0.1] hover:text-white",
-                ].join(" ")}
-              >
-                Save costs
-              </button>
-            </div>
-
-            {/* Big stat */}
-            <div className="mt-10">
-              <p className="text-[60px] font-normal text-white tracking-tight leading-none">
-                54,210
-              </p>
-              <p className="text-[#797D86] mt-2">
-                performance degradations prevented daily
-              </p>
-            </div>
-          </motion.div>
+      {/* SVG capacity chart */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        className="bg-[#111215] border border-white/[0.06] rounded-2xl p-6 mt-10"
+      >
+        <svg
+          viewBox="0 0 800 200"
+          className="w-full"
+          preserveAspectRatio="none"
+        >
+          {/* Grid lines */}
+          {[0, 50, 100, 150, 200].map((y) => (
+            <line
+              key={y}
+              x1="0"
+              y1={y}
+              x2="800"
+              y2={y}
+              stroke="rgba(255,255,255,0.04)"
+              strokeWidth="1"
+            />
+          ))}
+          {/* Fixed resource (flat orange) */}
+          <polyline
+            points="0,40 800,40"
+            fill="none"
+            stroke="#F97316"
+            strokeWidth="2"
+            strokeDasharray="6 4"
+            opacity="0.7"
+          />
+          {/* Database load (gray dashed) */}
+          <polyline
+            points="0,160 100,150 200,120 300,80 400,100 500,130 600,90 700,110 800,140"
+            fill="none"
+            stroke="rgba(255,255,255,0.3)"
+            strokeWidth="2"
+            strokeDasharray="4 3"
+          />
+          {/* Synapse autoscaling (green) */}
+          <polyline
+            points="0,168 100,158 200,128 300,88 400,108 500,138 600,98 700,118 800,148"
+            fill="none"
+            stroke="#00E599"
+            strokeWidth="2.5"
+          />
+        </svg>
+        {/* Legend */}
+        <div className="flex items-center gap-6 mt-4">
+          <div className="flex items-center gap-2">
+            <div className="w-4 h-0.5 bg-[#00E599]" />
+            <span className="text-xs text-[#797D86]">Synapse autoscaling</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div
+              className="w-4 h-0.5 bg-white/30"
+              style={{
+                backgroundImage:
+                  "repeating-linear-gradient(90deg,rgba(255,255,255,0.3) 0,rgba(255,255,255,0.3) 4px,transparent 4px,transparent 7px)",
+              }}
+            />
+            <span className="text-xs text-[#797D86]">Database load</span>
+          </div>
+          <div className="flex items-center gap-2">
+            <div
+              className="w-4 h-0.5 bg-orange-500 opacity-70"
+              style={{
+                backgroundImage:
+                  "repeating-linear-gradient(90deg,#F97316 0,#F97316 6px,transparent 6px,transparent 10px)",
+              }}
+            />
+            <span className="text-xs text-[#797D86]">Fixed-resource</span>
+          </div>
         </div>
-      </div>
+      </motion.div>
     </section>
   );
 }

@@ -4,93 +4,65 @@ import { motion } from "framer-motion";
 
 export default function BackedBy() {
   return (
-    <section
-      id="backed-by-giants"
-      className="bg-black border-b border-white/[0.06] py-32"
-    >
-      <div className="max-w-7xl mx-auto px-6">
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="text-xs font-medium text-[#797D86] uppercase tracking-widest mb-8"
-        >
-          Backed by giants
-        </motion.p>
-
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.05 }}
-          className="text-[48px] font-normal tracking-[-0.04em] text-[#797D86] leading-[54px]"
-        >
-          <span className="text-white">Trusted AI, Backed by Giants.</span>{" "}
-          Synapse was founded by ML researchers, bringing years of large-scale
-          systems expertise.
-        </motion.h2>
-
-        {/* Stats row */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mt-16 max-w-2xl">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-          >
-            <h3 className="text-[80px] font-normal tracking-[-0.04em] text-white leading-none">
-              10B+
-            </h3>
-            <p className="text-[#797D86] text-base mt-2">
-              Tokens processed daily
-            </p>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.15 }}
-            className="bg-[#18191B] border border-white/[0.06] rounded-2xl p-6 flex flex-col justify-center"
-          >
-            <p className="text-white font-medium text-lg mb-2">
-              Synapse Research Labs
-            </p>
-            <p className="text-[#797D86] text-sm leading-relaxed">
-              Founded by researchers from DeepMind, OpenAI, and Google Brain.
-              Building the infrastructure the world&apos;s AI runs on.
-            </p>
-          </motion.div>
-        </div>
-
-        {/* Testimonial */}
+    <section className="bg-[#E4F1EB] py-32 px-6">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-24">
+        {/* LEFT column */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="mt-20 border-t border-white/[0.06] pt-16"
+          transition={{ duration: 0.5 }}
         >
-          <p className="text-xs text-[#797D86] uppercase tracking-widest mb-8">
-            Trusted by the best
-          </p>
-          <blockquote className="text-[28px] font-normal text-[#797D86] leading-relaxed max-w-3xl">
-            &ldquo;Synapse cut our inference costs by 60% while giving us
-            sub-50ms latency on every request. It&apos;s the only platform we
-            trust at this scale.&rdquo;
-          </blockquote>
-          <div className="flex items-center gap-4 mt-8">
-            <div className="size-10 rounded-full bg-[#18191B] border border-white/[0.08] flex items-center justify-center text-[#797D86] text-sm font-medium">
-              AK
-            </div>
-            <div>
-              <p className="text-white text-sm font-medium">Aisha Kowalski</p>
-              <p className="text-[#797D86] text-sm">
-                CTO, Meridian AI
-              </p>
-            </div>
+          <div className="flex items-center gap-2 mb-4">
+            <span className="text-[#2C6D4C] text-xs">▶</span>
+            <span className="text-xs font-mono uppercase tracking-widest text-[#2C6D4C]">
+              BACKED BY GIANTS
+            </span>
           </div>
+          <h2 className="text-[48px] font-normal tracking-[-0.04em] leading-[54px] text-[#111215]">
+            Trusted AI, Backed by Giants.{" "}
+            <span className="text-[#797D86]">
+              Synapse was built by ML researchers with decades of large-scale
+              systems expertise.
+            </span>
+          </h2>
+
+          <p className="text-[80px] font-normal tracking-tight text-[#111215] leading-none mt-16">
+            10B+
+          </p>
+          <p className="text-[#797D86] text-base mt-2">
+            Tokens processed daily
+          </p>
+
+          <div className="bg-white/60 border border-[#CAE6D9] rounded-2xl p-5 mt-8 inline-block">
+            <p className="text-sm font-semibold text-[#111215]">Synapse AI</p>
+            <p className="text-sm text-[#797D86] mt-1 max-w-xs">
+              Serverless inference infrastructure for teams and AI agents.
+            </p>
+          </div>
+        </motion.div>
+
+        {/* RIGHT column */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5, delay: 0.1 }}
+        >
+          <div className="flex items-center gap-2 mb-4">
+            <span className="text-[#2C6D4C] text-xs">▶</span>
+            <span className="text-xs font-mono uppercase tracking-widest text-[#2C6D4C]">
+              TRUSTED BY THE BEST
+            </span>
+          </div>
+          <p className="font-mono text-[15px] text-[#2C6D4C] leading-relaxed mt-6 max-w-sm">
+            &quot;Synapse&apos;s serverless philosophy is aligned with our
+            vision: no infrastructure to manage, no servers to provision, no
+            endpoints to maintain.&quot;
+          </p>
+          <p className="text-sm text-[#2C6D4C] mt-6">
+            — Marcus A., CTO at Launchpad
+          </p>
         </motion.div>
       </div>
     </section>
