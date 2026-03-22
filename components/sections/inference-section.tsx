@@ -194,7 +194,7 @@ export default function InferenceSection() {
     <section
       id="ai"
       className="relative pt-40 pb-24 overflow-hidden border-b"
-      style={{ background: "#0C0D0D", borderColor: "rgba(255,255,255,0.06)" }}
+      style={{ background: "#0C0D0D", borderColor: "rgba(255,255,255,0.06)", scrollSnapAlign: "start", scrollSnapStop: "always" }}
     >
       <SectionGlow variant="default" />
 

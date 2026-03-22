@@ -98,7 +98,7 @@ export default function AutoscalingSection() {
     <section
       id="autoscaling"
       className="relative py-48 overflow-hidden border-b"
-      style={{ background: "#E4F1EB", borderColor: "rgba(0,0,0,0.06)" }}
+      style={{ background: "#E4F1EB", borderColor: "rgba(0,0,0,0.06)", scrollSnapAlign: "start", scrollSnapStop: "always" }}
     >
       <SectionGlow variant="corner" color="44, 109, 76" />
       <div className="relative max-w-[1400px] mx-auto px-8 lg:pl-[260px]">

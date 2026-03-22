@@ -22,8 +22,8 @@ interface HalftoneEdgesProps {
 }
 
 export default function HalftoneEdges({
-  leftColor  = "rgba(52, 213, 154, 0.55)",
-  rightColor = "rgba(220, 120, 60, 0.50)",
+  leftColor  = "rgba(52, 213, 154, 0.80)",
+  rightColor = "rgba(220, 120, 60, 0.75)",
   dotSize    = 1.6,
   spacing    = 9,
   edgeWidth  = 340,

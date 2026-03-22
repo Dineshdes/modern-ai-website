@@ -91,7 +91,7 @@ export default function FineTuningSection() {
     <section
       id="branching"
       className="relative py-48 overflow-hidden border-b"
-      style={{ background: "#0C0D0D", borderColor: "rgba(255,255,255,0.06)" }}
+      style={{ background: "#0C0D0D", borderColor: "rgba(255,255,255,0.06)", scrollSnapAlign: "start", scrollSnapStop: "always" }}
     >
       <SectionGlow variant="corner" />
       <div className="relative max-w-[1400px] mx-auto px-8 lg:pl-[260px]">

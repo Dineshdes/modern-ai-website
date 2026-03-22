@@ -16,6 +16,7 @@
 
 html {
   color-scheme: dark;
+  scroll-snap-type: y proximity;
 }
 
 body {
