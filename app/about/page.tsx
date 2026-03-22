@@ -1033,64 +1033,70 @@ function Investors() {
                   padding: "32px 28px 26px",
                 }}>
 
-                  {/* ── Two-colour gradient + running dash SVG (same as CTA bar) ── */}
+                  {/* ── Brand teal gradient + vertical running dashes ── */}
                   <svg aria-hidden style={{ position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none" }}
                     viewBox={`0 0 ${CW} ${CH}`} preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
                     <defs>
-                      <linearGradient id={`cg-${inv.id}`} x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="0%"   stopColor={inv.accent} stopOpacity="0.13" />
-                        <stop offset="40%"  stopColor="#111215"    stopOpacity="0"    />
-                        <stop offset="60%"  stopColor="#111215"    stopOpacity="0"    />
-                        <stop offset="100%" stopColor={inv.accent} stopOpacity="0.10" />
+                      {/* Vertical teal gradient: bright top & bottom, transparent centre */}
+                      <linearGradient id="inv-vg" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%"   stopColor="#34D59A" stopOpacity="0.18" />
+                        <stop offset="32%"  stopColor="#34D59A" stopOpacity="0"    />
+                        <stop offset="68%"  stopColor="#34D59A" stopOpacity="0"    />
+                        <stop offset="100%" stopColor="#34D59A" stopOpacity="0.12" />
                       </linearGradient>
-                      <linearGradient id={`dm-${inv.id}`} x1="0" y1="0" x2="1" y2="0">
-                        <stop offset="0%"  stopColor="white" stopOpacity="0"  />
-                        <stop offset="12%" stopColor="white" stopOpacity="1"  />
-                        <stop offset="88%" stopColor="white" stopOpacity="1"  />
-                        <stop offset="100%" stopColor="white" stopOpacity="0" />
+                      {/* Dot grid pattern */}
+                      <pattern id="inv-dots" x="0" y="0" width="18" height="18" patternUnits="userSpaceOnUse">
+                        <circle cx="1" cy="1" r="0.7" fill="white" fillOpacity="0.028" />
+                      </pattern>
+                      {/* Vertical edge-fade mask for left/right dashes */}
+                      <linearGradient id="inv-vm" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%"   stopColor="white" stopOpacity="0"  />
+                        <stop offset="10%"  stopColor="white" stopOpacity="1"  />
+                        <stop offset="90%"  stopColor="white" stopOpacity="1"  />
+                        <stop offset="100%" stopColor="white" stopOpacity="0"  />
                       </linearGradient>
-                      <mask id={`msk-${inv.id}`}>
-                        <rect width={CW} height={CH} fill={`url(#dm-${inv.id})`} />
+                      <mask id="inv-vmsk">
+                        <rect width={CW} height={CH} fill="url(#inv-vm)" />
                       </mask>
                     </defs>
-                    {/* Gradient wash */}
-                    <rect width={CW} height={CH} fill={`url(#cg-${inv.id})`} />
-                    {/* Dot grid */}
-                    <rect width={CW} height={CH} fill="none"
-                      style={{ backgroundImage: "radial-gradient(circle,rgba(255,255,255,0.03) 1px,transparent 1px)", backgroundSize: "18px 18px" }} />
 
-                    {/* Top running dashes */}
-                    <g mask={`url(#msk-${inv.id})`}>
-                      <line x1="0" y1="1" x2={CW} y2="1"
-                        stroke={inv.accent} strokeWidth="1.4" strokeDasharray="10 16" strokeLinecap="round" opacity="0.65">
-                        <animate attributeName="stroke-dashoffset" from="0" to="-104" dur="2.2s" repeatCount="indefinite" />
+                    {/* Gradient wash */}
+                    <rect width={CW} height={CH} fill="url(#inv-vg)" />
+                    {/* Dot grid */}
+                    <rect width={CW} height={CH} fill="url(#inv-dots)" />
+
+                    {/* LEFT vertical running dashes — top to bottom */}
+                    <g mask="url(#inv-vmsk)">
+                      <line x1="1" y1="0" x2="1" y2={CH}
+                        stroke="#34D59A" strokeWidth="1.4" strokeDasharray="10 16" strokeLinecap="round" opacity="0.65">
+                        <animate attributeName="stroke-dashoffset" from="0" to="104" dur="2.4s" repeatCount="indefinite" />
                       </line>
-                      <line x1="0" y1="1" x2={CW} y2="1"
-                        stroke={inv.accent} strokeWidth="0.5" strokeDasharray="5 21" strokeLinecap="round" opacity="0.28">
-                        <animate attributeName="stroke-dashoffset" from="0" to="-104" dur="3.6s" repeatCount="indefinite" />
+                      <line x1="1" y1="0" x2="1" y2={CH}
+                        stroke="#34D59A" strokeWidth="0.5" strokeDasharray="5 21" strokeLinecap="round" opacity="0.28">
+                        <animate attributeName="stroke-dashoffset" from="0" to="104" dur="3.8s" repeatCount="indefinite" />
                       </line>
                     </g>
 
-                    {/* Bottom running dashes — reversed */}
-                    <g mask={`url(#msk-${inv.id})`}>
-                      <line x1="0" y1={CH - 1} x2={CW} y2={CH - 1}
-                        stroke={inv.accent} strokeWidth="1.4" strokeDasharray="10 16" strokeLinecap="round" opacity="0.4">
-                        <animate attributeName="stroke-dashoffset" from="-104" to="0" dur="2.2s" repeatCount="indefinite" />
+                    {/* RIGHT vertical running dashes — bottom to top */}
+                    <g mask="url(#inv-vmsk)">
+                      <line x1={CW - 1} y1="0" x2={CW - 1} y2={CH}
+                        stroke="#34D59A" strokeWidth="1.4" strokeDasharray="10 16" strokeLinecap="round" opacity="0.45">
+                        <animate attributeName="stroke-dashoffset" from="104" to="0" dur="2.4s" repeatCount="indefinite" />
                       </line>
-                      <line x1="0" y1={CH - 1} x2={CW} y2={CH - 1}
-                        stroke={inv.accent} strokeWidth="0.5" strokeDasharray="5 21" strokeLinecap="round" opacity="0.18">
-                        <animate attributeName="stroke-dashoffset" from="-104" to="0" dur="3.6s" repeatCount="indefinite" />
+                      <line x1={CW - 1} y1="0" x2={CW - 1} y2={CH}
+                        stroke="#34D59A" strokeWidth="0.5" strokeDasharray="5 21" strokeLinecap="round" opacity="0.2">
+                        <animate attributeName="stroke-dashoffset" from="104" to="0" dur="3.8s" repeatCount="indefinite" />
                       </line>
                     </g>
                   </svg>
 
-                  {/* Corner brackets */}
-                  <Brackets color={`${inv.accent}60`} />
+                  {/* Corner brackets — brand teal */}
+                  <Brackets color="rgba(52,213,154,0.45)" />
 
                   {/* Role */}
                   <div style={{ position: "relative", display: "flex", alignItems: "center", gap: 7, marginBottom: 16 }}>
-                    <span style={{ width: 6, height: 6, borderRadius: "50%", background: inv.accent, display: "inline-block", boxShadow: `0 0 8px ${inv.accent}` }} />
-                    <span style={{ fontSize: 11, color: inv.accent, fontFamily: "var(--font-mono),monospace", letterSpacing: "0.14em", textTransform: "uppercase" }}>{inv.role}</span>
+                    <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#34D59A", display: "inline-block", boxShadow: "0 0 8px rgba(52,213,154,0.8)" }} />
+                    <span style={{ fontSize: 11, color: "#34D59A", fontFamily: "var(--font-mono),monospace", letterSpacing: "0.14em", textTransform: "uppercase" }}>{inv.role}</span>
                   </div>
 
                   {/* Name */}
@@ -1098,7 +1104,7 @@ function Investors() {
 
                   {/* Monogram */}
                   <div style={{ position: "relative", flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    <span style={{ fontSize: 108, fontWeight: 800, letterSpacing: "-0.06em", color: inv.accent, opacity: 0.14, lineHeight: 1, userSelect: "none" }}>{inv.mono}</span>
+                    <span style={{ fontSize: 108, fontWeight: 800, letterSpacing: "-0.06em", color: "#34D59A", opacity: 0.10, lineHeight: 1, userSelect: "none" }}>{inv.mono}</span>
                   </div>
 
                   {/* Description */}
@@ -1110,9 +1116,9 @@ function Investors() {
 
                   {/* Website */}
                   <div style={{ position: "relative", width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 12 }}>
-                    <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, transparent, ${inv.accent}40)` }} />
+                    <div style={{ flex: 1, height: 1, background: "linear-gradient(90deg, transparent, rgba(52,213,154,0.35))" }} />
                     <span style={{ fontSize: 11, color: "#94979E", fontFamily: "var(--font-mono),monospace", letterSpacing: "0.16em", textTransform: "uppercase" }}>WEBSITE</span>
-                    <div style={{ flex: 1, height: 1, background: `linear-gradient(270deg, transparent, ${inv.accent}40)` }} />
+                    <div style={{ flex: 1, height: 1, background: "linear-gradient(270deg, transparent, rgba(52,213,154,0.35))" }} />
                   </div>
                 </div>
               ) : (
@@ -1253,7 +1259,6 @@ export default function AboutPage() {
         <Team />
         <Values />
         <Investors />
-        <Press />
         <BottomCTA />
       </main>
       <Footer />
