@@ -1,300 +1,323 @@
 "use client";
 
-import { useState, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
 
-/* ── Subtle halftone dot backgrounds ── */
-function HalftoneBackground() {
+/* ─── Node definitions for the SVG network ─── */
+const NODES = [
+  { id: "llama-3.1-70b", x: 80, y: 95 },
+  { id: "embedding-api", x: 145, y: 280 },
+  { id: "inference-v2", x: 340, y: 160 },
+  { id: "fine-tune-job", x: 280, y: 350 },
+  { id: "agent-runtime", x: 540, y: 80 },
+  { id: "model-endpoint", x: 580, y: 270 },
+  { id: "mixtral-8x7b", x: 780, y: 150 },
+  { id: "gpu-cluster", x: 460, y: 390 },
+  { id: "serving-pool", x: 880, y: 310 },
+  { id: "checkpoint-v3", x: 950, y: 110 },
+  { id: "vector-store", x: 190, y: 190 },
+  { id: "batch-worker", x: 700, y: 350 },
+  { id: "load-balancer", x: 1020, y: 220 },
+  { id: "quantize-v2", x: 420, y: 270 },
+];
+
+/* ─── Edge connections ─── */
+const EDGES: [number, number][] = [
+  [0, 2], [0, 10], [1, 2], [1, 3], [10, 2], [10, 13],
+  [2, 4], [2, 5], [13, 5], [3, 5], [3, 7], [3, 13],
+  [4, 6], [5, 6], [5, 7], [5, 11], [6, 8], [6, 9],
+  [4, 9], [7, 8], [7, 11], [8, 12], [9, 12], [11, 8],
+  [1, 13], [11, 12],
+];
+
+/* Bezier control point for organic curves */
+function ctrl(x1: number, y1: number, x2: number, y2: number, idx: number) {
+  const mx = (x1 + x2) / 2;
+  const my = (y1 + y2) / 2;
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+  const d = Math.sqrt(dx * dx + dy * dy);
+  const offset = d * 0.18 * (idx % 2 === 0 ? 1 : -1);
+  return { cx: mx + (-dy / d) * offset, cy: my + (dx / d) * offset };
+}
+
+function NetworkSVG() {
   return (
     <svg
+      viewBox="0 0 1100 460"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
       className="absolute inset-0 w-full h-full"
       preserveAspectRatio="xMidYMid slice"
-      viewBox="0 0 1400 680"
       aria-hidden
-      style={{ pointerEvents: "none" }}
     >
       <defs>
-        <pattern id="tdot" x="0" y="0" width="16" height="16" patternUnits="userSpaceOnUse">
-          <circle cx="8" cy="8" r="2.4" fill="#34D59A" />
-        </pattern>
-        <pattern id="odot" x="0" y="0" width="16" height="16" patternUnits="userSpaceOnUse">
-          <circle cx="8" cy="8" r="2.4" fill="#F97316" />
-        </pattern>
-        <linearGradient id="fL" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%"   stopColor="white" stopOpacity="0.55" />
-          <stop offset="45%"  stopColor="white" stopOpacity="0.2" />
-          <stop offset="75%"  stopColor="white" stopOpacity="0.04" />
-          <stop offset="100%" stopColor="white" stopOpacity="0" />
+        {/* Glow filter for nodes */}
+        <filter id="nodeGlow" x="-100%" y="-100%" width="300%" height="300%">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="12" result="blur" />
+          <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0.2  0 0 0 0 0.84  0 0 0 0 0.6  0 0 0 0.6 0" result="glow" />
+          <feMerge>
+            <feMergeNode in="glow" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+
+        {/* Softer glow for edges */}
+        <filter id="edgeGlow" x="-50%" y="-50%" width="200%" height="200%">
+          <feGaussianBlur in="SourceGraphic" stdDeviation="3" result="blur" />
+          <feColorMatrix in="blur" type="matrix" values="0 0 0 0 0.2  0 0 0 0 0.84  0 0 0 0 0.6  0 0 0 0.5 0" result="glow" />
+          <feMerge>
+            <feMergeNode in="glow" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+
+        {/* Large ambient glow */}
+        <radialGradient id="ambientGlow1" cx="55%" cy="40%" r="40%">
+          <stop offset="0%" stopColor="#34D59A" stopOpacity="0.06" />
+          <stop offset="60%" stopColor="#34D59A" stopOpacity="0.02" />
+          <stop offset="100%" stopColor="#34D59A" stopOpacity="0" />
+        </radialGradient>
+
+        <radialGradient id="ambientGlow2" cx="25%" cy="60%" r="30%">
+          <stop offset="0%" stopColor="#34D59A" stopOpacity="0.04" />
+          <stop offset="100%" stopColor="#34D59A" stopOpacity="0" />
+        </radialGradient>
+
+        <radialGradient id="ambientGlow3" cx="80%" cy="35%" r="25%">
+          <stop offset="0%" stopColor="#34D59A" stopOpacity="0.05" />
+          <stop offset="100%" stopColor="#34D59A" stopOpacity="0" />
+        </radialGradient>
+
+        {/* Left fade gradient for heading readability */}
+        <linearGradient id="leftFade" x1="0" y1="0" x2="0.4" y2="0">
+          <stop offset="0%" stopColor="#0C0D0D" stopOpacity="0.92" />
+          <stop offset="50%" stopColor="#0C0D0D" stopOpacity="0.4" />
+          <stop offset="100%" stopColor="#0C0D0D" stopOpacity="0" />
         </linearGradient>
-        <linearGradient id="fR" x1="100%" y1="0%" x2="0%" y2="0%">
-          <stop offset="0%"   stopColor="white" stopOpacity="0.55" />
-          <stop offset="45%"  stopColor="white" stopOpacity="0.2" />
-          <stop offset="75%"  stopColor="white" stopOpacity="0.04" />
-          <stop offset="100%" stopColor="white" stopOpacity="0" />
+
+        {/* Top fade */}
+        <linearGradient id="topFade" x1="0" y1="0" x2="0" y2="0.18">
+          <stop offset="0%" stopColor="#0C0D0D" stopOpacity="0.6" />
+          <stop offset="100%" stopColor="#0C0D0D" stopOpacity="0" />
         </linearGradient>
-        <mask id="mL"><rect x="0"   y="0" width="560" height="680" fill="url(#fL)" /></mask>
-        <mask id="mR"><rect x="840" y="0" width="560" height="680" fill="url(#fR)" /></mask>
+
+        {/* Bottom fade */}
+        <linearGradient id="bottomFade" x1="0" y1="0.75" x2="0" y2="1">
+          <stop offset="0%" stopColor="#0C0D0D" stopOpacity="0" />
+          <stop offset="100%" stopColor="#0C0D0D" stopOpacity="0.85" />
+        </linearGradient>
+
+        {/* Animated dash pattern for flowing edges */}
+        <style>{`
+          @keyframes flowDash {
+            to { stroke-dashoffset: -40; }
+          }
+          .flow-edge {
+            animation: flowDash 3s linear infinite;
+          }
+          @keyframes pulseNode {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+          }
+          .pulse-node {
+            animation: pulseNode 3s ease-in-out infinite;
+          }
+        `}</style>
       </defs>
-      <rect x="0"   y="0" width="560" height="680" fill="url(#tdot)" mask="url(#mL)" />
-      <rect x="840" y="0" width="560" height="680" fill="url(#odot)" mask="url(#mR)" />
+
+      {/* Ambient glow backgrounds */}
+      <rect width="1100" height="460" fill="url(#ambientGlow1)" />
+      <rect width="1100" height="460" fill="url(#ambientGlow2)" />
+      <rect width="1100" height="460" fill="url(#ambientGlow3)" />
+
+      {/* Dot grid pattern — very subtle */}
+      {Array.from({ length: 22 }, (_, col) =>
+        Array.from({ length: 9 }, (_, row) => (
+          <circle
+            key={`dot-${col}-${row}`}
+            cx={col * 50 + 25}
+            cy={row * 50 + 30}
+            r={0.6}
+            fill="#34D59A"
+            opacity={0.08}
+          />
+        ))
+      )}
+
+      {/* Edges — flowing dashed lines with glow */}
+      <g filter="url(#edgeGlow)">
+        {EDGES.map(([a, b], i) => {
+          const n1 = NODES[a];
+          const n2 = NODES[b];
+          const c = ctrl(n1.x, n1.y, n2.x, n2.y, i);
+          const delay = (i * 0.15) % 3;
+          return (
+            <path
+              key={`edge-${i}`}
+              d={`M ${n1.x} ${n1.y} Q ${c.cx} ${c.cy} ${n2.x} ${n2.y}`}
+              stroke="#34D59A"
+              strokeWidth={1.2}
+              strokeOpacity={0.2 + (i % 3) * 0.08}
+              fill="none"
+              strokeDasharray="4 8"
+              strokeLinecap="round"
+              className="flow-edge"
+              style={{ animationDelay: `${delay}s`, animationDuration: `${2.5 + (i % 4) * 0.5}s` }}
+            />
+          );
+        })}
+      </g>
+
+      {/* Secondary solid thin lines for structure */}
+      {EDGES.map(([a, b], i) => {
+        const n1 = NODES[a];
+        const n2 = NODES[b];
+        const c = ctrl(n1.x, n1.y, n2.x, n2.y, i);
+        return (
+          <path
+            key={`edge-solid-${i}`}
+            d={`M ${n1.x} ${n1.y} Q ${c.cx} ${c.cy} ${n2.x} ${n2.y}`}
+            stroke="#34D59A"
+            strokeWidth={0.4}
+            strokeOpacity={0.07}
+            fill="none"
+          />
+        );
+      })}
+
+      {/* Nodes */}
+      <g filter="url(#nodeGlow)">
+        {NODES.map((node, i) => (
+          <g key={node.id}>
+            {/* Outer glow ring */}
+            <circle
+              cx={node.x}
+              cy={node.y}
+              r={18}
+              fill="#34D59A"
+              fillOpacity={0.03}
+              className="pulse-node"
+              style={{ animationDelay: `${i * 0.4}s` }}
+            />
+            {/* Core dot */}
+            <circle cx={node.x} cy={node.y} r={3} fill="#34D59A" fillOpacity={0.75} />
+            {/* Inner bright dot */}
+            <circle cx={node.x} cy={node.y} r={1.2} fill="#A8F5D8" fillOpacity={0.9} />
+          </g>
+        ))}
+      </g>
+
+      {/* Node labels */}
+      {NODES.map((node) => {
+        const labelW = node.id.length * 6.2 + 12;
+        const lx = node.x - labelW / 2;
+        const ly = node.y - 20;
+        return (
+          <g key={`label-${node.id}`}>
+            <rect
+              x={lx}
+              y={ly}
+              width={labelW}
+              height={16}
+              rx={3}
+              fill="#0C0D0D"
+              fillOpacity={0.7}
+              stroke="rgba(255,255,255,0.06)"
+              strokeWidth={0.5}
+            />
+            <text
+              x={node.x}
+              y={ly + 11.5}
+              textAnchor="middle"
+              fill="#94979E"
+              fillOpacity={0.7}
+              fontSize={9}
+              fontFamily="var(--font-mono), monospace"
+            >
+              {node.id}
+            </text>
+          </g>
+        );
+      })}
+
+      {/* Fade overlays */}
+      <rect width="1100" height="460" fill="url(#leftFade)" />
+      <rect width="1100" height="460" fill="url(#topFade)" />
+      <rect width="1100" height="460" fill="url(#bottomFade)" />
     </svg>
   );
 }
 
-/* ── Dual-handle autoscaling slider ── */
-const SCALE_POINTS = [0.25, 0.5, 1, 2, 3, 4];
-const RAM_MAP: Record<number, number> = { 0.25: 1, 0.5: 2, 1: 4, 2: 8, 3: 10, 4: 16 };
-
-function AutoscalingSlider() {
-  const [minIdx, setMinIdx] = useState(1); // 0.5 vCPU
-  const [maxIdx, setMaxIdx] = useState(4); // 3 vCPU
-  const trackRef = useRef<HTMLDivElement>(null);
-  const dragging = useRef<"min"|"max"|null>(null);
-
-  const pct = (i: number) => (i / (SCALE_POINTS.length - 1)) * 100;
-  const minPct = pct(minIdx);
-  const maxPct = pct(maxIdx);
-
-  const getIdxFromX = useCallback((clientX: number) => {
-    const track = trackRef.current;
-    if (!track) return 0;
-    const { left, width } = track.getBoundingClientRect();
-    const ratio = Math.max(0, Math.min(1, (clientX - left) / width));
-    return Math.round(ratio * (SCALE_POINTS.length - 1));
-  }, []);
-
-  const onPointerDown = (handle: "min"|"max") => (e: React.PointerEvent) => {
-    dragging.current = handle;
-    (e.target as HTMLElement).setPointerCapture(e.pointerId);
-  };
-
-  const onPointerMove = (e: React.PointerEvent) => {
-    if (!dragging.current) return;
-    const idx = getIdxFromX(e.clientX);
-    if (dragging.current === "min" && idx < maxIdx) setMinIdx(idx);
-    if (dragging.current === "max" && idx > minIdx) setMaxIdx(idx);
-  };
-
-  const onPointerUp = () => { dragging.current = null; };
-
-  return (
-    <div>
-      <p style={{ fontSize: 13, color: "#94979E", marginBottom: 20, letterSpacing: "0.01em" }}>
-        Autoscaling
-      </p>
-
-      {/* Track */}
-      <div
-        ref={trackRef}
-        className="relative select-none"
-        style={{ height: 28, cursor: "pointer" }}
-        onPointerMove={onPointerMove}
-        onPointerUp={onPointerUp}
-        onPointerLeave={onPointerUp}
-      >
-        {/* Base track */}
-        <div
-          style={{
-            position: "absolute",
-            left: 0, right: 0,
-            top: "50%", transform: "translateY(-50%)",
-            height: 2,
-            background: "rgba(255,255,255,0.1)",
-            borderRadius: 1,
-          }}
-        />
-        {/* Active (green) track */}
-        <div
-          style={{
-            position: "absolute",
-            left: `${minPct}%`,
-            width: `${maxPct - minPct}%`,
-            top: "50%", transform: "translateY(-50%)",
-            height: 2,
-            background: "#34D59A",
-            borderRadius: 1,
-          }}
-        />
-
-        {/* Min handle */}
-        <div
-          onPointerDown={onPointerDown("min")}
-          style={{
-            position: "absolute",
-            left: `${minPct}%`,
-            top: "50%",
-            transform: "translate(-50%, -50%)",
-            width: 14, height: 14,
-            borderRadius: "50%",
-            background: "#34D59A",
-            cursor: "grab",
-            zIndex: 3,
-            boxShadow: "0 0 0 3px rgba(52,213,154,0.2)",
-          }}
-        />
-
-        {/* Max handle */}
-        <div
-          onPointerDown={onPointerDown("max")}
-          style={{
-            position: "absolute",
-            left: `${maxPct}%`,
-            top: "50%",
-            transform: "translate(-50%, -50%)",
-            width: 14, height: 14,
-            borderRadius: "50%",
-            background: "#34D59A",
-            cursor: "grab",
-            zIndex: 3,
-            boxShadow: "0 0 0 3px rgba(52,213,154,0.2)",
-          }}
-        />
-      </div>
-
-      {/* Scale marks */}
-      <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8 }}>
-        {SCALE_POINTS.map((pt) => (
-          <span
-            key={pt}
-            style={{
-              fontSize: 11,
-              color: "rgba(255,255,255,0.3)",
-              fontFamily: "var(--font-mono), monospace",
-            }}
-          >
-            {pt}
-          </span>
-        ))}
-      </div>
-
-      {/* Scale info */}
-      <div style={{ display: "flex", justifyContent: "space-between", marginTop: 28, gap: 16 }}>
-        <div>
-          <p style={{ fontSize: 11, color: "#94979E", marginBottom: 4 }}>Scale from</p>
-          <p style={{ fontSize: 16, color: "#F9FAFA", fontWeight: 400, letterSpacing: "-0.02em" }}>
-            {SCALE_POINTS[minIdx]} vCPU, {RAM_MAP[SCALE_POINTS[minIdx]]} RAM
-          </p>
-        </div>
-        <div style={{ textAlign: "right" }}>
-          <p style={{ fontSize: 11, color: "#94979E", marginBottom: 4 }}>Scale up to</p>
-          <p style={{ fontSize: 16, color: "#F9FAFA", fontWeight: 400, letterSpacing: "-0.02em" }}>
-            {SCALE_POINTS[maxIdx]} vCPU, {RAM_MAP[SCALE_POINTS[maxIdx]]} RAM
-          </p>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 export default function CTAFinal() {
-  const [copied, setCopied] = useState(false);
-
-  const handleCopy = () => {
-    navigator.clipboard.writeText("npx synapsectl init");
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
-
   return (
-    <section className="relative overflow-hidden" style={{ background: "#0C0D0D" }}>
-      <HalftoneBackground />
+    <section style={{ background: "#0C0D0D" }}>
+      {/* SVG network visualization section */}
+      <div className="relative" style={{ minHeight: "clamp(520px, 65vh, 780px)" }}>
+        <NetworkSVG />
 
-      {/* Main content: heading left + slider right */}
-      <div className="relative z-10 max-w-[1400px] mx-auto px-8">
-        <div
-          className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center"
-          style={{ paddingTop: "clamp(80px, 12vh, 160px)", paddingBottom: "clamp(80px, 12vh, 160px)" }}
-        >
-          {/* Left: big heading */}
+        {/* Heading overlay */}
+        <div className="relative z-10 max-w-[1400px] mx-auto px-8 pt-20">
           <motion.h2
-            initial={{ opacity: 0, y: 28 }}
+            initial={{ opacity: 0, y: 24 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.7 }}
+            transition={{ duration: 0.6 }}
             style={{
-              fontSize: "clamp(52px, 7.5vw, 104px)",
+              fontSize: "clamp(36px, 5.5vw, 72px)",
               fontWeight: 400,
-              lineHeight: 1.04,
+              lineHeight: 1.08,
               letterSpacing: "-0.04em",
               color: "#F9FAFA",
+              maxWidth: 720,
             }}
           >
             The world&apos;s most advanced AI platform.
           </motion.h2>
-
-          {/* Right: slider */}
-          <motion.div
-            initial={{ opacity: 0, y: 28 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7, delay: 0.12 }}
-            style={{ maxWidth: 480, width: "100%" }}
-          >
-            <AutoscalingSlider />
-          </motion.div>
         </div>
       </div>
 
       {/* Bottom CTA bar */}
-      <div className="relative z-10 border-t" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
+      <div className="border-t" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
         <div
-          className="max-w-[1400px] mx-auto px-8 py-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5"
+          className="max-w-[1400px] mx-auto px-8 py-6 flex flex-col md:flex-row items-start md:items-center justify-between gap-6"
         >
-          <p style={{ fontSize: 15, color: "rgba(249,250,250,0.55)", lineHeight: 1.5 }}>
-            Trusted by developers, ready for agents.<br />
-            Build and scale AI faster with Synapse.
-          </p>
+          <div className="text-[15px] leading-snug" style={{ color: "#94979E" }}>
+            <p>Trusted by developers, ready for agents.</p>
+            <p>Build and scale AI faster with Synapse.</p>
+          </div>
 
-          <div className="flex items-center gap-3 shrink-0 flex-wrap">
-            {/* Get started */}
+          <div className="flex items-center gap-3 shrink-0">
             <a
               href="#"
-              className="inline-flex items-center h-10 px-5 rounded-full text-[14px] font-medium transition-colors"
+              className="inline-flex items-center px-6 h-11 rounded-full text-sm font-medium transition-colors"
               style={{ background: "#F9FAFA", color: "#0C0D0D" }}
-              onMouseEnter={e => (e.currentTarget.style.background = "#e5e7eb")}
-              onMouseLeave={e => (e.currentTarget.style.background = "#F9FAFA")}
+              onMouseEnter={(e) => (e.currentTarget.style.background = "#e5e7eb")}
+              onMouseLeave={(e) => (e.currentTarget.style.background = "#F9FAFA")}
             >
               Get started
             </a>
-
-            {/* Read the docs */}
             <a
               href="#"
-              className="inline-flex items-center h-10 px-5 rounded-full text-[14px] transition-colors"
-              style={{ color: "rgba(249,250,250,0.7)", border: "1px solid rgba(255,255,255,0.18)" }}
-              onMouseEnter={e => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.4)")}
-              onMouseLeave={e => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.18)")}
+              className="inline-flex items-center px-6 h-11 rounded-full text-sm transition-colors"
+              style={{ color: "#F9FAFA", border: "1px solid rgba(255,255,255,0.2)" }}
+              onMouseEnter={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.4)")}
+              onMouseLeave={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.2)")}
             >
               Read the docs
             </a>
-
-            {/* CLI command — copyable */}
             <button
-              onClick={handleCopy}
-              className="inline-flex items-center gap-2.5 h-10 px-4 rounded-xl text-[13px] transition-all"
+              className="inline-flex items-center gap-2 px-4 h-11 rounded-xl text-sm transition-colors"
               style={{
-                background: "#131415",
-                color: "rgba(249,250,250,0.7)",
-                border: "1px solid rgba(255,255,255,0.1)",
+                background: "#34D59A",
+                color: "#0C0D0D",
                 fontFamily: "var(--font-mono), monospace",
+                fontWeight: 500,
               }}
-              onMouseEnter={e => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.25)")}
-              onMouseLeave={e => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)")}
+              onMouseEnter={(e) => (e.currentTarget.style.background = "#2cb885")}
+              onMouseLeave={(e) => (e.currentTarget.style.background = "#34D59A")}
             >
-              <span style={{ color: "#94979E" }}>$</span>
-              <span>npx synapsectl init</span>
-              <span
-                style={{
-                  fontSize: 11,
-                  color: copied ? "#34D59A" : "#6b7280",
-                  border: "1px solid rgba(255,255,255,0.1)",
-                  borderRadius: 4,
-                  padding: "1px 5px",
-                  transition: "color 0.2s",
-                }}
-              >
-                {copied ? "✓" : "⧉"}
-              </span>
+              $ npx synapsectl init
+              <span className="opacity-60 text-xs">&#x29C9;</span>
             </button>
           </div>
         </div>
