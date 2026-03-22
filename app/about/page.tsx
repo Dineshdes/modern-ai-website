@@ -673,16 +673,135 @@ function Story() {
 }
 
 /* ════════════════════════════════════════════════════════
-   SECTION 5 — TEAM (horizontal scroll)
+   SECTION 5 — TEAM (horizontal scroll · photo-style cards)
 ════════════════════════════════════════════════════════ */
 const TEAM = [
-  { name: "Maria Santos", role: "Co-founder & CEO",    initials: "MS", bg: "rgba(52,213,154,0.12)",  color: "#34D59A", bio: "ML Platform, Meta AI Research. Stanford CS PhD." },
-  { name: "James Park",   role: "Co-founder & CTO",    initials: "JP", bg: "rgba(124,111,255,0.12)", color: "#7C6FFF", bio: "Infrastructure Lead, OpenAI. Caltech EE/CS." },
-  { name: "Priya Mehta",  role: "Co-founder & CPO",    initials: "PM", bg: "rgba(245,157,74,0.12)",  color: "#F59D4A", bio: "Product Director, Scale AI. MIT EECS." },
-  { name: "Alex Kim",     role: "Head of Engineering", initials: "AK", bg: "rgba(52,213,154,0.08)",  color: "#34D59A", bio: "Senior SWE, Cloudflare Workers. CMU CS." },
-  { name: "Rania Hassan", role: "Head of Research",    initials: "RH", bg: "rgba(124,111,255,0.08)", color: "#7C6FFF", bio: "Research Scientist, Google DeepMind. Oxford DPhil." },
-  { name: "Luis Torres",  role: "Head of GTM",         initials: "LT", bg: "rgba(245,157,74,0.08)",  color: "#F59D4A", bio: "Enterprise Sales, Databricks. UT Austin MBA." },
+  {
+    name: "Maria Santos", role: "Co-founder & CEO", initials: "MS",
+    grad: "linear-gradient(155deg,#072e22 0%,#0d5c40 38%,#20a875 68%,#4adba0 100%)",
+    blob1: "rgba(52,213,154,0.38)", blob2: "rgba(110,231,183,0.22)",
+    accent: "#34D59A", status: "Building",
+    bio: "ML Platform · Meta AI · Stanford CS PhD",
+  },
+  {
+    name: "James Park",   role: "Co-founder & CTO", initials: "JP",
+    grad: "linear-gradient(155deg,#0d0621 0%,#2a1480 38%,#5b40d4 68%,#9580ff 100%)",
+    blob1: "rgba(124,111,255,0.38)", blob2: "rgba(167,139,250,0.22)",
+    accent: "#7C6FFF", status: "Shipping",
+    bio: "Infrastructure Lead · OpenAI · Caltech EE/CS",
+  },
+  {
+    name: "Priya Mehta",  role: "Co-founder & CPO", initials: "PM",
+    grad: "linear-gradient(155deg,#1f0900 0%,#8c3a08 38%,#d9700f 68%,#f8b96a 100%)",
+    blob1: "rgba(245,157,74,0.38)", blob2: "rgba(252,211,77,0.22)",
+    accent: "#F59D4A", status: "Designing",
+    bio: "Product Director · Scale AI · MIT EECS",
+  },
+  {
+    name: "Alex Kim",     role: "Head of Engineering", initials: "AK",
+    grad: "linear-gradient(155deg,#031811 0%,#084d31 38%,#129960 68%,#34D59A 100%)",
+    blob1: "rgba(16,185,129,0.38)", blob2: "rgba(52,213,154,0.22)",
+    accent: "#10d07a", status: "Deploying",
+    bio: "Senior SWE · Cloudflare Workers · CMU CS",
+  },
+  {
+    name: "Rania Hassan", role: "Head of Research", initials: "RH",
+    grad: "linear-gradient(155deg,#12021f 0%,#581c87 38%,#9333ea 68%,#c084fc 100%)",
+    blob1: "rgba(168,85,247,0.38)", blob2: "rgba(216,180,254,0.22)",
+    accent: "#c084fc", status: "Researching",
+    bio: "Research Scientist · Google DeepMind · Oxford DPhil",
+  },
+  {
+    name: "Luis Torres",  role: "Head of GTM", initials: "LT",
+    grad: "linear-gradient(155deg,#140700 0%,#78350f 38%,#d97706 68%,#fbbf24 100%)",
+    blob1: "rgba(217,119,6,0.38)", blob2: "rgba(251,191,36,0.22)",
+    accent: "#fbbf24", status: "Growing",
+    bio: "Enterprise Sales · Databricks · UT Austin MBA",
+  },
 ];
+
+/* Photo-style glassmorphism card */
+function TeamCard({ p }: { p: typeof TEAM[0] }) {
+  const ref = useRef<HTMLDivElement>(null);
+
+  const onMove = (e: React.MouseEvent) => {
+    const el = ref.current; if (!el) return;
+    const r  = el.getBoundingClientRect();
+    const x  = (e.clientX - r.left) / r.width  - 0.5;
+    const y  = (e.clientY - r.top)  / r.height - 0.5;
+    gsap.to(el, { rotateY: x * 16, rotateX: -y * 16, scale: 1.03, transformPerspective: 1000, duration: 0.28, ease: "power2.out" });
+  };
+  const onLeave = () =>
+    gsap.to(ref.current, { rotateY: 0, rotateX: 0, scale: 1, duration: 0.55, ease: "elastic.out(1,0.5)" });
+
+  return (
+    <div
+      ref={ref}
+      onMouseMove={onMove}
+      onMouseLeave={onLeave}
+      style={{
+        width: 258, height: 370, borderRadius: 24, overflow: "hidden",
+        position: "relative", flexShrink: 0, cursor: "none",
+        transformStyle: "preserve-3d", willChange: "transform",
+        background: p.grad,
+        boxShadow: `0 24px 56px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.08) inset`,
+      }}
+    >
+      {/* Decorative blobs */}
+      <div style={{ position: "absolute", top: -40, right: -40, width: 200, height: 200, borderRadius: "50%", background: p.blob1, filter: "blur(50px)", pointerEvents: "none" }} />
+      <div style={{ position: "absolute", bottom: 60, left: -30, width: 150, height: 150, borderRadius: "50%", background: p.blob2, filter: "blur(40px)", pointerEvents: "none" }} />
+
+      {/* Dot-grid texture */}
+      <div style={{ position: "absolute", inset: 0, backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.12) 1px, transparent 1px)", backgroundSize: "18px 18px", pointerEvents: "none" }} />
+
+      {/* Top status bar (glass) */}
+      <div style={{
+        position: "absolute", top: 0, left: 0, right: 0,
+        padding: "14px 18px",
+        backdropFilter: "blur(16px) saturate(160%)",
+        WebkitBackdropFilter: "blur(16px) saturate(160%)",
+        background: "rgba(0,0,0,0.22)",
+        borderBottom: "1px solid rgba(255,255,255,0.12)",
+        display: "flex", alignItems: "center", justifyContent: "space-between",
+      }}>
+        <span style={{ fontSize: 13, fontWeight: 600, color: "#fff", letterSpacing: "-0.01em" }}>{p.name}</span>
+        <span className="flex items-center gap-1.5" style={{ fontSize: 10, color: "rgba(255,255,255,0.7)", fontFamily: "var(--font-mono),monospace" }}>
+          <span style={{ width: 5, height: 5, borderRadius: "50%", background: p.accent, display: "inline-block", boxShadow: `0 0 6px ${p.accent}` }} />
+          {p.status}
+        </span>
+      </div>
+
+      {/* Avatar circle — upper-center */}
+      <div style={{
+        position: "absolute", top: "38%", left: "50%",
+        transform: "translate(-50%, -50%)",
+        width: 96, height: 96, borderRadius: "50%",
+        background: "rgba(0,0,0,0.28)",
+        backdropFilter: "blur(8px)",
+        WebkitBackdropFilter: "blur(8px)",
+        border: `2px solid rgba(255,255,255,0.28)`,
+        boxShadow: `0 8px 32px rgba(0,0,0,0.4), 0 0 0 6px rgba(255,255,255,0.06)`,
+        display: "flex", alignItems: "center", justifyContent: "center",
+        fontSize: 28, fontWeight: 700, color: "#fff", letterSpacing: "-0.02em",
+      }}>
+        {p.initials}
+      </div>
+
+      {/* Bottom glass info strip */}
+      <div style={{
+        position: "absolute", bottom: 0, left: 0, right: 0,
+        padding: "16px 20px 18px",
+        backdropFilter: "blur(24px) saturate(180%)",
+        WebkitBackdropFilter: "blur(24px) saturate(180%)",
+        background: "rgba(0,0,0,0.38)",
+        borderTop: "1px solid rgba(255,255,255,0.15)",
+      }}>
+        <div style={{ fontSize: 11, fontWeight: 500, color: p.accent, marginBottom: 3, fontFamily: "var(--font-mono),monospace", letterSpacing: "0.04em", textTransform: "uppercase" }}>{p.role}</div>
+        <div style={{ fontSize: 12, color: "rgba(255,255,255,0.55)", lineHeight: 1.5 }}>{p.bio}</div>
+      </div>
+    </div>
+  );
+}
 
 function Team() {
   const pinRef   = useRef<HTMLDivElement>(null);
@@ -714,39 +833,54 @@ function Team() {
   }, []);
 
   return (
-    <div ref={pinRef} style={{ overflow: "hidden", background: "#080909", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-      <div className="pt-16 pb-10 px-16 max-w-none">
+    <div ref={pinRef} style={{ background: "#080909", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
+      {/* Header */}
+      <div className="px-16 pt-16 pb-12">
         <span className="text-[11px] uppercase tracking-widest block mb-4" style={{ color: "#94979E" }}>The team</span>
         <h2 style={{ fontSize: "clamp(24px, 2.8vw, 40px)", fontWeight: 400, letterSpacing: "-0.04em", color: "#F9FAFA" }}>
           Small team.{" "}<span style={{ color: "#6B7280" }}>Massive ambition.</span>
         </h2>
       </div>
-      <div ref={trackRef} className="flex" style={{ paddingLeft: 64, paddingRight: 64, gap: 18, paddingBottom: 80, width: "max-content" }}>
-        {TEAM.map((p) => (
-          <TiltCard key={p.name} className="rounded-2xl p-7 flex-shrink-0 relative overflow-hidden"
-            style={{ width: 290, background: "#111215", border: "1px solid rgba(255,255,255,0.07)" }}>
-            <div className="cg absolute pointer-events-none" style={{ width: 200, height: 200, borderRadius: "50%", background: `radial-gradient(circle, ${p.color}20 0%, transparent 70%)`, top: -50, left: -50 }} />
-            <div className="relative z-10">
-              <div className="w-12 h-12 rounded-full flex items-center justify-center text-[15px] font-semibold mb-5" style={{ background: p.bg, color: p.color }}>{p.initials}</div>
-              <div style={{ fontSize: 15, fontWeight: 500, color: "#F9FAFA", marginBottom: 4 }}>{p.name}</div>
-              <div style={{ fontSize: 12, color: p.color, marginBottom: 12 }}>{p.role}</div>
-              <p style={{ fontSize: 13, color: "#94979E", lineHeight: 1.65 }}>{p.bio}</p>
-            </div>
-          </TiltCard>
-        ))}
-        {/* Hiring card */}
-        <TiltCard className="rounded-2xl p-7 flex-shrink-0 relative overflow-hidden flex flex-col justify-between"
-          style={{ width: 290, background: "rgba(52,213,154,0.06)", border: "1px solid rgba(52,213,154,0.25)" }}>
-          <div className="cg absolute pointer-events-none" style={{ width: 200, height: 200, borderRadius: "50%", background: "radial-gradient(circle, rgba(52,213,154,0.14) 0%, transparent 70%)", top: -50, left: -50 }} />
-          <div className="relative z-10">
-            <div className="w-12 h-12 rounded-full flex items-center justify-center mb-5" style={{ background: "rgba(52,213,154,0.15)", border: "1px solid rgba(52,213,154,0.3)" }}>
-              <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 3v12M3 9h12" stroke="#34D59A" strokeWidth={1.8} strokeLinecap="round" /></svg>
-            </div>
-            <div style={{ fontSize: 17, fontWeight: 500, color: "#F9FAFA", marginBottom: 8 }}>We&apos;re hiring</div>
-            <p style={{ fontSize: 13, color: "#94979E", lineHeight: 1.65, marginBottom: 20 }}>Remote-first. Competitive equity. Hard problems worth solving.</p>
+
+      {/* Scrolling track */}
+      <div ref={trackRef} style={{ display: "flex", paddingLeft: 64, paddingRight: 64, gap: 20, paddingBottom: 88, width: "max-content", alignItems: "flex-end" }}>
+        {TEAM.map((p, i) => (
+          /* Alternate vertical offsets for staggered look */
+          <div key={p.name} style={{ transform: i % 2 === 0 ? "translateY(0px)" : "translateY(-28px)" }}>
+            <TeamCard p={p} />
           </div>
-          <MagBtn primary>See open roles →</MagBtn>
-        </TiltCard>
+        ))}
+
+        {/* Hiring card — same glass style */}
+        <div style={{ transform: "translateY(0px)" }}>
+          <div style={{
+            width: 258, height: 370, borderRadius: 24, overflow: "hidden",
+            position: "relative", flexShrink: 0,
+            background: "linear-gradient(155deg, #061810 0%, #0a3328 40%, #0e5c42 70%, #1a8f65 100%)",
+            boxShadow: "0 24px 56px rgba(0,0,0,0.55), 0 0 0 1px rgba(52,213,154,0.2) inset",
+            display: "flex", flexDirection: "column", justifyContent: "flex-end",
+          }}>
+            <div style={{ position: "absolute", top: -40, right: -40, width: 200, height: 200, borderRadius: "50%", background: "rgba(52,213,154,0.3)", filter: "blur(55px)" }} />
+            <div style={{ position: "absolute", inset: 0, backgroundImage: "radial-gradient(circle, rgba(52,213,154,0.12) 1px, transparent 1px)", backgroundSize: "18px 18px" }} />
+
+            {/* Plus icon */}
+            <div style={{ position: "absolute", top: "38%", left: "50%", transform: "translate(-50%,-50%)", width: 72, height: 72, borderRadius: "50%", background: "rgba(52,213,154,0.15)", border: "1.5px solid rgba(52,213,154,0.4)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 4v16M4 12h16" stroke="#34D59A" strokeWidth={1.8} strokeLinecap="round" /></svg>
+            </div>
+
+            <div style={{
+              padding: "20px 20px 22px",
+              backdropFilter: "blur(24px) saturate(180%)",
+              WebkitBackdropFilter: "blur(24px) saturate(180%)",
+              background: "rgba(0,0,0,0.35)",
+              borderTop: "1px solid rgba(52,213,154,0.2)",
+            }}>
+              <div style={{ fontSize: 16, fontWeight: 600, color: "#F9FAFA", marginBottom: 6 }}>We&apos;re hiring</div>
+              <div style={{ fontSize: 12, color: "rgba(255,255,255,0.5)", lineHeight: 1.6, marginBottom: 16 }}>Remote-first · great equity · hard problems</div>
+              <a href="#" style={{ display: "inline-flex", alignItems: "center", gap: 6, paddingLeft: 14, paddingRight: 14, height: 34, borderRadius: 999, background: "#34D59A", color: "#0C0D0D", fontSize: 12, fontWeight: 600 }}>View roles →</a>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
