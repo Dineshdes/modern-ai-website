@@ -1,15 +1,15 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, X, MessageCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const navLinks = [
-  { label: "Products", href: "#" },
+  { label: "Features", href: "#inference" },
   { label: "Solutions", href: "#" },
-  { label: "Pricing", href: "#" },
   { label: "Docs", href: "#" },
-  { label: "Blog", href: "#" },
+  { label: "Pricing", href: "#" },
+  { label: "Resources", href: "#" },
 ];
 
 export default function Navbar() {
@@ -25,25 +25,27 @@ export default function Navbar() {
   return (
     <nav
       className={cn(
-        "fixed top-0 left-0 right-0 z-50 h-16 transition-all duration-300",
+        "fixed left-0 right-0 z-50 h-16 transition-all duration-300",
+        "top-[40px]",
         scrolled
-          ? "bg-black/80 backdrop-blur-xl border-b border-white/[0.06]"
+          ? "bg-black/90 backdrop-blur-xl border-b border-white/[0.06]"
           : "bg-transparent"
       )}
     >
-      <div className="max-w-[1216px] mx-auto h-full flex items-center justify-between px-6">
+      <div className="max-w-7xl mx-auto h-full flex items-center justify-between px-6">
         {/* Logo */}
-        <a href="/" className="flex items-center gap-2 text-white" style={{ fontWeight: 500 }}>
-          <span className="text-[#00E599]">✦</span> Synapse
+        <a href="/" className="flex items-center gap-1.5">
+          <span className="text-[#00E599] text-lg">✦</span>
+          <span className="text-white font-medium text-[18px]">Synapse</span>
         </a>
 
         {/* Desktop Nav */}
-        <ul className="hidden md:flex items-center gap-8">
+        <ul className="hidden md:flex items-center">
           {navLinks.map((link) => (
             <li key={link.label}>
               <a
                 href={link.href}
-                className="text-[15px] text-white hover:text-[#94979E] transition-colors"
+                className="text-[15px] text-white/80 hover:text-white font-normal px-4 transition-colors"
               >
                 {link.label}
               </a>
@@ -51,25 +53,39 @@ export default function Navbar() {
           ))}
         </ul>
 
-        {/* Desktop CTA */}
+        {/* Desktop Right */}
         <div className="hidden md:flex items-center gap-3">
           <a
-            href="#login"
-            className="text-sm text-[#94979E] hover:text-white transition-colors"
+            href="#"
+            className="text-white/70 hover:text-white transition-colors"
+            aria-label="Discord"
+          >
+            <MessageCircle size={18} />
+          </a>
+          <a
+            href="#"
+            className="text-[15px] text-white/70 hover:text-white transition-colors"
+          >
+            GitHub ★ 8.4k
+          </a>
+          <div className="w-px h-4 bg-white/[0.12] mx-1" />
+          <a
+            href="#"
+            className="text-[15px] text-white/70 hover:text-white transition-colors"
           >
             Log in
           </a>
           <a
-            href="#signup"
-            className="bg-white text-[#1a1a1a] text-sm font-medium px-5 py-2 rounded-full hover:bg-white/90 transition-colors"
+            href="#"
+            className="bg-white text-[#1a1a1a] text-[15px] font-medium px-5 py-2 rounded-full hover:bg-white/90 transition-colors"
           >
-            Get started
+            Sign up
           </a>
         </div>
 
         {/* Mobile Menu Toggle */}
         <button
-          className="md:hidden text-[#94979E] hover:text-white transition-colors"
+          className="md:hidden text-[#797D86] hover:text-white transition-colors"
           onClick={() => setMobileOpen((v) => !v)}
           aria-label="Toggle menu"
         >
@@ -85,27 +101,27 @@ export default function Navbar() {
               <li key={link.label}>
                 <a
                   href={link.href}
-                  className="text-[15px] text-white hover:text-[#94979E] transition-colors block py-1"
+                  className="text-[15px] text-white/80 hover:text-white transition-colors block py-1"
                   onClick={() => setMobileOpen(false)}
                 >
                   {link.label}
                 </a>
               </li>
             ))}
-            <li className="pt-2 flex flex-col gap-3">
+            <li className="pt-2 flex flex-col gap-3 border-t border-white/[0.06]">
               <a
-                href="#login"
-                className="text-sm text-[#94979E] hover:text-white transition-colors py-1"
+                href="#"
+                className="text-[15px] text-white/70 hover:text-white transition-colors py-1"
                 onClick={() => setMobileOpen(false)}
               >
                 Log in
               </a>
               <a
-                href="#signup"
-                className="bg-white text-[#1a1a1a] text-sm font-medium px-5 py-2 rounded-full hover:bg-white/90 transition-colors text-center"
+                href="#"
+                className="bg-white text-[#1a1a1a] text-[15px] font-medium px-5 py-2 rounded-full hover:bg-white/90 transition-colors text-center"
                 onClick={() => setMobileOpen(false)}
               >
-                Get started
+                Sign up
               </a>
             </li>
           </ul>
