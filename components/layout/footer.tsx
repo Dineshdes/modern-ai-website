@@ -79,8 +79,16 @@ const COLS = [
 
 export default function Footer() {
   return (
-    <footer className="relative" style={{ background: "#0C0D0D", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
-      {/* Subtle noise texture overlay */}
+    <footer className="relative overflow-hidden" style={{ background: "#0C0D0D", borderTop: "1px solid rgba(255,255,255,0.06)" }}>
+      {/* Teal radial gradient — top-left glow */}
+      <div className="absolute inset-0 pointer-events-none" style={{
+        background: "radial-gradient(ellipse 70% 50% at 15% 0%, rgba(52,213,154,0.10) 0%, rgba(52,213,154,0.03) 45%, transparent 70%)",
+      }} />
+      {/* Secondary glow — bottom right */}
+      <div className="absolute inset-0 pointer-events-none" style={{
+        background: "radial-gradient(ellipse 55% 45% at 85% 100%, rgba(52,213,154,0.07) 0%, rgba(52,213,154,0.02) 45%, transparent 70%)",
+      }} />
+      {/* Noise grain texture */}
       <div
         className="absolute inset-0 pointer-events-none opacity-[0.03]"
         style={{
