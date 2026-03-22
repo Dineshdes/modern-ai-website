@@ -45,31 +45,6 @@ body {
   animation: scroll-left 40s linear infinite;
 }
 
-/* Halftone rhythm animations */
-@keyframes halftone-breathe {
-  0%, 100% { opacity: 0.55; transform: scaleX(1); }
-  50%       { opacity: 1;    transform: scaleX(1.04); }
-}
-@keyframes halftone-breathe-offset {
-  0%, 100% { opacity: 0.45; transform: scaleX(1); }
-  50%       { opacity: 0.9;  transform: scaleX(1.04); }
-}
-@keyframes halftone-drift {
-  0%, 100% { background-position: 0px 0px;   }
-  33%       { background-position: 4px 3px;   }
-  66%       { background-position: -3px 5px;  }
-}
-.halftone-pulse-left {
-  animation: halftone-breathe 4s ease-in-out infinite,
-             halftone-drift   12s ease-in-out infinite;
-  transform-origin: left center;
-}
-.halftone-pulse-right {
-  animation: halftone-breathe-offset 4s ease-in-out 1.8s infinite,
-             halftone-drift          12s ease-in-out 4s infinite;
-  transform-origin: right center;
-}
-
 /* Rainbow gradient bar */
 .rainbow-bar {
   background: linear-gradient(90deg,

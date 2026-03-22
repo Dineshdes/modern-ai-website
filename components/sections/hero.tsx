@@ -3,80 +3,6 @@
 import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 
-/* ─── Animated halftone dot-grid for hero edges ─── */
-function HeroHalftone() {
-  const DOT   = 1.8;   // dot radius px
-  const GAP   = 9;     // grid spacing px
-  const W     = 380;   // edge panel width
-
-  const dotPattern = (color: string) =>
-    `radial-gradient(circle, ${color} ${DOT}px, transparent ${DOT}px)`;
-
-  const baseStyle = (side: "left" | "right"): React.CSSProperties => ({
-    position: "absolute",
-    top: 0,
-    bottom: 0,
-    [side]: 0,
-    width: W,
-    backgroundSize: `${GAP}px ${GAP}px`,
-    pointerEvents: "none",
-    zIndex: 5,
-  });
-
-  return (
-    <>
-      {/* Teal left — triple layer for depth */}
-      <div
-        aria-hidden
-        className="halftone-pulse-left"
-        style={{
-          ...baseStyle("left"),
-          backgroundImage: dotPattern("rgba(52, 213, 154, 0.80)"),
-          WebkitMaskImage: "linear-gradient(to right, black 0%, black 28%, transparent 100%)",
-          maskImage:        "linear-gradient(to right, black 0%, black 28%, transparent 100%)",
-        }}
-      />
-      {/* Teal left — softer wider halo */}
-      <div
-        aria-hidden
-        style={{
-          ...baseStyle("left"),
-          width: W * 1.5,
-          backgroundImage: dotPattern("rgba(52, 213, 154, 0.28)"),
-          WebkitMaskImage: "linear-gradient(to right, black 0%, transparent 80%)",
-          maskImage:        "linear-gradient(to right, black 0%, transparent 80%)",
-          animation: "halftone-breathe 6s ease-in-out 0.5s infinite",
-          transformOrigin: "left center",
-        }}
-      />
-
-      {/* Orange right — main layer */}
-      <div
-        aria-hidden
-        className="halftone-pulse-right"
-        style={{
-          ...baseStyle("right"),
-          backgroundImage: dotPattern("rgba(220, 120, 60, 0.75)"),
-          WebkitMaskImage: "linear-gradient(to left, black 0%, black 28%, transparent 100%)",
-          maskImage:        "linear-gradient(to left, black 0%, black 28%, transparent 100%)",
-        }}
-      />
-      {/* Orange right — softer wider halo */}
-      <div
-        aria-hidden
-        style={{
-          ...baseStyle("right"),
-          width: W * 1.5,
-          backgroundImage: dotPattern("rgba(220, 100, 40, 0.25)"),
-          WebkitMaskImage: "linear-gradient(to left, black 0%, transparent 80%)",
-          maskImage:        "linear-gradient(to left, black 0%, transparent 80%)",
-          animation: "halftone-breathe-offset 6s ease-in-out 2.5s infinite",
-          transformOrigin: "right center",
-        }}
-      />
-    </>
-  );
-}
 
 /* ─── Company logo marks matching neon's style: icon mark + wordmark ─── */
 const LOGOS: { icon: React.ReactNode; label: string }[] = [
@@ -280,9 +206,6 @@ export default function Hero() {
     >
       {/* Canvas bars */}
       <HeroBars />
-
-      {/* Animated halftone rhythm */}
-      <HeroHalftone />
 
       {/* Content — positioned to match neon's above-fold layout */}
       <div
