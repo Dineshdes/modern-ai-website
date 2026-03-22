@@ -901,22 +901,22 @@ function Brackets({ color = "rgba(255,255,255,0.18)" }: { color?: string }) {
 }
 
 const INV_DATA = [
-  { name: "Y Combinator",        mono: "YC",   role: "Lead Investor",   accent: "#F59D4A",
+  { id: "yc",    name: "Y Combinator",        mono: "YC",   role: "Lead Investor",   accent: "#F59D4A",
     desc: "The world's most powerful startup accelerator backing Synapse's vision for the AI inference era.",
     website: "ycombinator.com" },
-  { name: "Andreessen Horowitz", mono: "a16z", role: "Series A Lead",   accent: "#7C6FFF",
+  { id: "a16z",  name: "Andreessen Horowitz", mono: "a16z", role: "Series A Lead",   accent: "#7C6FFF",
     desc: "Pioneering venture firm backing transformational technology companies from seed to public markets.",
     website: "a16z.com" },
-  { name: "Index Ventures",      mono: "IX",   role: "Series A",        accent: "#3482D5",
+  { id: "index", name: "Index Ventures",      mono: "IX",   role: "Series A",        accent: "#3482D5",
     desc: "Global venture capital firm backing bold founders building category-defining companies worldwide.",
     website: "indexventures.com" },
-  { name: "Elad Gil",            mono: "EG",   role: "Angel Investor",  accent: "#34D59A",
+  { id: "elad",  name: "Elad Gil",            mono: "EG",   role: "Angel Investor",  accent: "#34D59A",
     desc: "Prolific investor and operator. Backed Stripe, Airbnb, and dozens of generational companies.",
     website: "eladgil.com" },
-  { name: "Nat Friedman",        mono: "NF",   role: "Angel Investor",  accent: "#94979E",
+  { id: "nat",   name: "Nat Friedman",        mono: "NF",   role: "Angel Investor",  accent: "#94979E",
     desc: "Former CEO of GitHub. Deep believer in open-source, developer tools, and AI infrastructure.",
     website: "nat.org" },
-  { name: "Andrej Karpathy",     mono: "AK",   role: "Advisor",         accent: "#c084fc",
+  { id: "ak",    name: "Andrej Karpathy",     mono: "AK",   role: "Advisor",         accent: "#c084fc",
     desc: "Founding scientist at Tesla AI and OpenAI. One of the world's foremost AI researchers.",
     website: "karpathy.ai" },
 ];
@@ -1027,44 +1027,92 @@ function Investors() {
                   width: CW, height: CH, borderRadius: 22,
                   background: "#111215",
                   border: "1px solid rgba(255,255,255,0.1)",
-                  boxShadow: `0 40px 80px rgba(0,0,0,0.65), 0 0 0 1px rgba(255,255,255,0.04) inset, 0 0 80px ${inv.accent}14`,
+                  boxShadow: `0 40px 80px rgba(0,0,0,0.65), 0 0 0 1px rgba(255,255,255,0.04) inset, 0 0 80px ${inv.accent}18`,
                   position: "relative", overflow: "hidden",
                   display: "flex", flexDirection: "column", alignItems: "center",
-                  padding: "32px 26px 24px",
+                  padding: "32px 28px 26px",
                 }}>
-                  {/* Ambient glow */}
-                  <div style={{ position: "absolute", top: -80, left: "50%", transform: "translateX(-50%)", width: 260, height: 260, borderRadius: "50%", background: `${inv.accent}14`, filter: "blur(60px)", pointerEvents: "none" }} />
-                  {/* Dot texture */}
-                  <div style={{ position: "absolute", inset: 0, backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.028) 1px, transparent 1px)", backgroundSize: "18px 18px", pointerEvents: "none" }} />
-                  {/* Corner brackets */}
-                  <Brackets color={`${inv.accent}55`} />
 
-                  {/* Role pill */}
-                  <div style={{ position: "relative", display: "flex", alignItems: "center", gap: 6, marginBottom: 14 }}>
-                    <span style={{ width: 5, height: 5, borderRadius: "50%", background: inv.accent, display: "inline-block", boxShadow: `0 0 7px ${inv.accent}` }} />
-                    <span style={{ fontSize: 9, color: inv.accent, fontFamily: "var(--font-mono),monospace", letterSpacing: "0.14em", textTransform: "uppercase" }}>{inv.role}</span>
+                  {/* ── Two-colour gradient + running dash SVG (same as CTA bar) ── */}
+                  <svg aria-hidden style={{ position: "absolute", inset: 0, width: "100%", height: "100%", pointerEvents: "none" }}
+                    viewBox={`0 0 ${CW} ${CH}`} preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                      <linearGradient id={`cg-${inv.id}`} x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%"   stopColor={inv.accent} stopOpacity="0.13" />
+                        <stop offset="40%"  stopColor="#111215"    stopOpacity="0"    />
+                        <stop offset="60%"  stopColor="#111215"    stopOpacity="0"    />
+                        <stop offset="100%" stopColor={inv.accent} stopOpacity="0.10" />
+                      </linearGradient>
+                      <linearGradient id={`dm-${inv.id}`} x1="0" y1="0" x2="1" y2="0">
+                        <stop offset="0%"  stopColor="white" stopOpacity="0"  />
+                        <stop offset="12%" stopColor="white" stopOpacity="1"  />
+                        <stop offset="88%" stopColor="white" stopOpacity="1"  />
+                        <stop offset="100%" stopColor="white" stopOpacity="0" />
+                      </linearGradient>
+                      <mask id={`msk-${inv.id}`}>
+                        <rect width={CW} height={CH} fill={`url(#dm-${inv.id})`} />
+                      </mask>
+                    </defs>
+                    {/* Gradient wash */}
+                    <rect width={CW} height={CH} fill={`url(#cg-${inv.id})`} />
+                    {/* Dot grid */}
+                    <rect width={CW} height={CH} fill="none"
+                      style={{ backgroundImage: "radial-gradient(circle,rgba(255,255,255,0.03) 1px,transparent 1px)", backgroundSize: "18px 18px" }} />
+
+                    {/* Top running dashes */}
+                    <g mask={`url(#msk-${inv.id})`}>
+                      <line x1="0" y1="1" x2={CW} y2="1"
+                        stroke={inv.accent} strokeWidth="1.4" strokeDasharray="10 16" strokeLinecap="round" opacity="0.65">
+                        <animate attributeName="stroke-dashoffset" from="0" to="-104" dur="2.2s" repeatCount="indefinite" />
+                      </line>
+                      <line x1="0" y1="1" x2={CW} y2="1"
+                        stroke={inv.accent} strokeWidth="0.5" strokeDasharray="5 21" strokeLinecap="round" opacity="0.28">
+                        <animate attributeName="stroke-dashoffset" from="0" to="-104" dur="3.6s" repeatCount="indefinite" />
+                      </line>
+                    </g>
+
+                    {/* Bottom running dashes — reversed */}
+                    <g mask={`url(#msk-${inv.id})`}>
+                      <line x1="0" y1={CH - 1} x2={CW} y2={CH - 1}
+                        stroke={inv.accent} strokeWidth="1.4" strokeDasharray="10 16" strokeLinecap="round" opacity="0.4">
+                        <animate attributeName="stroke-dashoffset" from="-104" to="0" dur="2.2s" repeatCount="indefinite" />
+                      </line>
+                      <line x1="0" y1={CH - 1} x2={CW} y2={CH - 1}
+                        stroke={inv.accent} strokeWidth="0.5" strokeDasharray="5 21" strokeLinecap="round" opacity="0.18">
+                        <animate attributeName="stroke-dashoffset" from="-104" to="0" dur="3.6s" repeatCount="indefinite" />
+                      </line>
+                    </g>
+                  </svg>
+
+                  {/* Corner brackets */}
+                  <Brackets color={`${inv.accent}60`} />
+
+                  {/* Role */}
+                  <div style={{ position: "relative", display: "flex", alignItems: "center", gap: 7, marginBottom: 16 }}>
+                    <span style={{ width: 6, height: 6, borderRadius: "50%", background: inv.accent, display: "inline-block", boxShadow: `0 0 8px ${inv.accent}` }} />
+                    <span style={{ fontSize: 11, color: inv.accent, fontFamily: "var(--font-mono),monospace", letterSpacing: "0.14em", textTransform: "uppercase" }}>{inv.role}</span>
                   </div>
 
                   {/* Name */}
-                  <div style={{ position: "relative", fontSize: 15, fontWeight: 600, color: "#F9FAFA", letterSpacing: "-0.015em", textAlign: "center", lineHeight: 1.3 }}>{inv.name}</div>
+                  <div style={{ position: "relative", fontSize: 20, fontWeight: 600, color: "#F9FAFA", letterSpacing: "-0.025em", textAlign: "center", lineHeight: 1.25 }}>{inv.name}</div>
 
-                  {/* Monogram — large, centered */}
+                  {/* Monogram */}
                   <div style={{ position: "relative", flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    <span style={{ fontSize: 90, fontWeight: 800, letterSpacing: "-0.06em", color: inv.accent, opacity: 0.16, lineHeight: 1, userSelect: "none" }}>{inv.mono}</span>
+                    <span style={{ fontSize: 108, fontWeight: 800, letterSpacing: "-0.06em", color: inv.accent, opacity: 0.14, lineHeight: 1, userSelect: "none" }}>{inv.mono}</span>
                   </div>
 
                   {/* Description */}
-                  <div style={{ position: "relative", textAlign: "center", marginBottom: 22 }}>
-                    <p style={{ fontSize: 9.5, color: "#6B7280", lineHeight: 1.85, letterSpacing: "0.07em", textTransform: "uppercase", fontFamily: "var(--font-mono),monospace", maxWidth: 210 }}>
+                  <div style={{ position: "relative", textAlign: "center", marginBottom: 24 }}>
+                    <p style={{ fontSize: 11.5, color: "#6B7280", lineHeight: 1.8, letterSpacing: "0.06em", textTransform: "uppercase", fontFamily: "var(--font-mono),monospace", maxWidth: 220 }}>
                       {inv.desc}
                     </p>
                   </div>
 
-                  {/* Website — with flanking lines */}
-                  <div style={{ position: "relative", width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 10 }}>
-                    <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, transparent, ${inv.accent}35)` }} />
-                    <span style={{ fontSize: 9, color: "#94979E", fontFamily: "var(--font-mono),monospace", letterSpacing: "0.14em", textTransform: "uppercase" }}>WEBSITE</span>
-                    <div style={{ flex: 1, height: 1, background: `linear-gradient(270deg, transparent, ${inv.accent}35)` }} />
+                  {/* Website */}
+                  <div style={{ position: "relative", width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 12 }}>
+                    <div style={{ flex: 1, height: 1, background: `linear-gradient(90deg, transparent, ${inv.accent}40)` }} />
+                    <span style={{ fontSize: 11, color: "#94979E", fontFamily: "var(--font-mono),monospace", letterSpacing: "0.16em", textTransform: "uppercase" }}>WEBSITE</span>
+                    <div style={{ flex: 1, height: 1, background: `linear-gradient(270deg, transparent, ${inv.accent}40)` }} />
                   </div>
                 </div>
               ) : (
