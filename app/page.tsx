@@ -1,6 +1,7 @@
 import AnnouncementBar from "@/components/layout/announcement-bar";
 import Navbar from "@/components/layout/navbar";
 import Hero from "@/components/sections/hero";
+import StatusTicker from "@/components/ui/status-ticker";
 import FeatureSectionWrapper from "@/components/sections/feature-section-wrapper";
 import InferenceSection from "@/components/sections/inference-section";
 import FineTuningSection from "@/components/sections/finetuning-section";
@@ -18,6 +19,7 @@ export default function Home() {
       <AnnouncementBar />
       <Navbar />
       <Hero />
+      <StatusTicker />
       <FeatureSectionWrapper>
         <InferenceSection />
         <AutoscalingSection />
@@ -25,6 +27,7 @@ export default function Home() {
         <VectorDBSection />
         <ObservabilitySection />
       </FeatureSectionWrapper>
+      <StatusTicker />
       <AgentPlatform />
       <BackedBy />
       <CTAFinal />

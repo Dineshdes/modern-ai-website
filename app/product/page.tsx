@@ -8,6 +8,7 @@ import Footer from "@/components/layout/footer";
 import HalftoneEdges from "@/components/ui/halftone-edges";
 import SectionGlow from "@/components/ui/section-glow";
 import CTAFinal from "@/components/sections/cta-final";
+import StatusTicker from "@/components/ui/status-ticker";
 
 /* ─── Shared animation helper ─── */
 const fadeUp = (delay = 0) => ({
@@ -935,6 +936,7 @@ export default function ProductPage() {
         <FAQ />
         <CTAFinal />
       </main>
+      <StatusTicker />
       <Footer />
     </>
   );
