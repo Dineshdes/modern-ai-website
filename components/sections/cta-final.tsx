@@ -385,44 +385,111 @@ export default function CTAFinal() {
       </div>
 
       {/* Bottom CTA bar */}
-      <div className="relative border-t overflow-hidden" style={{ borderColor: "rgba(255,255,255,0.07)" }}>
+      <div className="relative overflow-hidden" style={{ borderTop: "none" }}>
 
-        {/* Two-colour SVG gradient background */}
+        {/* ── Animated running-dash SVG ── */}
         <svg
           aria-hidden
           className="absolute inset-0 w-full h-full pointer-events-none"
           preserveAspectRatio="none"
-          viewBox="0 0 1440 96"
+          viewBox="0 0 1200 110"
           xmlns="http://www.w3.org/2000/svg"
         >
           <defs>
-            <linearGradient id="barGrad" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%"   stopColor="#34D59A" stopOpacity="0.10" />
-              <stop offset="50%"  stopColor="#080A09" stopOpacity="0"    />
-              <stop offset="100%" stopColor="#F59D4A" stopOpacity="0.10" />
+            {/* Two-colour gradient filling the bar */}
+            <linearGradient id="barGrad2" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%"   stopColor="#34D59A" stopOpacity="0.12" />
+              <stop offset="42%"  stopColor="#080A09" stopOpacity="0"    />
+              <stop offset="58%"  stopColor="#080A09" stopOpacity="0"    />
+              <stop offset="100%" stopColor="#F59D4A" stopOpacity="0.12" />
             </linearGradient>
-            {/* Subtle noise-dot grid overlay */}
-            <pattern id="barDots" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse">
-              <circle cx="1" cy="1" r="0.8" fill="white" fillOpacity="0.025" />
-            </pattern>
+            {/* Mask so dashes fade out at edges */}
+            <linearGradient id="dashMask" x1="0" y1="0" x2="1" y2="0">
+              <stop offset="0%"   stopColor="white" stopOpacity="0"   />
+              <stop offset="8%"   stopColor="white" stopOpacity="1"   />
+              <stop offset="92%"  stopColor="white" stopOpacity="1"   />
+              <stop offset="100%" stopColor="white" stopOpacity="0"   />
+            </linearGradient>
+            <mask id="edgeFade">
+              <rect width="1200" height="110" fill="url(#dashMask)" />
+            </mask>
           </defs>
-          <rect width="1440" height="96" fill="url(#barGrad)" />
-          <rect width="1440" height="96" fill="url(#barDots)" />
-          {/* Left teal edge fade */}
-          <rect width="320" height="96" fill="url(#barGrad)" opacity="0.6" />
-          {/* Right orange edge fade — mirrored */}
-          <rect x="1120" width="320" height="96" fill="url(#barGrad)" opacity="0.6" />
-          {/* Hairline dividers */}
-          <line x1="0" y1="0" x2="1440" y2="0" stroke="rgba(52,213,154,0.15)" strokeWidth="0.5" />
-          <line x1="0" y1="95" x2="1440" y2="95" stroke="rgba(245,157,74,0.08)" strokeWidth="0.5" />
+
+          {/* Background gradient wash */}
+          <rect width="1200" height="110" fill="url(#barGrad2)" />
+
+          {/* ── Top running dash line ── */}
+          <g mask="url(#edgeFade)">
+            <line
+              x1="0" y1="1" x2="1200" y2="1"
+              stroke="#34D59A" strokeWidth="1.5"
+              strokeDasharray="12 18"
+              strokeLinecap="round"
+              opacity="0.7"
+            >
+              <animate
+                attributeName="stroke-dashoffset"
+                from="0" to="-120"
+                dur="2.4s"
+                repeatCount="indefinite"
+              />
+            </line>
+            {/* Softer duplicate offset for depth */}
+            <line
+              x1="0" y1="1" x2="1200" y2="1"
+              stroke="#34D59A" strokeWidth="0.5"
+              strokeDasharray="6 24"
+              strokeLinecap="round"
+              opacity="0.3"
+            >
+              <animate
+                attributeName="stroke-dashoffset"
+                from="0" to="-120"
+                dur="3.8s"
+                repeatCount="indefinite"
+              />
+            </line>
+          </g>
+
+          {/* ── Bottom running dash line ── */}
+          <g mask="url(#edgeFade)">
+            <line
+              x1="0" y1="109" x2="1200" y2="109"
+              stroke="#34D59A" strokeWidth="1.5"
+              strokeDasharray="12 18"
+              strokeLinecap="round"
+              opacity="0.45"
+            >
+              <animate
+                attributeName="stroke-dashoffset"
+                from="-120" to="0"
+                dur="2.4s"
+                repeatCount="indefinite"
+              />
+            </line>
+            <line
+              x1="0" y1="109" x2="1200" y2="109"
+              stroke="#34D59A" strokeWidth="0.5"
+              strokeDasharray="6 24"
+              strokeLinecap="round"
+              opacity="0.2"
+            >
+              <animate
+                attributeName="stroke-dashoffset"
+                from="-120" to="0"
+                dur="3.8s"
+                repeatCount="indefinite"
+              />
+            </line>
+          </g>
         </svg>
 
-        <div className="relative z-10 max-w-[1400px] mx-auto px-8 py-9 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
-          <div style={{ lineHeight: 1.55 }}>
-            <p style={{ fontSize: 20, fontWeight: 400, letterSpacing: "-0.02em", color: "#F9FAFA" }}>
+        <div className="relative z-10 max-w-[1200px] mx-auto px-8 py-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          <div style={{ lineHeight: 1.5 }}>
+            <p style={{ fontSize: 24, fontWeight: 400, letterSpacing: "-0.03em", color: "#F9FAFA" }}>
               Trusted by developers, ready for agents.
             </p>
-            <p style={{ fontSize: 20, fontWeight: 400, letterSpacing: "-0.02em", color: "#6B7280" }}>
+            <p style={{ fontSize: 24, fontWeight: 400, letterSpacing: "-0.03em", color: "#6B7280" }}>
               Build and scale AI faster with Synapse.
             </p>
           </div>
