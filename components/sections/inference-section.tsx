@@ -235,53 +235,77 @@ export default function InferenceSection() {
           </h2>
         </motion.div>
 
-        {/* IDE mockup wrapped in halftone-edged container */}
+        {/* Pipe-separated tab labels — Neon style, above the IDE columns */}
         <motion.div
-          initial={{ opacity: 0, y: 28 }}
+          initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          transition={{ duration: 0.6, delay: 0.08 }}
-          className="mt-14 relative overflow-hidden rounded-2xl"
+          transition={{ duration: 0.5, delay: 0.06 }}
+          className="mt-14 flex"
+          style={{ paddingLeft: 0 }}
         >
-          {/* Halftone wraps only the IDE mockup */}
-          <HalftoneEdges
-            leftColor="rgba(52, 213, 154, 0.60)"
-            rightColor="rgba(210, 100, 40, 0.55)"
-            dotSize={2}
-            spacing={8}
-            edgeWidth={220}
-            fadeStop={100}
-          />
-
-          {/* Tab headers — sit on top of halftone, above the IDE */}
-          <div
-            className="relative z-10 flex"
-            style={{ borderBottom: "1px solid rgba(255,255,255,0.06)" }}
-          >
-            {["Adds Synapse Rules for correct code", "Adds MCP for safe access to Synapse"].map((tab, i) => (
-              <div
-                key={tab}
-                className="px-6 py-3 text-sm border-r"
-                style={{
-                  borderColor: "rgba(255,255,255,0.06)",
-                  color: i === 0 ? "rgba(249,250,250,0.7)" : "#94979E",
-                  borderLeft: i === 0 ? "1px solid rgba(255,255,255,0.06)" : undefined,
-                  background: "rgba(12,13,13,0.6)",
-                  backdropFilter: "blur(8px)",
-                }}
-              >
-                {tab}
-              </div>
-            ))}
-          </div>
-
-          {/* IDE mockup */}
-          <div className="relative z-10">
-            <IDEMockup />
-          </div>
+          {["Adds Synapse Rules for correct code", "Adds MCP for safe access to Synapse"].map((tab, i) => (
+            <div
+              key={tab}
+              className="flex items-center gap-4 pr-10"
+              style={{ color: i === 0 ? "rgba(249,250,250,0.55)" : "rgba(249,250,250,0.35)", fontSize: 13 }}
+            >
+              <span style={{ opacity: 0.3, fontWeight: 300 }}>|</span>
+              <span>{tab}</span>
+            </div>
+          ))}
         </motion.div>
+      </div>
 
-        <motion.div initial={{ opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6, delay: 0.2 }}>
+      {/* IDE mockup — full-width with tight halftone wrap */}
+      <motion.div
+        initial={{ opacity: 0, y: 28 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6, delay: 0.12 }}
+        className="relative mt-6 overflow-hidden"
+        style={{ marginLeft: "max(0px, calc(50vw - 700px + 260px))", marginRight: "max(0px, calc(50vw - 700px))" }}
+      >
+        {/* Tight halftone edges around the IDE */}
+        <HalftoneEdges
+          leftColor="rgba(52, 213, 154, 0.65)"
+          rightColor="rgba(210, 100, 40, 0.60)"
+          dotSize={2.2}
+          spacing={8}
+          edgeWidth={200}
+          fadeStop={100}
+        />
+
+        {/* IDE mockup */}
+        <div className="relative z-10">
+          <IDEMockup />
+        </div>
+      </motion.div>
+
+      {/* Full-width bottom bar — Neon style */}
+      <div
+        className="relative z-10 border-t mt-0"
+        style={{ borderColor: "rgba(255,255,255,0.06)", background: "rgba(10,11,11,0.85)" }}
+      >
+        <div
+          className="max-w-[1400px] mx-auto px-8 lg:pl-[260px] py-5 flex items-center justify-between"
+        >
+          <span style={{ fontSize: 15, color: "rgba(249,250,250,0.55)" }}>
+            Try for yourself, start building with Synapse now.
+          </span>
+          <div
+            className="flex items-center gap-2 px-4 py-2 rounded-lg"
+            style={{ background: "#131415", border: "1px solid rgba(255,255,255,0.08)", fontFamily: "var(--font-mono), monospace", fontSize: 14 }}
+          >
+            <span style={{ color: "#34D59A" }}>$</span>
+            <span style={{ color: "rgba(249,250,250,0.65)" }}>npx synapsectl init</span>
+            <span className="ml-2 px-1 rounded text-xs" style={{ color: "#94979E", border: "1px solid rgba(255,255,255,0.1)" }}>⧉</span>
+          </div>
+        </div>
+      </div>
+
+      <div className="relative max-w-[1400px] mx-auto px-8 lg:pl-[260px] pb-16">
+        <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: 0.1 }}>
           <MCPRow />
         </motion.div>
       </div>
