@@ -9,6 +9,7 @@ import Footer from "@/components/layout/footer";
 import HalftoneEdges from "@/components/ui/halftone-edges";
 import SectionGlow from "@/components/ui/section-glow";
 import { GlowingEffect } from "@/components/ui/glowing-effect";
+import { WarpBackground } from "@/components/ui/warp-background";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -1269,79 +1270,32 @@ function BottomCTA() {
   const cta = "Help us build the inference standard.";
   return (
     <section ref={sec} className="relative overflow-hidden" style={{ background: "#0C0D0D" }}>
-
-      {/* ── Two-colour halftone: orange top · teal bottom ── */}
-      <svg aria-hidden className="absolute inset-0 w-full h-full pointer-events-none"
-        preserveAspectRatio="xMidYMid slice" viewBox="0 0 1440 560" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          {/* Orange dot grid — top */}
-          <pattern id="cta-dt" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
-            <circle cx="5" cy="5" r="1.3" fill="#C8702A" />
-          </pattern>
-          {/* Teal dot grid — bottom */}
-          <pattern id="cta-db" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
-            <circle cx="5" cy="5" r="1.3" fill="#34D59A" />
-          </pattern>
-
-          {/* Top mask: fully visible at top-edge, fades to transparent at ~48% height */}
-          <linearGradient id="cta-tm" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%"   stopColor="white" stopOpacity="1"   />
-            <stop offset="38%"  stopColor="white" stopOpacity="0.3" />
-            <stop offset="52%"  stopColor="white" stopOpacity="0"   />
-            <stop offset="100%" stopColor="white" stopOpacity="0"   />
-          </linearGradient>
-          <mask id="cta-tmsk">
-            <rect width="1440" height="560" fill="url(#cta-tm)" />
-          </mask>
-
-          {/* Bottom mask: fully visible at bottom-edge, fades to transparent at ~48% height */}
-          <linearGradient id="cta-bm" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%"   stopColor="white" stopOpacity="0"   />
-            <stop offset="48%"  stopColor="white" stopOpacity="0"   />
-            <stop offset="62%"  stopColor="white" stopOpacity="0.3" />
-            <stop offset="100%" stopColor="white" stopOpacity="1"   />
-          </linearGradient>
-          <mask id="cta-bmsk">
-            <rect width="1440" height="560" fill="url(#cta-bm)" />
-          </mask>
-
-          {/* Orange colour wash — top */}
-          <linearGradient id="cta-owash" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%"  stopColor="#C8702A" stopOpacity="0.12" />
-            <stop offset="40%" stopColor="#C8702A" stopOpacity="0"    />
-          </linearGradient>
-          {/* Teal colour wash — bottom */}
-          <linearGradient id="cta-twash" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="60%"  stopColor="#34D59A" stopOpacity="0"    />
-            <stop offset="100%" stopColor="#34D59A" stopOpacity="0.10" />
-          </linearGradient>
-        </defs>
-
-        {/* Orange dots — top half, opacity 0.32 */}
-        <rect width="1440" height="560" fill="url(#cta-dt)" mask="url(#cta-tmsk)" opacity="0.32" />
-        {/* Teal dots — bottom half, opacity 0.36 */}
-        <rect width="1440" height="560" fill="url(#cta-db)" mask="url(#cta-bmsk)" opacity="0.36" />
-        {/* Colour wash overlays */}
-        <rect width="1440" height="560" fill="url(#cta-owash)" />
-        <rect width="1440" height="560" fill="url(#cta-twash)" />
-      </svg>
-
-      <div className="relative z-10 max-w-[620px] mx-auto px-8 text-center py-36">
-        <div className="flex items-center justify-center gap-2 mb-8">
-          <Diamond />
-          <span className="text-[11px] uppercase tracking-widest" style={{ color: "#94979E", fontFamily: "var(--font-mono),monospace" }}>Join the team</span>
+      <SectionGlow variant="center" />
+      <WarpBackground
+        className="border-0 rounded-none p-0 w-full"
+        gridColor="rgba(52,213,154,0.06)"
+        beamsPerSide={2}
+        beamDuration={7}
+        beamSize={10}
+        perspective={120}
+      >
+        <div className="relative z-10 max-w-[620px] mx-auto px-8 text-center py-32">
+          <div className="flex items-center justify-center gap-2 mb-8">
+            <Diamond />
+            <span className="text-[11px] uppercase tracking-widest" style={{ color: "#94979E", fontFamily: "var(--font-mono),monospace" }}>Join the team</span>
+          </div>
+          <h2 ref={headRef} style={{ fontSize: "clamp(26px, 4vw, 50px)", fontWeight: 400, letterSpacing: "-0.04em", color: "#F9FAFA", lineHeight: 1.12, marginBottom: 20 }}>
+            {cta.split(" ").map((word, i) => <span key={i} className="w inline-block" style={{ marginRight: "0.26em", opacity: 0 }}>{word}</span>)}
+          </h2>
+          <p style={{ fontSize: 16, color: "#94979E", lineHeight: 1.7, marginBottom: 44 }}>
+            Small team, clear mission. If you care about performance, developer experience, and making powerful AI accessible — we should talk.
+          </p>
+          <div className="flex items-center justify-center gap-3">
+            <MagBtn primary>View open roles</MagBtn>
+            <MagBtn>Get started free</MagBtn>
+          </div>
         </div>
-        <h2 ref={headRef} style={{ fontSize: "clamp(26px, 4vw, 50px)", fontWeight: 400, letterSpacing: "-0.04em", color: "#F9FAFA", lineHeight: 1.12, marginBottom: 20 }}>
-          {cta.split(" ").map((word, i) => <span key={i} className="w inline-block" style={{ marginRight: "0.26em", opacity: 0 }}>{word}</span>)}
-        </h2>
-        <p style={{ fontSize: 16, color: "#94979E", lineHeight: 1.7, marginBottom: 44 }}>
-          Small team, clear mission. If you care about performance, developer experience, and making powerful AI accessible — we should talk.
-        </p>
-        <div className="flex items-center justify-center gap-3">
-          <MagBtn primary>View open roles</MagBtn>
-          <MagBtn>Get started free</MagBtn>
-        </div>
-      </div>
+      </WarpBackground>
     </section>
   );
 }

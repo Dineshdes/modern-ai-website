@@ -46,8 +46,8 @@ export default function StatusTicker() {
         className="max-w-[1200px] mx-auto px-8 flex items-center gap-6 overflow-hidden"
         style={{
           fontFamily: "var(--font-mono),monospace",
-          fontSize: 10,
-          letterSpacing: "0.1em",
+          fontSize: 11.5,
+          letterSpacing: "0.12em",
           whiteSpace: "nowrap",
         }}
       >
@@ -55,10 +55,10 @@ export default function StatusTicker() {
         <div className="flex items-center gap-2.5 shrink-0">
           <div
             style={{
-              width: 16,
-              height: 16,
+              width: 18,
+              height: 18,
               borderRadius: "50%",
-              border: "1.5px solid rgba(52,213,154,0.45)",
+              border: "1.5px solid rgba(52,213,154,0.6)",
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
@@ -66,23 +66,23 @@ export default function StatusTicker() {
           >
             <div
               style={{
-                width: 5,
-                height: 5,
+                width: 6,
+                height: 6,
                 borderRadius: "50%",
                 background: "#34D59A",
-                boxShadow: "0 0 6px rgba(52,213,154,0.9)",
+                boxShadow: "0 0 8px rgba(52,213,154,1)",
                 animation: "statusBlink 2.4s ease-in-out infinite",
               }}
             />
           </div>
-          <span style={{ color: "rgba(255,255,255,0.38)" }}>
+          <span style={{ color: "rgba(255,255,255,0.55)" }}>
             SYSTEM: SYNAPSE AI PLATFORM
           </span>
         </div>
 
         <PipeLine count={24} />
 
-        <span style={{ color: "rgba(255,255,255,0.28)" }}>
+        <span style={{ color: "rgba(255,255,255,0.45)" }}>
           {"[ STATUS: "}
           <span style={{ color: "#34D59A" }}>ONLINE</span>
           {" ]"}
@@ -90,19 +90,19 @@ export default function StatusTicker() {
 
         <PipeLine count={9} />
 
-        <span style={{ color: "rgba(255,255,255,0.28)" }}>
+        <span style={{ color: "rgba(255,255,255,0.45)" }}>
           {"[ CONNECTION: STABLE ]"}
         </span>
 
         <PipeLine count={9} />
 
-        <span style={{ color: "rgba(255,255,255,0.18)" }}>
+        <span style={{ color: "rgba(255,255,255,0.32)" }}>
           {"[ LATENCY: 43ms ]"}
         </span>
 
         <PipeLine count={6} />
 
-        <span style={{ color: "rgba(255,255,255,0.18)" }}>
+        <span style={{ color: "rgba(255,255,255,0.32)" }}>
           {"[ UPTIME: 99.99% ]"}
         </span>
       </div>

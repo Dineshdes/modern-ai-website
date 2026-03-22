@@ -27,7 +27,6 @@ export default function Home() {
         <VectorDBSection />
         <ObservabilitySection />
       </FeatureSectionWrapper>
-      <StatusTicker />
       <AgentPlatform />
       <BackedBy />
       <CTAFinal />
