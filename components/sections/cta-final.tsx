@@ -1,302 +1,186 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
 import { motion } from "framer-motion";
 
-/* ─── Halftone Dot Pattern SVG ─── */
+/* ── Subtle halftone dot backgrounds ── */
 function HalftoneBackground() {
   return (
     <svg
       className="absolute inset-0 w-full h-full"
       preserveAspectRatio="xMidYMid slice"
-      viewBox="0 0 1400 700"
+      viewBox="0 0 1400 680"
       aria-hidden
       style={{ pointerEvents: "none" }}
     >
       <defs>
-        {/* Teal dot tile */}
-        <pattern id="tealDot" x="0" y="0" width="16" height="16" patternUnits="userSpaceOnUse">
-          <circle cx="8" cy="8" r="2.6" fill="#34D59A" />
+        <pattern id="tdot" x="0" y="0" width="16" height="16" patternUnits="userSpaceOnUse">
+          <circle cx="8" cy="8" r="2.4" fill="#34D59A" />
         </pattern>
-
-        {/* Orange dot tile */}
-        <pattern id="orangeDot" x="0" y="0" width="16" height="16" patternUnits="userSpaceOnUse">
-          <circle cx="8" cy="8" r="2.6" fill="#F97316" />
+        <pattern id="odot" x="0" y="0" width="16" height="16" patternUnits="userSpaceOnUse">
+          <circle cx="8" cy="8" r="2.4" fill="#F97316" />
         </pattern>
-
-        {/* Left fade: full opacity at left, transparent at right */}
-        <linearGradient id="fadeL" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%"   stopColor="white" stopOpacity="0.65" />
-          <stop offset="35%"  stopColor="white" stopOpacity="0.45" />
-          <stop offset="65%"  stopColor="white" stopOpacity="0.12" />
+        <linearGradient id="fL" x1="0%" y1="0%" x2="100%" y2="0%">
+          <stop offset="0%"   stopColor="white" stopOpacity="0.55" />
+          <stop offset="45%"  stopColor="white" stopOpacity="0.2" />
+          <stop offset="75%"  stopColor="white" stopOpacity="0.04" />
           <stop offset="100%" stopColor="white" stopOpacity="0" />
         </linearGradient>
-
-        {/* Right fade: full opacity at right, transparent at left */}
-        <linearGradient id="fadeR" x1="100%" y1="0%" x2="0%" y2="0%">
-          <stop offset="0%"   stopColor="white" stopOpacity="0.65" />
-          <stop offset="35%"  stopColor="white" stopOpacity="0.45" />
-          <stop offset="65%"  stopColor="white" stopOpacity="0.12" />
+        <linearGradient id="fR" x1="100%" y1="0%" x2="0%" y2="0%">
+          <stop offset="0%"   stopColor="white" stopOpacity="0.55" />
+          <stop offset="45%"  stopColor="white" stopOpacity="0.2" />
+          <stop offset="75%"  stopColor="white" stopOpacity="0.04" />
           <stop offset="100%" stopColor="white" stopOpacity="0" />
         </linearGradient>
-
-        {/* Top/bottom vertical fade for both patterns */}
-        <linearGradient id="fadeV" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%"   stopColor="white" stopOpacity="0" />
-          <stop offset="12%"  stopColor="white" stopOpacity="1" />
-          <stop offset="88%"  stopColor="white" stopOpacity="1" />
-          <stop offset="100%" stopColor="white" stopOpacity="0" />
-        </linearGradient>
-
-        {/* Combined masks = horizontal × vertical fade */}
-        <mask id="maskLeft">
-          <rect x="0"   y="0" width="620" height="700" fill="url(#fadeL)" />
-        </mask>
-        <mask id="maskRight">
-          <rect x="780" y="0" width="620" height="700" fill="url(#fadeR)" />
-        </mask>
-
-        {/* Vertical crop masks */}
-        <mask id="maskLeftV">
-          <rect x="0"   y="0" width="620" height="700" fill="url(#fadeV)" />
-        </mask>
-        <mask id="maskRightV">
-          <rect x="780" y="0" width="620" height="700" fill="url(#fadeV)" />
-        </mask>
+        <mask id="mL"><rect x="0"   y="0" width="560" height="680" fill="url(#fL)" /></mask>
+        <mask id="mR"><rect x="840" y="0" width="560" height="680" fill="url(#fR)" /></mask>
       </defs>
-
-      {/* Left teal halftone — two rects layered: horizontal fade + vertical fade */}
-      <rect x="0"   y="0" width="620" height="700" fill="url(#tealDot)"   mask="url(#maskLeft)"   />
-
-      {/* Right orange halftone */}
-      <rect x="780" y="0" width="620" height="700" fill="url(#orangeDot)" mask="url(#maskRight)"  />
+      <rect x="0"   y="0" width="560" height="680" fill="url(#tdot)" mask="url(#mL)" />
+      <rect x="840" y="0" width="560" height="680" fill="url(#odot)" mask="url(#mR)" />
     </svg>
   );
 }
 
-/* ─── Code Editor Mockup ─── */
-function CodeEditorMockup() {
+/* ── Dual-handle autoscaling slider ── */
+const SCALE_POINTS = [0.25, 0.5, 1, 2, 3, 4];
+const RAM_MAP: Record<number, number> = { 0.25: 1, 0.5: 2, 1: 4, 2: 8, 3: 10, 4: 16 };
+
+function AutoscalingSlider() {
+  const [minIdx, setMinIdx] = useState(1); // 0.5 vCPU
+  const [maxIdx, setMaxIdx] = useState(4); // 3 vCPU
+  const trackRef = useRef<HTMLDivElement>(null);
+  const dragging = useRef<"min"|"max"|null>(null);
+
+  const pct = (i: number) => (i / (SCALE_POINTS.length - 1)) * 100;
+  const minPct = pct(minIdx);
+  const maxPct = pct(maxIdx);
+
+  const getIdxFromX = useCallback((clientX: number) => {
+    const track = trackRef.current;
+    if (!track) return 0;
+    const { left, width } = track.getBoundingClientRect();
+    const ratio = Math.max(0, Math.min(1, (clientX - left) / width));
+    return Math.round(ratio * (SCALE_POINTS.length - 1));
+  }, []);
+
+  const onPointerDown = (handle: "min"|"max") => (e: React.PointerEvent) => {
+    dragging.current = handle;
+    (e.target as HTMLElement).setPointerCapture(e.pointerId);
+  };
+
+  const onPointerMove = (e: React.PointerEvent) => {
+    if (!dragging.current) return;
+    const idx = getIdxFromX(e.clientX);
+    if (dragging.current === "min" && idx < maxIdx) setMinIdx(idx);
+    if (dragging.current === "max" && idx > minIdx) setMaxIdx(idx);
+  };
+
+  const onPointerUp = () => { dragging.current = null; };
+
   return (
-    <div
-      className="w-full rounded-2xl overflow-hidden"
-      style={{
-        border: "1px solid rgba(255,255,255,0.1)",
-        background: "#111214",
-        boxShadow: "0 32px 80px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04)",
-        maxWidth: 900,
-        margin: "0 auto",
-      }}
-    >
-      {/* Title bar */}
+    <div>
+      <p style={{ fontSize: 13, color: "#94979E", marginBottom: 20, letterSpacing: "0.01em" }}>
+        Autoscaling
+      </p>
+
+      {/* Track */}
       <div
-        className="flex items-center gap-2 px-4 py-3 border-b"
-        style={{ borderColor: "rgba(255,255,255,0.07)", background: "#0d0e10" }}
+        ref={trackRef}
+        className="relative select-none"
+        style={{ height: 28, cursor: "pointer" }}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerLeave={onPointerUp}
       >
-        <span className="w-3 h-3 rounded-full" style={{ background: "#ff5f57" }} />
-        <span className="w-3 h-3 rounded-full" style={{ background: "#febc2e" }} />
-        <span className="w-3 h-3 rounded-full" style={{ background: "#28c840" }} />
-        <span
-          className="mx-auto text-[11px]"
-          style={{ color: "#6b7280", fontFamily: "var(--font-mono), monospace" }}
-        >
-          Your Code Editor
-        </span>
+        {/* Base track */}
+        <div
+          style={{
+            position: "absolute",
+            left: 0, right: 0,
+            top: "50%", transform: "translateY(-50%)",
+            height: 2,
+            background: "rgba(255,255,255,0.1)",
+            borderRadius: 1,
+          }}
+        />
+        {/* Active (green) track */}
+        <div
+          style={{
+            position: "absolute",
+            left: `${minPct}%`,
+            width: `${maxPct - minPct}%`,
+            top: "50%", transform: "translateY(-50%)",
+            height: 2,
+            background: "#34D59A",
+            borderRadius: 1,
+          }}
+        />
+
+        {/* Min handle */}
+        <div
+          onPointerDown={onPointerDown("min")}
+          style={{
+            position: "absolute",
+            left: `${minPct}%`,
+            top: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 14, height: 14,
+            borderRadius: "50%",
+            background: "#34D59A",
+            cursor: "grab",
+            zIndex: 3,
+            boxShadow: "0 0 0 3px rgba(52,213,154,0.2)",
+          }}
+        />
+
+        {/* Max handle */}
+        <div
+          onPointerDown={onPointerDown("max")}
+          style={{
+            position: "absolute",
+            left: `${maxPct}%`,
+            top: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 14, height: 14,
+            borderRadius: "50%",
+            background: "#34D59A",
+            cursor: "grab",
+            zIndex: 3,
+            boxShadow: "0 0 0 3px rgba(52,213,154,0.2)",
+          }}
+        />
       </div>
 
-      {/* Split body */}
-      <div className="grid grid-cols-[220px_1fr_1fr]">
-
-        {/* File tree */}
-        <div className="p-4" style={{ borderRight: "1px solid rgba(255,255,255,0.06)" }}>
-          <p className="text-[10px] uppercase tracking-widest mb-3" style={{ color: "#4b5563", fontFamily: "var(--font-mono), monospace" }}>
-            MY-AI-APP
-          </p>
-          {[
-            { indent: 0, icon: "▸", name: "src", type: "folder" },
-            { indent: 1, icon: "▸", name: "lib", type: "folder" },
-            { indent: 1, icon: "▸", name: "routes", type: "folder" },
-            { indent: 2, icon: "▸", name: "api", type: "folder" },
-            { indent: 3, icon: "◻", name: "index.ts", type: "file", active: true },
-            { indent: 2, icon: "◻", name: "app.tsx", type: "file" },
-            { indent: 0, icon: "◻", name: ".env", type: "file" },
-            { indent: 0, icon: "◻", name: "synapse.md", type: "file", highlight: true },
-            { indent: 0, icon: "◻", name: "package.json", type: "file" },
-            { indent: 0, icon: "◻", name: "README.md", type: "file" },
-          ].map((item, i) => (
-            <div
-              key={i}
-              className="flex items-center gap-1.5 py-[3px]"
-              style={{
-                paddingLeft: item.indent * 12 + 4,
-                color: item.active ? "#F9FAFA" : item.highlight ? "#34D59A" : "#6b7280",
-                fontSize: 12,
-                fontFamily: "var(--font-mono), monospace",
-                background: item.active ? "rgba(255,255,255,0.05)" : "transparent",
-                borderRadius: 3,
-              }}
-            >
-              <span style={{ fontSize: 8, opacity: 0.5 }}>{item.icon}</span>
-              <span>{item.name}</span>
-            </div>
-          ))}
-        </div>
-
-        {/* Code editor */}
-        <div style={{ borderRight: "1px solid rgba(255,255,255,0.06)" }}>
-          {/* Tab bar */}
-          <div className="flex border-b" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
-            <div
-              className="px-4 py-2 text-[11px] flex items-center gap-2"
-              style={{
-                fontFamily: "var(--font-mono), monospace",
-                color: "#F9FAFA",
-                borderBottom: "1px solid #34D59A",
-              }}
-            >
-              index.ts
-              <span style={{ opacity: 0.4, fontSize: 10 }}>✕</span>
-            </div>
-          </div>
-
-          {/* Code lines */}
-          <div className="p-4 text-[11px]" style={{ fontFamily: "var(--font-mono), monospace", lineHeight: 1.8 }}>
-            {[
-              { n: 1,  code: <><span style={{color:"#7dd3fc"}}>import</span> <span style={{color:"#fbbf24"}}>{"{ synapse }"}</span> <span style={{color:"#7dd3fc"}}>from</span> <span style={{color:"#86efac"}}>&apos;@synapse/sdk&apos;</span></> },
-              { n: 2,  code: "" },
-              { n: 3,  code: <><span style={{color:"#c084fc"}}>export default async</span> <span style={{color:"#fbbf24"}}>function</span> <span style={{color:"#60a5fa"}}>handler</span><span style={{color:"#94a3b8"}}>(req) {"{"}</span></> },
-              { n: 4,  code: <><span style={{color:"#94a3b8", paddingLeft: 16}}>const </span><span style={{color:"#fbbf24"}}>{"{ data }"}</span> <span style={{color:"#94a3b8"}}>=</span> <span style={{color:"#7dd3fc"}}>await</span></> },
-              { n: 5,  code: <><span style={{color:"#94a3b8", paddingLeft: 32}}>synapse.</span><span style={{color:"#60a5fa"}}>inference</span><span style={{color:"#94a3b8"}}>({"{"}model: </span><span style={{color:"#86efac"}}>&apos;llama-3.1-70b&apos;</span><span style={{color:"#94a3b8"}}>{"}"});</span></> },
-              { n: 6,  code: "" },
-              { n: 7,  code: <><span style={{color:"#94a3b8", paddingLeft: 16}}>res.</span><span style={{color:"#60a5fa"}}>status</span><span style={{color:"#94a3b8"}}>(200).</span><span style={{color:"#60a5fa"}}>json</span><span style={{color:"#94a3b8"}}>({"{ data })"}</span></> },
-              { n: 8,  code: <><span style={{color:"#94a3b8"}}>{"}"}</span></> },
-            ].map(({ n, code }) => (
-              <div key={n} className="flex gap-4">
-                <span style={{ color: "#374151", width: 16, textAlign: "right", flexShrink: 0 }}>{n}</span>
-                <span>{code}</span>
-              </div>
-            ))}
-          </div>
-
-          {/* Terminal */}
-          <div className="border-t" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
-            <div className="flex gap-4 border-b px-4 py-1.5" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
-              {["Problems", "Output", "Debug Console", "Terminal", "Ports"].map((t) => (
-                <span
-                  key={t}
-                  className="text-[10px]"
-                  style={{
-                    color: t === "Terminal" ? "#F9FAFA" : "#4b5563",
-                    borderBottom: t === "Terminal" ? "1px solid #34D59A" : "none",
-                    paddingBottom: 4,
-                    fontFamily: "var(--font-mono), monospace",
-                  }}
-                >
-                  {t}
-                </span>
-              ))}
-            </div>
-            <div className="p-4 text-[10px]" style={{ fontFamily: "var(--font-mono), monospace", lineHeight: 1.9 }}>
-              <div style={{ color: "#94979E" }}>$ npx synapsectl init</div>
-              <div style={{ color: "#4b5563" }}>Synapse Project Initialization</div>
-              <div style={{ color: "#4b5563" }}>Step 1/3: <span style={{ color: "#6b7280" }}>Configuring Synapse MCP Server...</span></div>
-              <div style={{ color: "#4b5563" }}>Step 2/3: <span style={{ color: "#6b7280" }}>Creating synapse.md with endpoints...</span></div>
-              <div style={{ color: "#4b5563" }}>Step 3/3: <span style={{ color: "#6b7280" }}>Creating AGENTS.md...</span></div>
-              <div style={{ color: "#34D59A" }}>▪ Success! Synapse project initialized.</div>
-            </div>
-          </div>
-        </div>
-
-        {/* Right: Setup panel */}
-        <div className="p-5">
-          <div className="flex items-center justify-between mb-4">
-            <p className="text-[13px] font-medium" style={{ color: "#F9FAFA" }}>Getting started with Synapse</p>
-            <span style={{ color: "#4b5563", fontSize: 16 }}>···</span>
-          </div>
-
-          <p className="text-[12px] mb-4" style={{ color: "#94979E", lineHeight: 1.6 }}>
-            Let&apos;s connect your app to the Synapse inference API:
-          </p>
-
-          {/* Code snippet */}
-          <div className="rounded-lg p-3 mb-5" style={{ background: "#0d0e10", border: "1px solid rgba(255,255,255,0.07)" }}>
-            <p className="text-[10px] mb-2" style={{ color: "#4b5563", fontFamily: "var(--font-mono), monospace" }}>
-              synapse.ts
-            </p>
-            <div className="text-[10px]" style={{ fontFamily: "var(--font-mono), monospace", lineHeight: 1.8, color: "#94979E" }}>
-              <div><span style={{ color: "#7dd3fc" }}>import</span> <span style={{ color: "#fbbf24" }}>{"{ synapse }"}</span> <span style={{ color: "#7dd3fc" }}>from</span> <span style={{ color: "#86efac" }}>&quot;@synapse/sdk&quot;</span>;</div>
-              <div><span style={{ color: "#c084fc" }}>const</span> ai = <span style={{ color: "#60a5fa" }}>synapse</span>(process.env.<span style={{ color: "#fbbf24" }}>SYNAPSE_API_KEY</span>);</div>
-              <div style={{ color: "#374151" }}>// Inference ready</div>
-            </div>
-          </div>
-
-          <p className="text-[12px] mb-4" style={{ color: "#94979E", lineHeight: 1.5 }}>
-            You&apos;re all set with Synapse! Here&apos;s what was configured:
-          </p>
-
-          {/* Checklist */}
-          <div className="space-y-2 mb-5">
-            {[
-              { text: "Created new Synapse project", tag: null },
-              { text: "Added", tag: "SYNAPSE_API_KEY", suffix: "to .env" },
-              { text: "Configured inference endpoint", tag: null },
-              { text: "Created", tag: "lib/synapse.ts", suffix: "with helpers" },
-            ].map((item, i) => (
-              <div key={i} className="flex items-center gap-2 text-[11px]" style={{ color: "#94979E" }}>
-                <span style={{ color: "#34D59A" }}>✓</span>
-                <span>{item.text}</span>
-                {item.tag && (
-                  <code
-                    className="px-1.5 py-0.5 rounded text-[10px]"
-                    style={{ background: "rgba(52,213,154,0.12)", color: "#34D59A", fontFamily: "var(--font-mono), monospace" }}
-                  >
-                    {item.tag}
-                  </code>
-                )}
-                {item.suffix && <span>{item.suffix}</span>}
-              </div>
-            ))}
-          </div>
-
-          {/* Input area */}
-          <div className="rounded-lg px-3 py-2.5 flex items-center" style={{ background: "#0d0e10", border: "1px solid rgba(255,255,255,0.07)" }}>
-            <span className="flex-1 text-[11px]" style={{ color: "#374151", fontFamily: "var(--font-mono), monospace" }}>
-              Plan, search, build anything...
-            </span>
-            <div className="flex items-center gap-2">
-              <span className="px-2 py-0.5 rounded text-[9px]" style={{ background: "rgba(52,213,154,0.15)", color: "#34D59A", fontFamily: "var(--font-mono), monospace" }}>
-                ✦ Agent
-              </span>
-              <span className="text-[10px]" style={{ color: "#4b5563" }}>GPT-5 ▾</span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-/* ─── Column labels at top ─── */
-function TopLabels() {
-  return (
-    <div className="border-b" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
-      <div className="max-w-[1400px] mx-auto grid grid-cols-3">
-        {[
-          "Adds Synapse Rules for correct AI code",
-          "Adds MCP for safe access to Synapse",
-          "Auto-scales your inference endpoints",
-        ].map((label, i) => (
-          <div
-            key={i}
-            className="px-8 py-6 text-[11px]"
+      {/* Scale marks */}
+      <div style={{ display: "flex", justifyContent: "space-between", marginTop: 8 }}>
+        {SCALE_POINTS.map((pt) => (
+          <span
+            key={pt}
             style={{
-              color: "#4b5563",
+              fontSize: 11,
+              color: "rgba(255,255,255,0.3)",
               fontFamily: "var(--font-mono), monospace",
-              borderRight: i < 2 ? "1px solid rgba(255,255,255,0.06)" : "none",
             }}
           >
-            {label}
-          </div>
+            {pt}
+          </span>
         ))}
+      </div>
+
+      {/* Scale info */}
+      <div style={{ display: "flex", justifyContent: "space-between", marginTop: 28, gap: 16 }}>
+        <div>
+          <p style={{ fontSize: 11, color: "#94979E", marginBottom: 4 }}>Scale from</p>
+          <p style={{ fontSize: 16, color: "#F9FAFA", fontWeight: 400, letterSpacing: "-0.02em" }}>
+            {SCALE_POINTS[minIdx]} vCPU, {RAM_MAP[SCALE_POINTS[minIdx]]} RAM
+          </p>
+        </div>
+        <div style={{ textAlign: "right" }}>
+          <p style={{ fontSize: 11, color: "#94979E", marginBottom: 4 }}>Scale up to</p>
+          <p style={{ fontSize: 16, color: "#F9FAFA", fontWeight: 400, letterSpacing: "-0.02em" }}>
+            {SCALE_POINTS[maxIdx]} vCPU, {RAM_MAP[SCALE_POINTS[maxIdx]]} RAM
+          </p>
+        </div>
       </div>
     </div>
   );
@@ -313,58 +197,106 @@ export default function CTAFinal() {
 
   return (
     <section className="relative overflow-hidden" style={{ background: "#0C0D0D" }}>
-      {/* Halftone dot pattern background */}
       <HalftoneBackground />
 
-      {/* Top column labels */}
-      <div className="relative z-10">
-        <TopLabels />
-      </div>
-
-      {/* Editor area */}
-      <div className="relative z-10 px-8 py-14">
-        <motion.div
-          initial={{ opacity: 0, y: 32 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.7 }}
+      {/* Main content: heading left + slider right */}
+      <div className="relative z-10 max-w-[1400px] mx-auto px-8">
+        <div
+          className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center"
+          style={{ paddingTop: "clamp(80px, 12vh, 160px)", paddingBottom: "clamp(80px, 12vh, 160px)" }}
         >
-          <CodeEditorMockup />
-        </motion.div>
+          {/* Left: big heading */}
+          <motion.h2
+            initial={{ opacity: 0, y: 28 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7 }}
+            style={{
+              fontSize: "clamp(52px, 7.5vw, 104px)",
+              fontWeight: 400,
+              lineHeight: 1.04,
+              letterSpacing: "-0.04em",
+              color: "#F9FAFA",
+            }}
+          >
+            The world&apos;s most advanced AI platform.
+          </motion.h2>
+
+          {/* Right: slider */}
+          <motion.div
+            initial={{ opacity: 0, y: 28 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, delay: 0.12 }}
+            style={{ maxWidth: 480, width: "100%" }}
+          >
+            <AutoscalingSlider />
+          </motion.div>
+        </div>
       </div>
 
       {/* Bottom CTA bar */}
       <div className="relative z-10 border-t" style={{ borderColor: "rgba(255,255,255,0.06)" }}>
-        <div className="max-w-[1400px] mx-auto px-8 py-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <p className="text-[15px]" style={{ color: "rgba(249,250,250,0.7)" }}>
-            Try for yourself, start building with Synapse now.
+        <div
+          className="max-w-[1400px] mx-auto px-8 py-5 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5"
+        >
+          <p style={{ fontSize: 15, color: "rgba(249,250,250,0.55)", lineHeight: 1.5 }}>
+            Trusted by developers, ready for agents.<br />
+            Build and scale AI faster with Synapse.
           </p>
 
-          <button
-            onClick={handleCopy}
-            className="inline-flex items-center gap-3 px-5 h-11 rounded-xl text-[13px] transition-all shrink-0"
-            style={{
-              background: "#131415",
-              color: "#F9FAFA",
-              border: "1px solid rgba(255,255,255,0.1)",
-              fontFamily: "var(--font-mono), monospace",
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.25)")}
-            onMouseLeave={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)")}
-          >
-            <span style={{ color: "#94979E" }}>$</span>
-            <span>npx synapsectl init</span>
-            <span
-              className="ml-1 text-[11px] px-1.5 py-0.5 rounded"
-              style={{
-                background: copied ? "rgba(52,213,154,0.15)" : "rgba(255,255,255,0.06)",
-                color: copied ? "#34D59A" : "#6b7280",
-                transition: "all 0.2s",
-              }}
+          <div className="flex items-center gap-3 shrink-0 flex-wrap">
+            {/* Get started */}
+            <a
+              href="#"
+              className="inline-flex items-center h-10 px-5 rounded-full text-[14px] font-medium transition-colors"
+              style={{ background: "#F9FAFA", color: "#0C0D0D" }}
+              onMouseEnter={e => (e.currentTarget.style.background = "#e5e7eb")}
+              onMouseLeave={e => (e.currentTarget.style.background = "#F9FAFA")}
             >
-              {copied ? "✓" : "⧉"}
-            </span>
-          </button>
+              Get started
+            </a>
+
+            {/* Read the docs */}
+            <a
+              href="#"
+              className="inline-flex items-center h-10 px-5 rounded-full text-[14px] transition-colors"
+              style={{ color: "rgba(249,250,250,0.7)", border: "1px solid rgba(255,255,255,0.18)" }}
+              onMouseEnter={e => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.4)")}
+              onMouseLeave={e => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.18)")}
+            >
+              Read the docs
+            </a>
+
+            {/* CLI command — copyable */}
+            <button
+              onClick={handleCopy}
+              className="inline-flex items-center gap-2.5 h-10 px-4 rounded-xl text-[13px] transition-all"
+              style={{
+                background: "#131415",
+                color: "rgba(249,250,250,0.7)",
+                border: "1px solid rgba(255,255,255,0.1)",
+                fontFamily: "var(--font-mono), monospace",
+              }}
+              onMouseEnter={e => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.25)")}
+              onMouseLeave={e => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)")}
+            >
+              <span style={{ color: "#94979E" }}>$</span>
+              <span>npx synapsectl init</span>
+              <span
+                style={{
+                  fontSize: 11,
+                  color: copied ? "#34D59A" : "#6b7280",
+                  border: "1px solid rgba(255,255,255,0.1)",
+                  borderRadius: 4,
+                  padding: "1px 5px",
+                  transition: "color 0.2s",
+                }}
+              >
+                {copied ? "✓" : "⧉"}
+              </span>
+            </button>
+          </div>
         </div>
       </div>
     </section>
