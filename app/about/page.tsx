@@ -883,35 +883,8 @@ function Values() {
 }
 
 /* ════════════════════════════════════════════════════════
-   SECTION 7 — INVESTORS  (awwwards bento grid)
+   SECTION 7 — INVESTORS  (bento grid · design-system aligned)
 ════════════════════════════════════════════════════════ */
-function InvCard({
-  children, style, className, onMouseMove, onMouseLeave,
-}: {
-  children: React.ReactNode;
-  style?: React.CSSProperties;
-  className?: string;
-  onMouseMove?: React.MouseEventHandler<HTMLDivElement>;
-  onMouseLeave?: React.MouseEventHandler<HTMLDivElement>;
-}) {
-  return (
-    <div
-      className={`inv-card relative overflow-hidden rounded-2xl ${className ?? ""}`}
-      style={{
-        border: "1px solid rgba(255,255,255,0.07)",
-        willChange: "transform",
-        transformStyle: "preserve-3d",
-        opacity: 0,
-        ...style,
-      }}
-      onMouseMove={onMouseMove}
-      onMouseLeave={onMouseLeave}
-    >
-      {children}
-    </div>
-  );
-}
-
 function useTilt() {
   const ref = useRef<HTMLDivElement>(null);
   const onMove = (e: React.MouseEvent) => {
@@ -919,32 +892,124 @@ function useTilt() {
     const r = el.getBoundingClientRect();
     const x = (e.clientX - r.left) / r.width - 0.5;
     const y = (e.clientY - r.top) / r.height - 0.5;
-    gsap.to(el, { rotateY: x * 10, rotateX: -y * 10, scale: 1.02, transformPerspective: 900, duration: 0.3, ease: "power2.out" });
+    gsap.to(el, { rotateY: x * 8, rotateX: -y * 8, scale: 1.018, transformPerspective: 900, duration: 0.28, ease: "power2.out" });
   };
   const onLeave = () => gsap.to(ref.current, { rotateY: 0, rotateX: 0, scale: 1, duration: 0.55, ease: "elastic.out(1,0.5)" });
   return { ref, onMove, onLeave };
 }
 
+/* Single card shell — one consistent design-system card */
+function ICard({
+  accent = "rgba(255,255,255,0.07)",
+  glow,
+  mono,
+  name,
+  sub,
+  tag,
+  tagColor = "#94979E",
+  tagBg = "rgba(255,255,255,0.06)",
+  featured = false,
+  wide = false,
+  style: extraStyle,
+}: {
+  accent?: string;
+  glow?: string;
+  mono: string;
+  name: string;
+  sub: string;
+  tag: string;
+  tagColor?: string;
+  tagBg?: string;
+  featured?: boolean;
+  wide?: boolean;
+  style?: React.CSSProperties;
+}) {
+  const t = useTilt();
+  return (
+    <div
+      ref={t.ref}
+      className="inv-card relative overflow-hidden"
+      onMouseMove={t.onMove}
+      onMouseLeave={t.onLeave}
+      style={{
+        borderRadius: 20,
+        border: `1px solid ${accent}`,
+        background: "#111215",
+        willChange: "transform",
+        transformStyle: "preserve-3d",
+        opacity: 0,
+        minHeight: featured ? 260 : wide ? 88 : 158,
+        boxShadow: "0 8px 32px rgba(0,0,0,0.45)",
+        ...extraStyle,
+      }}
+    >
+      {/* Ambient glow blob */}
+      {glow && (
+        <div style={{ position: "absolute", top: -50, right: -50, width: 180, height: 180, borderRadius: "50%", background: glow, filter: "blur(55px)", pointerEvents: "none" }} />
+      )}
+
+      {/* Top accent line */}
+      <div style={{ position: "absolute", top: 0, left: 20, right: 20, height: 1, background: `linear-gradient(90deg, transparent, ${accent}, transparent)` }} />
+
+      {!wide ? (
+        <>
+          {/* Monogram */}
+          <div style={{ padding: "22px 22px 0" }}>
+            <span style={{ fontSize: featured ? 56 : 36, fontWeight: 700, letterSpacing: "-0.05em", lineHeight: 1, color: accent, opacity: 0.55, userSelect: "none", display: "block" }}>{mono}</span>
+          </div>
+
+          {/* Bottom info */}
+          <div style={{
+            position: "absolute", bottom: 0, left: 0, right: 0,
+            padding: "14px 22px 18px",
+            backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)",
+            background: "rgba(12,13,13,0.55)",
+            borderTop: `1px solid ${accent}`,
+          }}>
+            {featured && (
+              <div className="flex items-center gap-1.5 mb-2">
+                <span style={{ width: 5, height: 5, borderRadius: "50%", background: tagColor, display: "inline-block", boxShadow: `0 0 6px ${tagColor}` }} />
+                <span style={{ fontSize: 10, color: tagColor, fontFamily: "var(--font-mono),monospace", letterSpacing: "0.1em", textTransform: "uppercase" }}>{tag}</span>
+              </div>
+            )}
+            <div style={{ fontSize: featured ? 16 : 14, fontWeight: 600, color: "#F9FAFA", letterSpacing: "-0.02em" }}>{name}</div>
+            <div style={{ fontSize: 12, color: "#6B7280", marginTop: 3, lineHeight: 1.45 }}>{sub}</div>
+            {!featured && (
+              <div style={{ display: "inline-flex", alignItems: "center", marginTop: 8, padding: "3px 9px", borderRadius: 6, background: tagBg, border: `1px solid ${accent}`, fontSize: 10, color: tagColor, fontFamily: "var(--font-mono),monospace", letterSpacing: "0.06em", textTransform: "uppercase" }}>{tag}</div>
+            )}
+          </div>
+        </>
+      ) : (
+        /* Wide card — horizontal layout */
+        <div className="flex items-center justify-between h-full" style={{ padding: "0 24px" }}>
+          <div className="flex items-center gap-4">
+            <div style={{ width: 40, height: 40, borderRadius: 10, background: tagBg, border: `1px solid ${accent}`, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 13, fontWeight: 700, color: tagColor, letterSpacing: "-0.02em", flexShrink: 0 }}>{mono}</div>
+            <div>
+              <div style={{ fontSize: 15, fontWeight: 600, color: "#F9FAFA", letterSpacing: "-0.02em" }}>{name}</div>
+              <div style={{ fontSize: 12, color: "#6B7280", marginTop: 2 }}>{sub}</div>
+            </div>
+          </div>
+          <div style={{ padding: "5px 13px", borderRadius: 999, background: tagBg, border: `1px solid ${accent}`, fontSize: 10, color: tagColor, fontFamily: "var(--font-mono),monospace", letterSpacing: "0.08em", textTransform: "uppercase", flexShrink: 0 }}>{tag}</div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function Investors() {
   const sec = useRef<HTMLElement>(null);
-  const yc   = useTilt();
-  const a16z = useTilt();
-  const idx  = useTilt();
-  const eg   = useTilt();
-  const nf   = useTilt();
-  const ak   = useTilt();
 
   useEffect(() => {
     const ctx = gsap.context(() => {
       gsap.fromTo(".inv-card",
-        { opacity: 0, y: 36, scale: 0.96 },
-        { opacity: 1, y: 0, scale: 1, stagger: 0.07, duration: 0.65, ease: "power3.out",
-          scrollTrigger: { trigger: sec.current, start: "top 72%" } }
+        { opacity: 0, y: 30, scale: 0.97 },
+        { opacity: 1, y: 0, scale: 1, stagger: 0.07, duration: 0.6, ease: "power3.out",
+          scrollTrigger: { trigger: sec.current, start: "top 74%" } }
       );
-      gsap.fromTo(".inv-headline .w",
-        { opacity: 0, y: 40 },
-        { opacity: 1, y: 0, stagger: 0.06, duration: 0.7, ease: "power3.out",
-          scrollTrigger: { trigger: sec.current, start: "top 80%" } }
+      gsap.fromTo(".inv-hl",
+        { opacity: 0, y: 32 },
+        { opacity: 1, y: 0, duration: 0.7, ease: "power3.out",
+          scrollTrigger: { trigger: sec.current, start: "top 82%" } }
       );
     }, sec);
     return () => ctx.revert();
@@ -959,176 +1024,128 @@ function Investors() {
 
   return (
     <section ref={sec} className="relative overflow-hidden border-t border-b"
-      style={{ background: "#080909", borderColor: "rgba(255,255,255,0.06)", paddingTop: 112, paddingBottom: 112 }}>
+      style={{ background: "#0C0D0D", borderColor: "rgba(255,255,255,0.06)", paddingTop: 112, paddingBottom: 112 }}>
 
-      {/* Subtle noise texture overlay */}
-      <div className="absolute inset-0 pointer-events-none" style={{
-        backgroundImage: "url(\"data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E\")",
-        backgroundSize: "200px 200px", opacity: 0.4,
-      }} />
-
-      {/* Ambient teal glow top-right */}
-      <div className="absolute pointer-events-none" style={{ top: 0, right: 0, width: 600, height: 600, background: "radial-gradient(circle, rgba(52,213,154,0.04) 0%, transparent 65%)" }} />
+      {/* Dot grid bg */}
+      <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.022) 1px, transparent 1px)", backgroundSize: "28px 28px" }} />
+      {/* Teal glow */}
+      <div className="absolute pointer-events-none" style={{ top: -100, right: -100, width: 700, height: 700, background: "radial-gradient(circle, rgba(52,213,154,0.035) 0%, transparent 65%)" }} />
 
       <div className="relative z-10 max-w-[1240px] mx-auto px-8">
 
-        {/* Section eyebrow */}
-        <div className="flex items-center gap-2 mb-12">
+        {/* Eyebrow */}
+        <div className="flex items-center gap-2 mb-14">
           <Diamond />
           <span style={{ fontSize: 11, letterSpacing: "0.18em", textTransform: "uppercase", color: "#94979E", fontFamily: "var(--font-mono),monospace" }}>Investors</span>
         </div>
 
-        {/* Two-col: headline left · bento grid right */}
-        <div className="grid gap-16 items-start" style={{ gridTemplateColumns: "1fr 1.45fr" }}>
+        {/* Two-col layout */}
+        <div className="grid gap-16 items-start" style={{ gridTemplateColumns: "390px 1fr" }}>
 
           {/* ── LEFT: editorial ── */}
-          <div>
-            <h2 className="inv-headline" style={{ fontSize: "clamp(28px, 3.4vw, 50px)", fontWeight: 400, letterSpacing: "-0.045em", lineHeight: 1.08, marginBottom: 28 }}>
-              {["People", "who", "build", "the", "frontier", "fund", "the", "frontier."].map((w, i) => (
-                <span key={i} className="w inline-block" style={{ marginRight: "0.22em", opacity: 0, color: i < 5 ? "#F9FAFA" : "#6B7280" }}>{w}</span>
-              ))}
+          <div className="inv-hl" style={{ opacity: 0 }}>
+            <h2 style={{ fontSize: "clamp(26px, 3vw, 44px)", fontWeight: 400, letterSpacing: "-0.045em", lineHeight: 1.1, marginBottom: 20, color: "#F9FAFA" }}>
+              People who build the frontier{" "}
+              <span style={{ color: "#6B7280" }}>fund the frontier.</span>
             </h2>
-            <p style={{ fontSize: 15, color: "#94979E", lineHeight: 1.8, maxWidth: 380, marginBottom: 48 }}>
+            <p style={{ fontSize: 15, color: "#94979E", lineHeight: 1.8, marginBottom: 48 }}>
               Every check came with conviction in open, fast, operator-free AI — from people who have built foundational infrastructure, not just funded it.
             </p>
 
-            {/* Stat grid */}
+            {/* Stats 2×2 */}
             <div className="grid grid-cols-2 gap-px" style={{ background: "rgba(255,255,255,0.06)", borderRadius: 16, overflow: "hidden" }}>
               {STATS.map((s) => (
-                <div key={s.label} style={{ background: "#0C0D0D", padding: "22px 24px" }}>
-                  <div style={{ fontSize: "clamp(22px, 2.4vw, 32px)", fontWeight: 400, letterSpacing: "-0.04em", color: "#F9FAFA", lineHeight: 1 }}>{s.val}</div>
-                  <div style={{ fontSize: 12, color: "#94979E", marginTop: 6 }}>{s.label}</div>
+                <div key={s.label} style={{ background: "#111215", padding: "20px 22px" }}>
+                  <div style={{ fontSize: "clamp(20px, 2.2vw, 30px)", fontWeight: 400, letterSpacing: "-0.04em", color: "#F9FAFA", lineHeight: 1 }}>{s.val}</div>
+                  <div style={{ fontSize: 12, color: "#6B7280", marginTop: 6 }}>{s.label}</div>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* ── RIGHT: bento grid ── */}
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gridTemplateRows: "auto auto auto", gap: 10 }}>
+          {/* ── RIGHT: bento ── 3 col × 3 row */}
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gridTemplateRows: "1fr 1fr auto", gap: 10 }}>
 
-            {/* YC — featured, tall 2×2 */}
-            <div ref={yc.ref} className="inv-card relative overflow-hidden rounded-2xl"
-              style={{ gridColumn: "span 1", gridRow: "span 2", border: "1px solid rgba(245,157,74,0.2)", willChange: "transform", transformStyle: "preserve-3d", opacity: 0,
-                background: "linear-gradient(155deg,#100800 0%,#3d1a00 45%,#8c4400 75%,#c46a20 100%)",
-                boxShadow: "0 0 0 1px rgba(245,157,74,0.1) inset, 0 32px 64px rgba(0,0,0,0.6)",
-              }}
-              onMouseMove={yc.onMove} onMouseLeave={yc.onLeave}>
-              {/* Blob */}
-              <div style={{ position: "absolute", top: -60, right: -60, width: 240, height: 240, borderRadius: "50%", background: "rgba(245,157,74,0.25)", filter: "blur(60px)", pointerEvents: "none" }} />
-              <div style={{ position: "absolute", inset: 0, backgroundImage: "radial-gradient(circle, rgba(245,157,74,0.1) 1px, transparent 1px)", backgroundSize: "20px 20px" }} />
-              {/* Monogram */}
-              <div style={{ position: "absolute", bottom: 90, left: 0, right: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <span style={{ fontSize: 88, fontWeight: 700, letterSpacing: "-0.06em", color: "rgba(245,157,74,0.18)", lineHeight: 1, userSelect: "none" }}>YC</span>
-              </div>
-              {/* Bottom glass strip */}
-              <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "18px 20px 20px",
-                backdropFilter: "blur(20px) saturate(160%)", WebkitBackdropFilter: "blur(20px) saturate(160%)",
-                background: "rgba(0,0,0,0.32)", borderTop: "1px solid rgba(245,157,74,0.2)" }}>
-                <div className="flex items-center gap-2 mb-1.5">
-                  <span style={{ width: 6, height: 6, borderRadius: "50%", background: "#F59D4A", display: "inline-block", boxShadow: "0 0 8px rgba(245,157,74,0.8)" }} />
-                  <span style={{ fontSize: 11, color: "#F59D4A", fontFamily: "var(--font-mono),monospace", letterSpacing: "0.06em", textTransform: "uppercase" }}>Lead Investor</span>
-                </div>
-                <div style={{ fontSize: 17, fontWeight: 600, color: "#F9FAFA", letterSpacing: "-0.02em" }}>Y Combinator</div>
-                <div style={{ fontSize: 12, color: "rgba(255,255,255,0.45)", marginTop: 3 }}>W2024 batch · $500k check</div>
-              </div>
+            {/* YC — col 1 · rows 1–2 (tall) */}
+            <div style={{ gridColumn: 1, gridRow: "1 / 3" }}>
+              <ICard
+                accent="rgba(245,157,74,0.35)"
+                glow="rgba(245,157,74,0.2)"
+                mono="YC"
+                name="Y Combinator"
+                sub="W2024 batch · $500k check"
+                tag="Lead Investor"
+                tagColor="#F59D4A"
+                tagBg="rgba(245,157,74,0.1)"
+                featured
+                style={{ height: "100%", minHeight: 0 }}
+              />
             </div>
 
-            {/* a16z */}
-            <div ref={a16z.ref} className="inv-card relative overflow-hidden rounded-2xl"
-              style={{ border: "1px solid rgba(124,111,255,0.18)", willChange: "transform", transformStyle: "preserve-3d", opacity: 0, minHeight: 140,
-                background: "linear-gradient(135deg,#0d0621 0%,#2a1480 60%,#5b40d4 100%)",
-                boxShadow: "0 16px 40px rgba(0,0,0,0.5)",
-              }}
-              onMouseMove={a16z.onMove} onMouseLeave={a16z.onLeave}>
-              <div style={{ position: "absolute", top: -30, right: -30, width: 120, height: 120, borderRadius: "50%", background: "rgba(124,111,255,0.3)", filter: "blur(40px)" }} />
-              <div style={{ padding: "20px 20px 16px" }}>
-                <div style={{ fontSize: 28, fontWeight: 700, letterSpacing: "-0.05em", color: "rgba(124,111,255,0.25)", lineHeight: 1, marginBottom: 28 }}>a16z</div>
-              </div>
-              <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "12px 20px 16px",
-                backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)",
-                background: "rgba(0,0,0,0.28)", borderTop: "1px solid rgba(124,111,255,0.15)" }}>
-                <div style={{ fontSize: 13, fontWeight: 600, color: "#F9FAFA", letterSpacing: "-0.01em" }}>Andreessen Horowitz</div>
-                <div style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", marginTop: 2 }}>Series A lead</div>
-              </div>
+            {/* a16z — col 2 · row 1 */}
+            <ICard
+              accent="rgba(124,111,255,0.3)"
+              glow="rgba(124,111,255,0.18)"
+              mono="a16z"
+              name="Andreessen Horowitz"
+              sub="Series A lead · 2024"
+              tag="Series A"
+              tagColor="#7C6FFF"
+              tagBg="rgba(124,111,255,0.1)"
+            />
+
+            {/* Index — col 3 · row 1 */}
+            <ICard
+              accent="rgba(52,130,213,0.28)"
+              glow="rgba(52,130,213,0.15)"
+              mono="IX"
+              name="Index Ventures"
+              sub="Global venture firm"
+              tag="Series A"
+              tagColor="#3482D5"
+              tagBg="rgba(52,130,213,0.1)"
+            />
+
+            {/* Elad Gil — col 2 · row 2 */}
+            <ICard
+              accent="rgba(52,213,154,0.28)"
+              glow="rgba(52,213,154,0.14)"
+              mono="EG"
+              name="Elad Gil"
+              sub="High Growth Handbook"
+              tag="Angel"
+              tagColor="#34D59A"
+              tagBg="rgba(52,213,154,0.08)"
+            />
+
+            {/* Nat Friedman — col 3 · row 2 */}
+            <ICard
+              accent="rgba(255,255,255,0.1)"
+              glow="rgba(255,255,255,0.05)"
+              mono="NF"
+              name="Nat Friedman"
+              sub="Former CEO · GitHub"
+              tag="Angel"
+              tagColor="#94979E"
+              tagBg="rgba(255,255,255,0.06)"
+            />
+
+            {/* Andrej Karpathy — full width row 3 */}
+            <div style={{ gridColumn: "1 / 4" }}>
+              <ICard
+                accent="rgba(192,132,252,0.28)"
+                glow="rgba(192,132,252,0.12)"
+                mono="AK"
+                name="Andrej Karpathy"
+                sub="Founding scientist · Tesla AI · OpenAI · Stanford PhD"
+                tag="Advisor"
+                tagColor="#c084fc"
+                tagBg="rgba(192,132,252,0.1)"
+                wide
+              />
             </div>
 
-            {/* Index Ventures */}
-            <div ref={idx.ref} className="inv-card relative overflow-hidden rounded-2xl"
-              style={{ border: "1px solid rgba(52,130,213,0.18)", willChange: "transform", transformStyle: "preserve-3d", opacity: 0, minHeight: 140,
-                background: "linear-gradient(135deg,#020c1a 0%,#083060 55%,#1060a0 100%)",
-                boxShadow: "0 16px 40px rgba(0,0,0,0.5)",
-              }}
-              onMouseMove={idx.onMove} onMouseLeave={idx.onLeave}>
-              <div style={{ position: "absolute", top: -30, right: -30, width: 120, height: 120, borderRadius: "50%", background: "rgba(52,130,213,0.25)", filter: "blur(40px)" }} />
-              <div style={{ padding: "20px 20px 16px" }}>
-                <div style={{ fontSize: 28, fontWeight: 700, letterSpacing: "-0.05em", color: "rgba(52,130,213,0.25)", lineHeight: 1, marginBottom: 28 }}>IX</div>
-              </div>
-              <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "12px 20px 16px",
-                backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)",
-                background: "rgba(0,0,0,0.28)", borderTop: "1px solid rgba(52,130,213,0.15)" }}>
-                <div style={{ fontSize: 13, fontWeight: 600, color: "#F9FAFA", letterSpacing: "-0.01em" }}>Index Ventures</div>
-                <div style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", marginTop: 2 }}>Series A</div>
-              </div>
-            </div>
-
-            {/* Elad Gil */}
-            <div ref={eg.ref} className="inv-card relative overflow-hidden rounded-2xl"
-              style={{ border: "1px solid rgba(52,213,154,0.18)", willChange: "transform", transformStyle: "preserve-3d", opacity: 0, minHeight: 140,
-                background: "linear-gradient(135deg,#031811 0%,#084d31 55%,#1a8f65 100%)",
-                boxShadow: "0 16px 40px rgba(0,0,0,0.5)",
-              }}
-              onMouseMove={eg.onMove} onMouseLeave={eg.onLeave}>
-              <div style={{ position: "absolute", top: -30, right: -30, width: 120, height: 120, borderRadius: "50%", background: "rgba(52,213,154,0.2)", filter: "blur(40px)" }} />
-              <div style={{ padding: "20px 20px 16px" }}>
-                <div style={{ fontSize: 28, fontWeight: 700, letterSpacing: "-0.05em", color: "rgba(52,213,154,0.22)", lineHeight: 1, marginBottom: 28 }}>EG</div>
-              </div>
-              <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "12px 20px 16px",
-                backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)",
-                background: "rgba(0,0,0,0.28)", borderTop: "1px solid rgba(52,213,154,0.15)" }}>
-                <div style={{ fontSize: 13, fontWeight: 600, color: "#F9FAFA", letterSpacing: "-0.01em" }}>Elad Gil</div>
-                <div style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", marginTop: 2 }}>Angel investor</div>
-              </div>
-            </div>
-
-            {/* Nat Friedman */}
-            <div ref={nf.ref} className="inv-card relative overflow-hidden rounded-2xl"
-              style={{ border: "1px solid rgba(200,200,200,0.1)", willChange: "transform", transformStyle: "preserve-3d", opacity: 0, minHeight: 140,
-                background: "linear-gradient(135deg,#111215 0%,#1c1d22 55%,#252630 100%)",
-                boxShadow: "0 16px 40px rgba(0,0,0,0.5)",
-              }}
-              onMouseMove={nf.onMove} onMouseLeave={nf.onLeave}>
-              <div style={{ position: "absolute", top: -30, right: -30, width: 120, height: 120, borderRadius: "50%", background: "rgba(255,255,255,0.05)", filter: "blur(40px)" }} />
-              <div style={{ padding: "20px 20px 16px" }}>
-                <div style={{ fontSize: 28, fontWeight: 700, letterSpacing: "-0.05em", color: "rgba(255,255,255,0.1)", lineHeight: 1, marginBottom: 28 }}>NF</div>
-              </div>
-              <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, padding: "12px 20px 16px",
-                backdropFilter: "blur(16px)", WebkitBackdropFilter: "blur(16px)",
-                background: "rgba(0,0,0,0.28)", borderTop: "1px solid rgba(255,255,255,0.08)" }}>
-                <div style={{ fontSize: 13, fontWeight: 600, color: "#F9FAFA", letterSpacing: "-0.01em" }}>Nat Friedman</div>
-                <div style={{ fontSize: 11, color: "rgba(255,255,255,0.4)", marginTop: 2 }}>Angel investor</div>
-              </div>
-            </div>
-
-            {/* Andrej Karpathy — wide, spans 2 cols */}
-            <div ref={ak.ref} className="inv-card relative overflow-hidden rounded-2xl"
-              style={{ gridColumn: "span 2", border: "1px solid rgba(168,85,247,0.18)", willChange: "transform", transformStyle: "preserve-3d", opacity: 0, minHeight: 90,
-                background: "linear-gradient(135deg,#12021f 0%,#3b0764 50%,#7c3aed 100%)",
-                boxShadow: "0 16px 40px rgba(0,0,0,0.5)",
-              }}
-              onMouseMove={ak.onMove} onMouseLeave={ak.onLeave}>
-              <div style={{ position: "absolute", top: -40, left: "30%", width: 200, height: 200, borderRadius: "50%", background: "rgba(168,85,247,0.2)", filter: "blur(60px)" }} />
-              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "22px 24px", position: "relative" }}>
-                <div>
-                  <div style={{ fontSize: 16, fontWeight: 600, color: "#F9FAFA", letterSpacing: "-0.02em" }}>Andrej Karpathy</div>
-                  <div style={{ fontSize: 12, color: "rgba(255,255,255,0.4)", marginTop: 3 }}>Founding scientist · Tesla AI · OpenAI</div>
-                </div>
-                <div style={{ padding: "5px 12px", borderRadius: 999, background: "rgba(168,85,247,0.15)", border: "1px solid rgba(168,85,247,0.3)", fontSize: 11, color: "#c084fc", fontFamily: "var(--font-mono),monospace", letterSpacing: "0.05em", textTransform: "uppercase" }}>
-                  Advisor
-                </div>
-              </div>
-            </div>
-
-          </div>{/* /bento grid */}
+          </div>{/* /bento */}
         </div>{/* /two-col */}
       </div>
     </section>
