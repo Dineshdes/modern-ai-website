@@ -51,7 +51,7 @@ function Heatmap({ day, active, idle }: { day: string; active: number; idle: num
 export default function AgentPlatform() {
   return (
     <section className="relative overflow-hidden" style={{ background: "#0C0D0D" }}>
-      <SectionGlow variant="dual" opacity={0.05} />
+      <SectionGlow variant="dual" />
       {/* Terminal status bar */}
       <div
         className="border-y px-8 py-2.5"

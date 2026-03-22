@@ -100,7 +100,7 @@ export default function AutoscalingSection() {
       className="relative py-36 overflow-hidden border-b"
       style={{ background: "#E4F1EB", borderColor: "rgba(0,0,0,0.06)" }}
     >
-      <SectionGlow variant="corner" color="#2C6D4C" opacity={0.03} />
+      <SectionGlow variant="corner" color="44, 109, 76" />
       <div className="relative max-w-[1400px] mx-auto px-8 lg:pl-[260px]">
         <motion.div initial={{ opacity: 0, y: 28 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.6 }}>
           <DotIcon dark />
