@@ -7,6 +7,7 @@ import Navbar from "@/components/layout/navbar";
 import Footer from "@/components/layout/footer";
 import HalftoneEdges from "@/components/ui/halftone-edges";
 import SectionGlow from "@/components/ui/section-glow";
+import CTAFinal from "@/components/sections/cta-final";
 
 /* ─── Shared animation helper ─── */
 const fadeUp = (delay = 0) => ({
@@ -915,67 +916,6 @@ function FAQ() {
   );
 }
 
-/* ══════════════════════════════════════════════════════════
-   SECTION 8 — BOTTOM CTA
-══════════════════════════════════════════════════════════ */
-function BottomCTA() {
-  return (
-    <section
-      className="relative overflow-hidden"
-      style={{ background: "#080909", paddingTop: 120, paddingBottom: 120 }}
-    >
-      <SectionGlow variant="center" />
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background: "radial-gradient(ellipse 50% 60% at 50% 100%, rgba(52,213,154,0.08) 0%, transparent 70%)",
-        }}
-      />
-
-      <div className="relative z-10 max-w-[700px] mx-auto px-8 text-center">
-        <motion.h2
-          {...fadeUp(0)}
-          style={{
-            fontSize: "clamp(30px, 4vw, 52px)",
-            fontWeight: 400,
-            letterSpacing: "-0.04em",
-            color: "#F9FAFA",
-            lineHeight: 1.12,
-            marginBottom: 20,
-          }}
-        >
-          Bring speed back into your AI stack.
-        </motion.h2>
-        <motion.p
-          {...fadeUp(0.07)}
-          style={{ fontSize: 16, color: "#94979E", lineHeight: 1.7, marginBottom: 40 }}
-        >
-          Join engineering teams that ship faster, scale cheaper, and observe everything — from day one.
-        </motion.p>
-        <motion.div {...fadeUp(0.14)} className="flex items-center justify-center gap-3">
-          <a
-            href="#"
-            className="inline-flex items-center px-8 h-12 rounded-full text-[15px] font-medium transition-colors"
-            style={{ background: "#34D59A", color: "#0C0D0D" }}
-            onMouseEnter={(e) => (e.currentTarget.style.background = "#2bc589")}
-            onMouseLeave={(e) => (e.currentTarget.style.background = "#34D59A")}
-          >
-            Get started free
-          </a>
-          <a
-            href="#"
-            className="inline-flex items-center px-7 h-12 rounded-full text-[15px] transition-colors"
-            style={{ color: "#F9FAFA", border: "1px solid rgba(255,255,255,0.18)" }}
-            onMouseEnter={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.4)")}
-            onMouseLeave={(e) => (e.currentTarget.style.borderColor = "rgba(255,255,255,0.18)")}
-          >
-            Request a demo
-          </a>
-        </motion.div>
-      </div>
-    </section>
-  );
-}
 
 /* ══════════════════════════════════════════════════════════
    PAGE ROOT
@@ -993,7 +933,7 @@ export default function ProductPage() {
         <Compliance />
         <Integrations />
         <FAQ />
-        <BottomCTA />
+        <CTAFinal />
       </main>
       <Footer />
     </>

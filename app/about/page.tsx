@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import AnnouncementBar from "@/components/layout/announcement-bar";
@@ -8,6 +8,8 @@ import Navbar from "@/components/layout/navbar";
 import Footer from "@/components/layout/footer";
 import HalftoneEdges from "@/components/ui/halftone-edges";
 import SectionGlow from "@/components/ui/section-glow";
+import { WarpBackground } from "@/components/ui/warp-background";
+import { GlowingEffect } from "@/components/ui/glowing-effect";
 
 if (typeof window !== "undefined") {
   gsap.registerPlugin(ScrollTrigger);
@@ -673,216 +675,165 @@ function Story() {
 }
 
 /* ════════════════════════════════════════════════════════
-   SECTION 5 — TEAM (horizontal scroll · photo-style cards)
+   SECTION 5 — TEAM (photo cards · arrow navigation)
 ════════════════════════════════════════════════════════ */
 const TEAM = [
   {
-    name: "Maria Santos", role: "Co-founder & CEO", initials: "MS",
-    grad: "linear-gradient(155deg,#072e22 0%,#0d5c40 38%,#20a875 68%,#4adba0 100%)",
-    blob1: "rgba(52,213,154,0.38)", blob2: "rgba(110,231,183,0.22)",
-    accent: "#34D59A", status: "Building",
-    bio: "ML Platform · Meta AI · Stanford CS PhD",
+    name: "Maria Santos", role: "Co-founder & CEO",
+    photo: "https://randomuser.me/api/portraits/women/44.jpg",
   },
   {
-    name: "James Park",   role: "Co-founder & CTO", initials: "JP",
-    grad: "linear-gradient(155deg,#0d0621 0%,#2a1480 38%,#5b40d4 68%,#9580ff 100%)",
-    blob1: "rgba(124,111,255,0.38)", blob2: "rgba(167,139,250,0.22)",
-    accent: "#7C6FFF", status: "Shipping",
-    bio: "Infrastructure Lead · OpenAI · Caltech EE/CS",
+    name: "James Park", role: "Co-founder & CTO",
+    photo: "https://randomuser.me/api/portraits/men/32.jpg",
   },
   {
-    name: "Priya Mehta",  role: "Co-founder & CPO", initials: "PM",
-    grad: "linear-gradient(155deg,#1f0900 0%,#8c3a08 38%,#d9700f 68%,#f8b96a 100%)",
-    blob1: "rgba(245,157,74,0.38)", blob2: "rgba(252,211,77,0.22)",
-    accent: "#F59D4A", status: "Designing",
-    bio: "Product Director · Scale AI · MIT EECS",
+    name: "Priya Mehta", role: "Co-founder & CPO",
+    photo: "https://randomuser.me/api/portraits/women/68.jpg",
   },
   {
-    name: "Alex Kim",     role: "Head of Engineering", initials: "AK",
-    grad: "linear-gradient(155deg,#031811 0%,#084d31 38%,#129960 68%,#34D59A 100%)",
-    blob1: "rgba(16,185,129,0.38)", blob2: "rgba(52,213,154,0.22)",
-    accent: "#10d07a", status: "Deploying",
-    bio: "Senior SWE · Cloudflare Workers · CMU CS",
+    name: "Alex Kim", role: "Head of Engineering",
+    photo: "https://randomuser.me/api/portraits/men/52.jpg",
   },
   {
-    name: "Rania Hassan", role: "Head of Research", initials: "RH",
-    grad: "linear-gradient(155deg,#12021f 0%,#581c87 38%,#9333ea 68%,#c084fc 100%)",
-    blob1: "rgba(168,85,247,0.38)", blob2: "rgba(216,180,254,0.22)",
-    accent: "#c084fc", status: "Researching",
-    bio: "Research Scientist · Google DeepMind · Oxford DPhil",
+    name: "Rania Hassan", role: "Head of Research",
+    photo: "https://randomuser.me/api/portraits/women/26.jpg",
   },
   {
-    name: "Luis Torres",  role: "Head of GTM", initials: "LT",
-    grad: "linear-gradient(155deg,#140700 0%,#78350f 38%,#d97706 68%,#fbbf24 100%)",
-    blob1: "rgba(217,119,6,0.38)", blob2: "rgba(251,191,36,0.22)",
-    accent: "#fbbf24", status: "Growing",
-    bio: "Enterprise Sales · Databricks · UT Austin MBA",
+    name: "Luis Torres", role: "Head of GTM",
+    photo: "https://randomuser.me/api/portraits/men/76.jpg",
   },
 ];
 
-/* Photo-style glassmorphism card */
-function TeamCard({ p }: { p: typeof TEAM[0] }) {
-  const ref = useRef<HTMLDivElement>(null);
-
-  const onMove = (e: React.MouseEvent) => {
-    const el = ref.current; if (!el) return;
-    const r  = el.getBoundingClientRect();
-    const x  = (e.clientX - r.left) / r.width  - 0.5;
-    const y  = (e.clientY - r.top)  / r.height - 0.5;
-    gsap.to(el, { rotateY: x * 16, rotateX: -y * 16, scale: 1.03, transformPerspective: 1000, duration: 0.28, ease: "power2.out" });
-  };
-  const onLeave = () =>
-    gsap.to(ref.current, { rotateY: 0, rotateX: 0, scale: 1, duration: 0.55, ease: "elastic.out(1,0.5)" });
-
-  return (
-    <div
-      ref={ref}
-      onMouseMove={onMove}
-      onMouseLeave={onLeave}
-      style={{
-        width: 258, height: 370, borderRadius: 24, overflow: "hidden",
-        position: "relative", flexShrink: 0, cursor: "none",
-        transformStyle: "preserve-3d", willChange: "transform",
-        background: p.grad,
-        boxShadow: `0 24px 56px rgba(0,0,0,0.55), 0 0 0 1px rgba(255,255,255,0.08) inset`,
-      }}
-    >
-      {/* Decorative blobs */}
-      <div style={{ position: "absolute", top: -40, right: -40, width: 200, height: 200, borderRadius: "50%", background: p.blob1, filter: "blur(50px)", pointerEvents: "none" }} />
-      <div style={{ position: "absolute", bottom: 60, left: -30, width: 150, height: 150, borderRadius: "50%", background: p.blob2, filter: "blur(40px)", pointerEvents: "none" }} />
-
-      {/* Dot-grid texture */}
-      <div style={{ position: "absolute", inset: 0, backgroundImage: "radial-gradient(circle, rgba(255,255,255,0.12) 1px, transparent 1px)", backgroundSize: "18px 18px", pointerEvents: "none" }} />
-
-      {/* Top status bar (glass) */}
-      <div style={{
-        position: "absolute", top: 0, left: 0, right: 0,
-        padding: "14px 18px",
-        backdropFilter: "blur(16px) saturate(160%)",
-        WebkitBackdropFilter: "blur(16px) saturate(160%)",
-        background: "rgba(0,0,0,0.22)",
-        borderBottom: "1px solid rgba(255,255,255,0.12)",
-        display: "flex", alignItems: "center", justifyContent: "space-between",
-      }}>
-        <span style={{ fontSize: 13, fontWeight: 600, color: "#fff", letterSpacing: "-0.01em" }}>{p.name}</span>
-        <span className="flex items-center gap-1.5" style={{ fontSize: 10, color: "rgba(255,255,255,0.7)", fontFamily: "var(--font-mono),monospace" }}>
-          <span style={{ width: 5, height: 5, borderRadius: "50%", background: p.accent, display: "inline-block", boxShadow: `0 0 6px ${p.accent}` }} />
-          {p.status}
-        </span>
-      </div>
-
-      {/* Avatar circle — upper-center */}
-      <div style={{
-        position: "absolute", top: "38%", left: "50%",
-        transform: "translate(-50%, -50%)",
-        width: 96, height: 96, borderRadius: "50%",
-        background: "rgba(0,0,0,0.28)",
-        backdropFilter: "blur(8px)",
-        WebkitBackdropFilter: "blur(8px)",
-        border: `2px solid rgba(255,255,255,0.28)`,
-        boxShadow: `0 8px 32px rgba(0,0,0,0.4), 0 0 0 6px rgba(255,255,255,0.06)`,
-        display: "flex", alignItems: "center", justifyContent: "center",
-        fontSize: 28, fontWeight: 700, color: "#fff", letterSpacing: "-0.02em",
-      }}>
-        {p.initials}
-      </div>
-
-      {/* Bottom glass info strip */}
-      <div style={{
-        position: "absolute", bottom: 0, left: 0, right: 0,
-        padding: "16px 20px 18px",
-        backdropFilter: "blur(24px) saturate(180%)",
-        WebkitBackdropFilter: "blur(24px) saturate(180%)",
-        background: "rgba(0,0,0,0.38)",
-        borderTop: "1px solid rgba(255,255,255,0.15)",
-      }}>
-        <div style={{ fontSize: 11, fontWeight: 500, color: p.accent, marginBottom: 3, fontFamily: "var(--font-mono),monospace", letterSpacing: "0.04em", textTransform: "uppercase" }}>{p.role}</div>
-        <div style={{ fontSize: 12, color: "rgba(255,255,255,0.55)", lineHeight: 1.5 }}>{p.bio}</div>
-      </div>
-    </div>
-  );
-}
-
 function Team() {
-  const pinRef   = useRef<HTMLDivElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
+  const [canPrev, setCanPrev] = useState(false);
+  const [canNext, setCanNext] = useState(true);
+  const sec = useRef<HTMLElement>(null);
+
+  const checkScroll = () => {
+    const t = trackRef.current; if (!t) return;
+    setCanPrev(t.scrollLeft > 4);
+    setCanNext(t.scrollLeft < t.scrollWidth - t.clientWidth - 4);
+  };
 
   useEffect(() => {
-    const pin   = pinRef.current;
-    const track = trackRef.current;
-    if (!pin || !track) return;
+    const t = trackRef.current; if (!t) return;
+    t.addEventListener("scroll", checkScroll, { passive: true });
+    checkScroll();
+    return () => t.removeEventListener("scroll", checkScroll);
+  }, []);
 
+  useEffect(() => {
     const ctx = gsap.context(() => {
-      const mm = gsap.matchMedia();
-      mm.add("(min-width: 768px)", () => {
-        const getDist = () => track.scrollWidth - pin.offsetWidth;
-        gsap.to(track, {
-          x: () => -getDist(),
-          ease: "none",
-          scrollTrigger: {
-            trigger: pin,
-            start: "top top",
-            end: () => `+=${getDist()}`,
-            pin: true, scrub: 1, anticipatePin: 1,
-            invalidateOnRefresh: true,
-          },
-        });
-      });
-    }, pinRef);
+      gsap.fromTo(".tm-card",
+        { opacity: 0, y: 40 },
+        { opacity: 1, y: 0, stagger: 0.08, duration: 0.6, ease: "power3.out",
+          scrollTrigger: { trigger: sec.current, start: "top 78%" } }
+      );
+    }, sec);
     return () => ctx.revert();
   }, []);
 
+  const scroll = (dir: "prev" | "next") => {
+    const t = trackRef.current; if (!t) return;
+    t.scrollBy({ left: dir === "next" ? 310 : -310, behavior: "smooth" });
+  };
+
   return (
-    <div ref={pinRef} style={{ background: "#080909", borderBottom: "1px solid rgba(255,255,255,0.06)" }}>
-      {/* Header */}
-      <div className="px-16 pt-16 pb-12">
-        <span className="text-[11px] uppercase tracking-widest block mb-4" style={{ color: "#94979E" }}>The team</span>
-        <h2 style={{ fontSize: "clamp(24px, 2.8vw, 40px)", fontWeight: 400, letterSpacing: "-0.04em", color: "#F9FAFA" }}>
-          Small team.{" "}<span style={{ color: "#6B7280" }}>Massive ambition.</span>
-        </h2>
-      </div>
+    <section ref={sec} className="border-b" style={{ background: "#0C0D0D", borderColor: "rgba(255,255,255,0.06)", paddingTop: 80, paddingBottom: 64 }}>
+      <div className="max-w-[1280px] mx-auto px-8">
+        {/* Header */}
+        <div className="mb-10">
+          <span className="text-[11px] uppercase tracking-widest block mb-4" style={{ color: "#94979E" }}>Our Team</span>
+          <h2 style={{ fontSize: "clamp(28px, 3.2vw, 48px)", fontWeight: 400, letterSpacing: "-0.04em", color: "#F9FAFA", lineHeight: 1.12 }}>
+            Meet the team{" "}
+            <span style={{ color: "#6B7280" }}>that<br />ships the future.</span>
+          </h2>
+        </div>
 
-      {/* Scrolling track */}
-      <div ref={trackRef} style={{ display: "flex", paddingLeft: 64, paddingRight: 64, gap: 20, paddingBottom: 88, width: "max-content", alignItems: "flex-end" }}>
-        {TEAM.map((p, i) => (
-          /* Alternate vertical offsets for staggered look */
-          <div key={p.name} style={{ transform: i % 2 === 0 ? "translateY(0px)" : "translateY(-28px)" }}>
-            <TeamCard p={p} />
-          </div>
-        ))}
-
-        {/* Hiring card — same glass style */}
-        <div style={{ transform: "translateY(0px)" }}>
-          <div style={{
-            width: 258, height: 370, borderRadius: 24, overflow: "hidden",
-            position: "relative", flexShrink: 0,
-            background: "linear-gradient(155deg, #061810 0%, #0a3328 40%, #0e5c42 70%, #1a8f65 100%)",
-            boxShadow: "0 24px 56px rgba(0,0,0,0.55), 0 0 0 1px rgba(52,213,154,0.2) inset",
-            display: "flex", flexDirection: "column", justifyContent: "flex-end",
-          }}>
-            <div style={{ position: "absolute", top: -40, right: -40, width: 200, height: 200, borderRadius: "50%", background: "rgba(52,213,154,0.3)", filter: "blur(55px)" }} />
-            <div style={{ position: "absolute", inset: 0, backgroundImage: "radial-gradient(circle, rgba(52,213,154,0.12) 1px, transparent 1px)", backgroundSize: "18px 18px" }} />
-
-            {/* Plus icon */}
-            <div style={{ position: "absolute", top: "38%", left: "50%", transform: "translate(-50%,-50%)", width: 72, height: 72, borderRadius: "50%", background: "rgba(52,213,154,0.15)", border: "1.5px solid rgba(52,213,154,0.4)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 4v16M4 12h16" stroke="#34D59A" strokeWidth={1.8} strokeLinecap="round" /></svg>
+        {/* Scrollable photo track */}
+        <div
+          ref={trackRef}
+          style={{
+            display: "flex", gap: 16, overflowX: "auto", scrollbarWidth: "none",
+            paddingBottom: 4,
+          }}
+          className="[&::-webkit-scrollbar]:hidden"
+        >
+          {TEAM.map((p) => (
+            <div key={p.name} className="tm-card" style={{ flexShrink: 0, width: 280, opacity: 0 }}>
+              {/* Photo */}
+              <div style={{ width: 280, height: 340, borderRadius: 16, overflow: "hidden", background: "#1a1b1e" }}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={p.photo}
+                  alt={p.name}
+                  width={280}
+                  height={340}
+                  style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+                />
+              </div>
+              {/* Info */}
+              <div style={{ marginTop: 14 }}>
+                <div style={{ fontSize: 16, fontWeight: 600, color: "#F9FAFA", letterSpacing: "-0.02em" }}>{p.name}</div>
+                <div style={{ fontSize: 13, color: "#94979E", marginTop: 3 }}>{p.role}</div>
+              </div>
             </div>
+          ))}
 
+          {/* Hiring card */}
+          <div className="tm-card" style={{ flexShrink: 0, width: 280, opacity: 0 }}>
             <div style={{
-              padding: "20px 20px 22px",
-              backdropFilter: "blur(24px) saturate(180%)",
-              WebkitBackdropFilter: "blur(24px) saturate(180%)",
-              background: "rgba(0,0,0,0.35)",
-              borderTop: "1px solid rgba(52,213,154,0.2)",
+              width: 280, height: 340, borderRadius: 16, overflow: "hidden",
+              background: "linear-gradient(155deg,#061810 0%,#0a3328 50%,#1a8f65 100%)",
+              display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 16,
+              border: "1px solid rgba(52,213,154,0.2)",
             }}>
-              <div style={{ fontSize: 16, fontWeight: 600, color: "#F9FAFA", marginBottom: 6 }}>We&apos;re hiring</div>
-              <div style={{ fontSize: 12, color: "rgba(255,255,255,0.5)", lineHeight: 1.6, marginBottom: 16 }}>Remote-first · great equity · hard problems</div>
-              <a href="#" style={{ display: "inline-flex", alignItems: "center", gap: 6, paddingLeft: 14, paddingRight: 14, height: 34, borderRadius: 999, background: "#34D59A", color: "#0C0D0D", fontSize: 12, fontWeight: 600 }}>View roles →</a>
+              <div style={{ width: 64, height: 64, borderRadius: "50%", border: "1.5px solid rgba(52,213,154,0.4)", background: "rgba(52,213,154,0.1)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 4v16M4 12h16" stroke="#34D59A" strokeWidth={1.8} strokeLinecap="round" /></svg>
+              </div>
+              <div style={{ textAlign: "center", padding: "0 24px" }}>
+                <div style={{ fontSize: 16, fontWeight: 600, color: "#F9FAFA", marginBottom: 6 }}>We&apos;re hiring</div>
+                <div style={{ fontSize: 12, color: "rgba(255,255,255,0.45)", lineHeight: 1.65 }}>Remote-first · great equity · hard problems</div>
+              </div>
+            </div>
+            <div style={{ marginTop: 14 }}>
+              <a href="#" style={{ display: "inline-flex", alignItems: "center", gap: 6, paddingLeft: 16, paddingRight: 16, height: 36, borderRadius: 999, background: "#34D59A", color: "#0C0D0D", fontSize: 13, fontWeight: 600 }}>View open roles →</a>
             </div>
           </div>
         </div>
+
+        {/* Navigation arrows */}
+        <div className="flex items-center gap-2 mt-8">
+          <button
+            onClick={() => scroll("prev")}
+            disabled={!canPrev}
+            style={{
+              width: 40, height: 40, borderRadius: "50%", border: "1px solid rgba(255,255,255,0.12)",
+              background: canPrev ? "rgba(255,255,255,0.06)" : "transparent",
+              color: canPrev ? "#F9FAFA" : "rgba(255,255,255,0.2)",
+              display: "flex", alignItems: "center", justifyContent: "center", cursor: canPrev ? "pointer" : "default",
+              transition: "all 0.2s",
+            }}
+          >
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M10 3L5 8l5 5" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" /></svg>
+          </button>
+          <button
+            onClick={() => scroll("next")}
+            disabled={!canNext}
+            style={{
+              width: 40, height: 40, borderRadius: "50%", border: "1px solid rgba(255,255,255,0.12)",
+              background: canNext ? "rgba(255,255,255,0.06)" : "transparent",
+              color: canNext ? "#F9FAFA" : "rgba(255,255,255,0.2)",
+              display: "flex", alignItems: "center", justifyContent: "center", cursor: canNext ? "pointer" : "default",
+              transition: "all 0.2s",
+            }}
+          >
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M6 3l5 5-5 5" stroke="currentColor" strokeWidth={1.5} strokeLinecap="round" strokeLinejoin="round" /></svg>
+          </button>
+        </div>
       </div>
-    </div>
+    </section>
   );
 }
 
@@ -916,9 +867,10 @@ function Values() {
         <h2 style={{ fontSize: "clamp(26px, 3vw, 42px)", fontWeight: 400, letterSpacing: "-0.04em", color: "#111215", marginBottom: 48, maxWidth: 460 }}>Four principles we&nbsp;don&apos;t compromise on.</h2>
         <div className="grid gap-5" style={{ gridTemplateColumns: "repeat(2, 1fr)", perspective: 800 }}>
           {VALUES.map((v) => (
-            <div key={v.title} className="vc rounded-2xl p-8" style={{ background: "rgba(255,255,255,0.62)", border: "1px solid rgba(44,74,62,0.1)", opacity: 0 }}
+            <div key={v.title} className="vc rounded-2xl p-8 relative overflow-hidden" style={{ background: "rgba(255,255,255,0.62)", border: "1px solid rgba(44,74,62,0.1)", opacity: 0 }}
               onMouseEnter={(e) => gsap.to(e.currentTarget, { y: -5, boxShadow: "0 18px 42px rgba(44,74,62,0.11)", duration: 0.3, ease: "power2.out" })}
               onMouseLeave={(e) => gsap.to(e.currentTarget, { y: 0, boxShadow: "none", duration: 0.4, ease: "power2.out" })}>
+              <GlowingEffect disabled={false} spread={28} proximity={52} blur={0} borderWidth={1} />
               <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-5" style={{ background: "rgba(44,74,62,0.1)" }}>{v.icon}</div>
               <h3 style={{ fontSize: 17, fontWeight: 500, color: "#111215", marginBottom: 10, letterSpacing: "-0.02em" }}>{v.title}</h3>
               <p style={{ fontSize: 14, color: "#4B7860", lineHeight: 1.75 }}>{v.body}</p>
@@ -1049,22 +1001,30 @@ function BottomCTA() {
   }, []);
   const cta = "Help us build the inference standard.";
   return (
-    <section ref={sec} className="relative overflow-hidden" style={{ background: "#0C0D0D", paddingTop: 130, paddingBottom: 130 }}>
+    <section ref={sec} className="relative overflow-hidden" style={{ background: "#0C0D0D" }}>
       <SectionGlow variant="center" />
-      <div className="absolute inset-0 pointer-events-none" style={{ background: "radial-gradient(ellipse 50% 60% at 50% 100%, rgba(52,213,154,0.07) 0%, transparent 70%)" }} />
-      <div className="relative z-10 max-w-[620px] mx-auto px-8 text-center">
-        <div className="flex items-center justify-center gap-2 mb-8"><Diamond /><span className="text-[11px] uppercase tracking-widest" style={{ color: "#94979E", fontFamily: "var(--font-mono),monospace" }}>Join the team</span></div>
-        <h2 ref={headRef} style={{ fontSize: "clamp(26px, 4vw, 50px)", fontWeight: 400, letterSpacing: "-0.04em", color: "#F9FAFA", lineHeight: 1.12, marginBottom: 20 }}>
-          {cta.split(" ").map((word, i) => <span key={i} className="w inline-block" style={{ marginRight: "0.26em", opacity: 0 }}>{word}</span>)}
-        </h2>
-        <p style={{ fontSize: 16, color: "#94979E", lineHeight: 1.7, marginBottom: 44 }}>
-          Small team, clear mission. If you care about performance, developer experience, and making powerful AI accessible — we should talk.
-        </p>
-        <div className="flex items-center justify-center gap-3">
-          <MagBtn primary>View open roles</MagBtn>
-          <MagBtn>Get started free</MagBtn>
+      <WarpBackground
+        className="border-0 rounded-none p-0 w-full"
+        gridColor="rgba(52,213,154,0.06)"
+        beamsPerSide={2}
+        beamDuration={7}
+        beamSize={10}
+        perspective={120}
+      >
+        <div className="relative z-10 max-w-[620px] mx-auto px-8 text-center py-32">
+          <div className="flex items-center justify-center gap-2 mb-8"><Diamond /><span className="text-[11px] uppercase tracking-widest" style={{ color: "#94979E", fontFamily: "var(--font-mono),monospace" }}>Join the team</span></div>
+          <h2 ref={headRef} style={{ fontSize: "clamp(26px, 4vw, 50px)", fontWeight: 400, letterSpacing: "-0.04em", color: "#F9FAFA", lineHeight: 1.12, marginBottom: 20 }}>
+            {cta.split(" ").map((word, i) => <span key={i} className="w inline-block" style={{ marginRight: "0.26em", opacity: 0 }}>{word}</span>)}
+          </h2>
+          <p style={{ fontSize: 16, color: "#94979E", lineHeight: 1.7, marginBottom: 44 }}>
+            Small team, clear mission. If you care about performance, developer experience, and making powerful AI accessible — we should talk.
+          </p>
+          <div className="flex items-center justify-center gap-3">
+            <MagBtn primary>View open roles</MagBtn>
+            <MagBtn>Get started free</MagBtn>
+          </div>
         </div>
-      </div>
+      </WarpBackground>
     </section>
   );
 }
