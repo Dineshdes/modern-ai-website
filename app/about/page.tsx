@@ -1278,6 +1278,7 @@ function BottomCTA() {
         beamDuration={7}
         beamSize={10}
         perspective={120}
+        dottedBeams
       >
         <div className="relative z-10 max-w-[620px] mx-auto px-8 text-center py-32">
           <div className="flex items-center justify-center gap-2 mb-8">
